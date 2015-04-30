@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.optimize import fsolve
+import matplotlib.pyplot as plt
+
 conserved_variables = ('Density','Momentum','Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
 
@@ -13,13 +15,16 @@ def conservative_to_primitive(rho,mom,E,gamma=1.4):
     p = (gamma-1.)*(E - 0.5*rho*u**2)
     return rho, u, p
 
-def exact_riemann_solution(q_l,q_r,gamma=1.4):
+def exact_riemann_solution(q_l,q_r,gamma=1.4,phase_plane_curves=False):
     """Return the exact solution to the Riemann problem with initial states q_l, q_r.
        The solution is given in terms of a list of states, a list of speeds (each of which
        may be a pair in case of a rarefaction fan), and a function reval(xi) that gives the
        solution at a point xi=x/t.
        
        The input and output vectors are the conserved quantities.
+
+       If phase_plane_curves==True, then the appropriate Hugoniot Locus and/or integral curve is
+       returned for the 1- and 3-waves.
     """
     
     rho_l, u_l, p_l = conservative_to_primitive(*q_l)
@@ -38,8 +43,8 @@ def exact_riemann_solution(q_l,q_r,gamma=1.4):
         return None
     
     # Define the integral curves and hugoniot loci
-    integral_curve_1   = lambda p : u_l + 2*c_l/(gamma-1.)*(1.-(p/p_l)**((gamma-1.)/(2.*gamma)))
-    integral_curve_3   = lambda p : u_r - 2*c_r/(gamma-1.)*(1.-(p/p_r)**((gamma-1.)/(2.*gamma)))
+    integral_curve_1   = lambda p : u_l + 2*c_l/(gamma-1.)*(1.-(max(p,0)/p_l)**((gamma-1.)/(2.*gamma)))
+    integral_curve_3   = lambda p : u_r - 2*c_r/(gamma-1.)*(1.-(max(p,0)/p_r)**((gamma-1.)/(2.*gamma)))
     hugoniot_locus_1 = lambda p : u_l + 2*c_l/np.sqrt(2*gamma*(gamma-1.)) * ((1-p/p_l)/np.sqrt(1+beta*p/p_l))
     hugoniot_locus_3 = lambda p : u_r - 2*c_r/np.sqrt(2*gamma*(gamma-1.)) * ((1-p/p_r)/np.sqrt(1+beta*p/p_r))
     
@@ -113,11 +118,69 @@ def exact_riemann_solution(q_l,q_r,gamma=1.4):
     speeds = [(ws[0],ws[1]),ws[2],(ws[3],ws[4])]
 
     def reval(xi):
+        r"""Returns the Riemann solution in primitive variables for any
+            value of xi = x/t.
+        """
         rar1 = raref1(xi)
         rar3 = raref3(xi)
-        rho_out = (xi<=speeds[0][0])*rho_l + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[0] + (xi>speeds[0][1])*(xi<=speeds[1])*rho_l_star + (xi>speeds[1])*(xi<=speeds[2][0])*rho_r_star + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[0] + (xi>speeds[2][1])*rho_r
-        u_out   = (xi<=speeds[0][0])*u_l   + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[1] + (xi>speeds[0][1])*(xi<=speeds[1])*u          + (xi>speeds[1])*(xi<=speeds[2][0])*u          + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[1] + (xi>speeds[2][1])*u_r
-        p_out   = (xi<=speeds[0][0])*p_l   + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[2] + (xi>speeds[0][1])*(xi<=speeds[1])*p          + (xi>speeds[1])*(xi<=speeds[2][0])*p          + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[2] + (xi>speeds[2][1])*p_r        
+        rho_out =  (xi<=speeds[0][0]                  )*rho_l      \
+                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[0]    \
+                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*rho_l_star \
+                 + (xi>speeds[1])   *(xi<=speeds[2][0])*rho_r_star \
+                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[0]    \
+                 + (xi>speeds[2][1]                   )*rho_r
+
+        u_out   =  (xi<=speeds[0][0]                  )*u_l     \
+                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[1] \
+                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*u       \
+                 + (xi>speeds[1]   )*(xi<=speeds[2][0])*u       \
+                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[1] \
+                 + (xi>speeds[2][1]                   )*u_r
+
+        p_out   =  (xi<=speeds[0][0]                  )*p_l     \
+                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[2] \
+                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*p       \
+                 + (xi>speeds[1]   )*(xi<=speeds[2][0])*p       \
+                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[2] \
+                 + (xi>speeds[2][1]                   )*p_r
         return primitive_to_conservative(rho_out,u_out,p_out)
 
-    return states, speeds, reval
+    if phase_plane_curves:
+        return states, speeds, reval, (p, phi_l, phi_r)
+    else:
+        return states, speeds, reval
+
+
+def phase_plane_plot(left_state, right_state, gamma=1.4):
+    r"""Plot the Hugoniot loci or integral curves in the p-u plane."""
+    # Solve Riemann problem
+    q_left  = primitive_to_conservative(*left_state)
+    q_right = primitive_to_conservative(*right_state)
+    ex_states, ex_speeds, reval, ppc = exact_riemann_solution(q_left ,q_right, gamma, phase_plane_curves=True)
+    pm, w1, w3 = ppc
+
+    # Set plot bounds
+    fig, ax = plt.subplots()
+    x = (left_state.Pressure, pm, right_state.Pressure)
+    y = (left_state.Velocity, w1(pm), right_state.Velocity)
+    xmax, xmin = max(x), min(x)
+    ymax, ymin = max(y), min(y)
+    dx, dy = xmax - xmin, ymax - ymin
+    ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
+    ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
+    ax.set_xlabel('Pressure (p)')
+    ax.set_ylabel('Velocity (u)')
+
+    # Plot curves
+    w1v, w3v = (np.vectorize(w1), np.vectorize(w3))
+    press1 = np.linspace(left_state.Pressure,pm)
+    press3 = np.linspace(right_state.Pressure,pm)
+    ax.plot(press1,w1v(press1),'k',lw=2)
+    ax.hold(True)
+    ax.plot(press3,w3v(press3),'k',lw=2)
+    for xp,yp in zip(x,y):
+        ax.plot(xp,yp,'or',markersize=10)
+    # Label states
+    for i,label in enumerate(('Left', 'Middle', 'Right')):
+        ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
+    ax.hold(False)
