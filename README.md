@@ -60,7 +60,7 @@ We will start by collecting some things from the following repositories to work 
 - *Results using Clawpack with different solvers*
 
 ## Notebooks already written that should be adapted as chapters in the book
--[Acoustics, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb)
--[Elasticity, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
--[Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
--[Euler equations (exact solution only)](http://nbviewer.ipython.org/gist/ketch/08ce0845da0c8f3fa9ff)
+- [Acoustics, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb)
+- [Elasticity, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
+- [Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
+- [Euler equations (exact solution only)](http://nbviewer.ipython.org/gist/ketch/08ce0845da0c8f3fa9ff)
