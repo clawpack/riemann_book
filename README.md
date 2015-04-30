@@ -1,20 +1,20 @@
-# riemann_book
+# Riemann_book
 Book in progress to illustrate Riemann solvers in Jupyter notebooks.
 @rjleveque, @ketch, and @maojrs.
 
 We will start by collecting some things from the following repositories to work on: 
   clawpack/riemann, clawpack/apps/notebooks, and clawpack/clawutil
   
-**To do:**
+##To do:
 
 - [ ] Add dropdown to static interacts to select variable
 - [ ] Phase space plots where you can drag q_l and q_r around
 - [ ] Sliders for sample q_l and q_r inputs (in phase space, also in x-t plane?)
 - [ ] Linked phase plane, q(x, t=1), and/or x-t plane plots as q_l, q_r change
 
-**Problems**
+##Problems
 
-**One-dimension**
+###One-dimensional
 
 - [ ] Advection - conservative and color equation
 - [ ] Acoustics - constant coefficient and arbitrary rho, K on each side
@@ -34,10 +34,33 @@ We will start by collecting some things from the following repositories to work 
 - [ ] Dusty gas
 - [ ] Two-phase flow
 
-**Two-dimensions**
+###Two-dimensional
 
 - [ ] Elasticity
 - [ ] Maxwell's equations
 - [ ] Arbitrary normal direction on mapped grid
 - [ ] Poro-elasticity (?)
 
+## What each chapter should contain (optional things in *italics*)
+- Description of the equations 
+- *physical derivation*
+- Analysis of the hyperbolic structure: 
+	- Jacobian; eigenvalues and eigenvectors
+	- Rankine-Hugoniot jump conditions
+	- Riemann invariants
+	- *structure of centered rarefaction waves*
+- Riemann solvers
+	- Exact Riemann solver
+	- *Approximate Riemann solvers*
+	- *Solvers for mapped grids*
+	- *Well-balanced solvers incorporating source terms*
+	- *Solvers with and without entropy fix*
+	- *Discussion and solvers for the transverse problem*
+	- *Comparisons*
+- *Results using Clawpack with different solvers*
+
+## Notebooks already written that should be adapted as chapters in the book
+-[Acoustics, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb)
+-[Elasticity, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
+-[Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
+-[Euler equations (exact solution only)](http://nbviewer.ipython.org/gist/ketch/08ce0845da0c8f3fa9ff)
