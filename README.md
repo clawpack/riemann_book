@@ -38,7 +38,7 @@ Should the book start with some general chapters explaining important background
 - [ ] Euler - Exact, Roe, HLL, HLLE, HLLC, 
 - [ ] Euler with general EOS
 - [ ] Reactive Euler
-- [ ] HLL solver for arbitrary equations
+- [ ] LLF and HLL solvers for arbitrary equations
 - [ ] Layered shallow water
 - [ ] MHD
 - [ ] Relativistic Euler
