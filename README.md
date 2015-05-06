@@ -15,6 +15,14 @@ We will start by collecting some things from the following repositories to work 
 - [ ] Create "riemann_apps.py" to store functions for specific interactive apps, like the one
 for shallow water?
 
+##Early chapters
+Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
+- Similarity solutions
+- Characteristics and characteristic velocities
+- Conservation, weak solutions, and jump conditions
+- Riemann invariants and integral curves
+- How approximate solvers are used in numerical discretizations
+
 ##Problems
 
 ###One-dimensional
