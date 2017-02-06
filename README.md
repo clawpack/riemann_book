@@ -75,3 +75,41 @@ Should the book start with some general chapters explaining important background
 - [Elasticity, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
 - [Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
 - [Euler equations (exact solution only)](http://nbviewer.ipython.org/gist/ketch/08ce0845da0c8f3fa9ff)
+
+
+# Citations
+
+We are using bibtex for citations; add entries as necessary to `riemann.bib`.
+To insert a citation in a notebook, follow this pattern:
+
+    <cite data-cite="toro2013riemann"><a href="riemann.html#toro2013riemann">(Toro, 2013)<a></cite>
+
+The value appearing in the html tag and the hyperlink should match the cite key
+in the bibtex file.
+
+## How to generate the html bibliography
+
+Use bibtex2html, downloadable from https://www.lri.fr/~filliatr/bibtex2html/.
+Then:
+
+    export TMPDIR=.
+    bibtex2html riemann.bib
+    
+This creates riemann.html which includes an anchor for each citation.
+
+We are keeping the HTML file under version control for convenience, even
+though it is generated from the .bib file.
+
+
+## How to generate the PDF with bibliography
+
+I've tested this with Jupyter 5.2.
+
+    jupyter nbconvert --to latex --template citations.tplx Euler_equations.ipynb
+    pdflatex Euler_equations
+    bibtex Euler_equations
+    pdflatex Euler_equations
+
+This generates a single chapter with a bibliography at the end.  To actually
+generate the book, we'll want to merge all the notebooks first; see
+discussion at https://github.com/jupyter/nbconvert/issues/253.
