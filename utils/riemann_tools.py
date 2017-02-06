@@ -144,7 +144,7 @@ def plot_phase_3d(states):
     ax.text(states[0,0]+0.05,states[1,0],states[2,0],'q_left')
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
  
-def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizontal',conserved_variables=None):
+def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizontal',conserved_variables=None,t_pointer=True):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be tuple of two values,
@@ -193,7 +193,8 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
                    
     ax[0].set_xlim(-xmax,xmax)
     ax[0].plot([-xmax,xmax],[t,t],'k',linewidth=2)
-    ax[0].text(-1.8*xmax,t,'t = %4.2f -->' % t)
+    if t_pointer:
+        ax[0].text(-1.8*xmax,t,'t = %4.2f -->' % t)
     ax[0].set_title('Waves in x-t plane')
 
     if conserved_variables is None:
@@ -225,7 +226,7 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
 def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layout='horizontal',conserved_variables=None):
     """
     Utility function to create a plot_function that takes a single argument t.
-    This function can then be used in a StaticInteract widget.
+    This function can then be used with ipywidgets.interact.
     Version that takes an arbitrary list of sets of states and speeds in order to make a comparison.
     """
     colors = "kbrg"
@@ -244,7 +245,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layo
             if fig is None:
                 fig = plot_riemann(states,speeds,riemann_eval,t,color=colors[i],layout=layout,conserved_variables=conserved_variables)
             else:
-                fig = plot_riemann(states,speeds,riemann_eval,t,fig,colors[i],layout=layout,conserved_variables=conserved_variables)
+                fig = plot_riemann(states,speeds,riemann_eval,t,fig,colors[i],layout=layout,conserved_variables=conserved_variables,t_pointer=False)
 
             if names is not None:
                 # We could use fig.legend here if we had the line plot handles
