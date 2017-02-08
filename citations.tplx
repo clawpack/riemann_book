@@ -1,0 +1,14 @@
+((*- extends 'article.tplx' -*))
+
+((* block author *))
+\author{David I. Ketcheson \and Randall J. LeVeque \and Mauricio del Razo Sarmina}
+((* endblock author *))
+
+((* block title *))
+\title{Riemann Problems and Riemann Solvers}
+((* endblock title *))
+
+((* block bibliography *))
+\bibliographystyle{unsrt}
+\bibliography{riemann}
+((* endblock bibliography *))
