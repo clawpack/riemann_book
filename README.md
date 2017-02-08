@@ -5,7 +5,7 @@ Book in progress to illustrate Riemann solvers in Jupyter notebooks.
 We will start by collecting some things from the following repositories to work on: 
   clawpack/riemann, clawpack/apps/notebooks, and clawpack/clawutil
   
-##To do:
+## To do:
 
 - [x] ~~Add dropdown to static interacts to select variable~~ Vertical layout instead.
 - [x] Phase space plots where you can drag q_l and q_r around
@@ -15,7 +15,7 @@ We will start by collecting some things from the following repositories to work 
 - [x] Create "riemann_apps.py" to store functions for specific interactive apps, like the one
 for shallow water?
 
-##Early chapters
+## Early chapters
 Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
 - Similarity solutions
 - Characteristics and characteristic velocities
@@ -23,9 +23,9 @@ Should the book start with some general chapters explaining important background
 - Riemann invariants and integral curves
 - How approximate solvers are used in numerical discretizations
 
-##Problems
+## Problems
 
-###One-dimensional
+### One-dimensional
 
 - [ ] Advection - conservative and color equation
 - [x] Acoustics - constant coefficient and arbitrary rho, K on each side - Mauricio
@@ -45,9 +45,10 @@ Should the book start with some general chapters explaining important background
 - [ ] Dusty gas
 - [ ] Two-phase flow
 
-###Two-dimensional
+### Two-dimensional
 
-- [ ] Elasticity
+- [ ] Elasticity - Mauricio
+- [ ] Acoustics + mapped grids - Mauricio
 - [ ] Maxwell's equations
 - [ ] Arbitrary normal direction on mapped grid
 - [ ] Poro-elasticity (?)
