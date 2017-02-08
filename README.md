@@ -28,7 +28,7 @@ Should the book start with some general chapters explaining important background
 ###One-dimensional
 
 - [ ] Advection - conservative and color equation
-- [x] Acoustics - constant coefficient and arbitrary rho, K on each side
+- [x] Acoustics - constant coefficient and arbitrary rho, K on each side - Mauricio
 - [ ] Traffic flow - scalar and systems - David
 - [ ] Burgers' - with/without entropy fix - Mauricio
 - [x] Buckley-Leverett - Randy
