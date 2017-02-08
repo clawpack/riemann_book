@@ -28,18 +28,18 @@ Should the book start with some general chapters explaining important background
 ###One-dimensional
 
 - [ ] Advection - conservative and color equation
-- [ ] Acoustics - constant coefficient and arbitrary rho, K on each side
-- [ ] Burgers' - with/without entropy fix
-- [ ] Traffic flow - scalar and systems
-- [ ] Buckley-Leverett
-- [ ] Shallow water - Exact, Roe, HLLE  (and with tracer)
-- [ ] Shallow water with topography, Augmented solver
-- [ ] p-system / nonlinear elasticity
-- [ ] Euler - Exact, Roe, HLL, HLLE, HLLC, 
-- [ ] Euler with general EOS
+- [x] Acoustics - constant coefficient and arbitrary rho, K on each side
+- [ ] Traffic flow - scalar and systems - David
+- [ ] Burgers' - with/without entropy fix - Mauricio
+- [x] Buckley-Leverett - Randy
+- [ ] Shallow water - Exact, Roe, HLLE  (and with tracer) - Randy
+- [ ] Shallow water with topography, Augmented solver - Randy
+- [ ] p-system / nonlinear elasticity - David
+- [x] Euler - Exact, Roe, HLL, HLLE, HLLC 
+- [ ] Euler with general EOS - Mauricio
 - [ ] Reactive Euler
 - [ ] LLF and HLL solvers for arbitrary equations
-- [ ] Layered shallow water
+- [ ] Layered shallow water - David
 - [ ] MHD
 - [ ] Relativistic Euler
 - [ ] Dusty gas
