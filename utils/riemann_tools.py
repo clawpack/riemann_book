@@ -263,7 +263,14 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layo
     return plot_function
 
 def JSAnimate_plot_riemann(states,speeds,riemann_eval, times=None, **kwargs):
-    from utils import animation_tools
+    try:
+        from utils import animation_tools
+    except:
+        try:
+            from clawpack.visclaw import animation_tools
+        except:
+            print("*** Warning: animation_tools not found")
+
     figs = []  # to collect figures at multiple times
     if times is None:
         times = np.linspace(0,0.9,10)
