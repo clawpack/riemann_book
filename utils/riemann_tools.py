@@ -26,7 +26,8 @@ import copy
 sympy.init_printing(use_latex='mathjax')
 
 
-def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=None,verbose=False):
+def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=None,
+                     verbose=False,stationary_wave=False,fwave=False):
     r"""
     Compute the (approximate) solution of the Riemann problem with states (q_l, q_r)
     based on the (approximate) Riemann solver `solver`.  The solver should be
@@ -55,17 +56,47 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
 
     if aux_l is None:
         aux_l = np.zeros(num_eqn)
-    if aux_r is None:
+        num_aux = num_eqn
         aux_r = np.zeros(num_eqn)
+    else:
+        num_aux = len(aux_l)
 
     wave, s, amdq, apdq = solver(q_l.reshape((num_eqn,1)),q_r.reshape((num_eqn,1)),
-                                 aux_l.reshape((num_eqn,1)),aux_r.reshape((num_eqn,1)),problem_data)
-    
-    wave0 = wave[:,:,0]
+                                 aux_l.reshape((num_aux,1)),aux_r.reshape((num_aux,1)),problem_data)
+
     num_waves = wave.shape[1]
-    qlwave = np.vstack((q_l,wave0.T)).T
-    # Sum to the waves to get the states:
-    states = np.cumsum(qlwave,1)  
+    
+    if fwave:
+        for i in range(num_waves):
+            # This will break for zero wave speed
+            wave[:,i,:] = wave[:,i,:]/s[i,:]
+
+    if stationary_wave:
+
+        # Allow for unidentified jumps at x=0
+        lstates = [q_l]
+        for i in range(num_waves):
+            if s[i,0] < 0:
+                lstates.append(lstates[-1]+np.squeeze(wave[:,i,:]))
+            else: break
+        rstates = [q_r]
+        for j in range(num_waves-1,i-1,-1):
+            rstates.insert(0,rstates[0]-np.squeeze(wave[:,j,:]))
+        states = np.array(lstates+rstates).T
+        s=np.insert(s,i,0)
+        jump = rstates[0]-lstates[-1]
+        jump = jump.reshape((1,num_eqn,1))
+        wave=np.insert(wave,i,jump,axis=1)
+        num_waves += 1
+    else:
+        wave0 = wave[:,:,0]
+        num_waves = wave.shape[1]
+        qlwave = np.vstack((q_l,wave0.T)).T
+        # Sum to the waves to get the states:
+        states = np.cumsum(qlwave,1)
+        if not np.allclose(states[:,-1],q_r):
+            print("""Warning: Computed right state does not match input.
+                   You may need to set stationary_wave=True.""")
     
     num_states = num_waves + 1
     
