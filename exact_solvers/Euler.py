@@ -176,11 +176,9 @@ def phase_plane_plot(left_state, right_state, gamma=1.4):
     press1 = np.linspace(left_state.Pressure,pm)
     press3 = np.linspace(right_state.Pressure,pm)
     ax.plot(press1,w1v(press1),'k',lw=2)
-    ax.hold(True)
     ax.plot(press3,w3v(press3),'k',lw=2)
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'or',markersize=10)
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
-    ax.hold(False)
