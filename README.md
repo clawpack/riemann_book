@@ -1,19 +1,7 @@
 # Riemann_book
 Book in progress to illustrate Riemann solvers in Jupyter notebooks.
-@rjleveque, @ketch, and @maojrs.
-
-We will start by collecting some things from the following repositories to work on: 
-  clawpack/riemann, clawpack/apps/notebooks, and clawpack/clawutil
+Contributors: @rjleveque, @ketch, and @maojrs.
   
-## To do:
-
-- [x] ~~Add dropdown to static interacts to select variable~~ Vertical layout instead.
-- [x] Phase space plots where you can drag q_l and q_r around
-- [x] Sliders for sample q_l and q_r inputs (in phase space, also in x-t plane?)
-- [x] Linked phase plane, q(x, t=1), and/or x-t plane plots as q_l, q_r change
-- [x] Incorporate interactive general linear phase plane as function in riemann_tools.py
-- [x] Create "riemann_apps.py" to store functions for specific interactive apps, like the one
-for shallow water?
 
 ## Early chapters
 Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
@@ -23,19 +11,20 @@ Should the book start with some general chapters explaining important background
 - Riemann invariants and integral curves
 - How approximate solvers are used in numerical discretizations
 
-## Problems
+## Chapters
+Chapters with a complete draft have the box checked.  Chapters that are required are in bold.  The remaining chapters are optional and will depend on the authors finding time to complete them.
 
 ### One-dimensional
 
 - [ ] **Advection** - conservative and color equation
-- [x] Acoustics - constant coefficient and arbitrary rho, K on each side - Mauricio
-- [x] Traffic flow - scalar - David
+- [x] **Acoustics** - constant coefficient and arbitrary rho, K on each side - Mauricio
+- [x] **Traffic flow** - scalar - David
 - [ ] **Burgers'** - with/without entropy fix - Mauricio
-- [x] Buckley-Leverett - Randy
+- [x] **Buckley-Leverett** - Randy
 - [ ] **Shallow water** - Exact, Roe, HLLE  (and with tracer) - Randy
 - [ ] **Shallow water with topography**, Augmented solver - Randy
-- [x] p-system / nonlinear elasticity - David
-- [x] Euler - Exact, Roe, HLL, HLLE, HLLC 
+- [x] **p-system / nonlinear elasticity** - David
+- [x] **Euler** - Exact, Roe, HLL, HLLE, HLLC 
 - [ ] **Euler with general EOS** - Mauricio
 - [ ] Reactive Euler
 - [ ] Traffic - systems
@@ -48,11 +37,13 @@ Should the book start with some general chapters explaining important background
 
 ### Two-dimensional
 
-- [ ] Elasticity - Mauricio
-- [ ] Acoustics + mapped grids - Mauricio
+- [ ] **Elasticity** - Mauricio
+- [ ] **Acoustics + mapped grids** - Mauricio
+- [ ] Shallow water
+- [ ] Euler
 - [ ] Maxwell's equations
 - [ ] Arbitrary normal direction on mapped grid
-- [ ] Poro-elasticity (?)
+- [ ] Poro-elasticity
 
 ## What each chapter should contain (optional things in *italics*)
 - Description of the equations 
