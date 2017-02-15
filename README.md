@@ -27,17 +27,18 @@ Should the book start with some general chapters explaining important background
 
 ### One-dimensional
 
-- [ ] Advection - conservative and color equation
+- [ ] **Advection** - conservative and color equation
 - [x] Acoustics - constant coefficient and arbitrary rho, K on each side - Mauricio
-- [ ] Traffic flow - scalar and systems - David
-- [ ] Burgers' - with/without entropy fix - Mauricio
+- [x] Traffic flow - scalar - David
+- [ ] **Burgers'** - with/without entropy fix - Mauricio
 - [x] Buckley-Leverett - Randy
-- [ ] Shallow water - Exact, Roe, HLLE  (and with tracer) - Randy
-- [ ] Shallow water with topography, Augmented solver - Randy
-- [ ] p-system / nonlinear elasticity - David
+- [ ] **Shallow water** - Exact, Roe, HLLE  (and with tracer) - Randy
+- [ ] **Shallow water with topography**, Augmented solver - Randy
+- [x] p-system / nonlinear elasticity - David
 - [x] Euler - Exact, Roe, HLL, HLLE, HLLC 
-- [ ] Euler with general EOS - Mauricio
+- [ ] **Euler with general EOS** - Mauricio
 - [ ] Reactive Euler
+- [ ] Traffic - systems
 - [ ] LLF and HLL solvers for arbitrary equations
 - [ ] Layered shallow water - David
 - [ ] MHD
@@ -75,7 +76,6 @@ Should the book start with some general chapters explaining important background
 - [Acoustics, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb)
 - [Elasticity, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
 - [Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
-- [Euler equations (exact solution only)](http://nbviewer.ipython.org/gist/ketch/08ce0845da0c8f3fa9ff)
 
 
 # Citations
