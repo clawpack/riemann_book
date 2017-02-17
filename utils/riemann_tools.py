@@ -12,8 +12,6 @@ clawpack/riemann/src in a future release.
 from __future__ import absolute_import
 from __future__ import print_function
 from matplotlib import animation
-from clawpack.visclaw.JSAnimation import IPython_display
-from IPython.display import display
 import ipywidgets
 import sympy
 import numpy as np
@@ -21,6 +19,15 @@ import matplotlib.pyplot as plt
 import matplotlib
 from six.moves import range
 import copy
+
+try:
+    from JSAnimation import IPython_display
+except:
+    try:
+        from clawpack.visclaw.JSAnimation import IPython_display
+    except:
+        print("*** Warning: JSAnimation not found")
+from IPython.display import display
 
 
 sympy.init_printing(use_latex='mathjax')
@@ -287,7 +294,14 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layo
     return plot_function
 
 def JSAnimate_plot_riemann(states,speeds,riemann_eval, times=None, **kwargs):
-    from clawpack.visclaw import animation_tools
+    try:
+        from utils import animation_tools
+    except:
+        try:
+            from clawpack.visclaw import animation_tools
+        except:
+            print("*** Warning: animation_tools not found")
+
     figs = []  # to collect figures at multiple times
     if times is None:
         times = np.linspace(0,0.9,10)

@@ -181,9 +181,13 @@ def make_html(anim, file_name='anim.html', title=None, raw_html='', \
     Take an animation created by make_anim and convert it into a stand-alone
     html file.
     """
-
-    from JSAnimation.IPython_display import anim_to_html
-
+    try:
+        from JSAnimation.IPython_display import anim_to_html
+    except:
+        try:
+            from clawpack.visclaw.JSAnimation.IPython_display import anim_to_html
+        except:
+            print("*** Warning: JSAnimation not found, cannot import anim_to_html")
 
     html_body = anim_to_html(anim, fps=fps, embed_frames=embed_frames, \
                  default_mode=default_mode)
@@ -202,9 +206,13 @@ def make_rst(anim, file_name='anim.rst',
     Take an animation created by make_anim and convert it into an rst file 
     (reStructuredText, for inclusion in Sphinx documentation, for example).
     """
-
-    from JSAnimation.IPython_display import anim_to_html
-
+    try:
+        from JSAnimation.IPython_display import anim_to_html
+    except:
+        try:
+            from clawpack.visclaw.JSAnimation.IPython_display import anim_to_html
+        except:
+            print("*** Warning: JSAnimation not found, cannot import anim_to_html")
 
     rst_body = anim_to_html(anim, fps=fps, embed_frames=embed_frames, \
                  default_mode=default_mode)
