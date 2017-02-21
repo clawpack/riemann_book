@@ -1,18 +1,16 @@
 """
-This version of riemann_tools.py was adapted from the 
+This version of riemann_tools.py was adapted from the
 version in clawpack/riemann/src from Clawpack V5.3.1 to
 add some new features and improve the plots.
 
 This may be modified further as the notebooks in this
-directory are improved and expanded.  Eventually a 
+directory are improved and expanded.  Eventually a
 stable version of this should be moved back to
 clawpack/riemann/src in a future release.
 """
 
 from __future__ import absolute_import
 from __future__ import print_function
-from matplotlib import animation
-import ipywidgets
 import sympy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -72,7 +70,7 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
                                  aux_l.reshape((num_aux,1)),aux_r.reshape((num_aux,1)),problem_data)
 
     num_waves = wave.shape[1]
-    
+
     if fwave:
         for i in range(num_waves):
             # This will break for zero wave speed
@@ -90,10 +88,10 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
         for j in range(num_waves-1,i-1,-1):
             rstates.insert(0,rstates[0]-np.squeeze(wave[:,j,:]))
         states = np.array(lstates+rstates).T
-        s=np.insert(s,i,0)
+        s = np.insert(s,i,0)
         jump = rstates[0]-lstates[-1]
         jump = jump.reshape((1,num_eqn,1))
-        wave=np.insert(wave,i,jump,axis=1)
+        wave = np.insert(wave,i,jump,axis=1)
         num_waves += 1
     else:
         wave0 = wave[:,:,0]
@@ -104,27 +102,27 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
         if not np.allclose(states[:,-1],q_r):
             print("""Warning: Computed right state does not match input.
                    You may need to set stationary_wave=True.""")
-    
+
     num_states = num_waves + 1
-    
+
     if verbose:
         print('States in Riemann solution:')
         states_sym = sympy.Matrix(states)
         display([states_sym[:,k] for k in range(num_states)])
-    
+
         print('Waves (jumps between states):')
         wave_sym = sympy.Matrix(wave[:,:,0])
         display([wave_sym[:,k] for k in range(num_waves)])
-    
+
         print("Speeds: ")
         s_sym = sympy.Matrix(s)
         display(s_sym.T)
-    
+
         print("Fluctuations amdq, apdq: ")
         amdq_sym = sympy.Matrix(amdq).T
         apdq_sym = sympy.Matrix(apdq).T
         display([amdq_sym, apdq_sym])
-    
+
     def riemann_eval(xi):
         "Return Riemann solution as function of xi = x/t."
         qout = np.zeros((num_eqn,len(xi)))
@@ -145,14 +143,14 @@ def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     and vertical axes via i_h and i_v.
     """
 
-    if label_h is None: 
+    if label_h is None:
         label_h = 'q[%s]' % i_h
-    if label_v is None: 
+    if label_v is None:
         label_v = 'q[%s]' % i_v
 
     q0 = states[i_h,:]
     q1 = states[i_v,:]
-    
+
     if ax is None:
         fig, ax = plt.subplots()
     ax.plot(q0,q1,'o-k')
@@ -166,7 +164,7 @@ def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     ax.axis([q0.min()-0.1*dq0, q0.max()+0.1*dq0, q1.min()-0.1*dq1, q1.max()+0.1*dq1])
     ax.set_xlabel(label_h)
     ax.set_ylabel(label_v)
-    
+
 def plot_phase_3d(states):
     """
     3d phase space plot
@@ -181,7 +179,7 @@ def plot_phase_3d(states):
     ax.set_title('phase space')
     ax.text(states[0,0]+0.05,states[1,0],states[2,0],'q_left')
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
- 
+
 def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizontal',conserved_variables=None,t_pointer=True):
     """
     Take an array of states and speeds s and plot the solution at time t.
@@ -190,7 +188,7 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
 
     Plots in the x-t plane and also produces a separate plot for each component of q.
     """
-    
+
     num_eqn,num_states = states.shape
     if fig is None:
         if layout == 'horizontal':
@@ -220,7 +218,7 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
             x1 = tmax * s[i]
             ax[0].plot([0,x1],[0,tmax],color=color)
             xmax = max(xmax,abs(x1))
-        else: #plot rarefaction fan
+        else:  # plot rarefaction fan
             speeds = np.linspace(s[i][0],s[i][1],5)
             for ss in speeds:
                 x1 = tmax * ss
@@ -228,7 +226,7 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
                 xmax = max(xmax,abs(x1))
 
     x = np.linspace(-xmax,xmax,1000)
-                   
+
     ax[0].set_xlim(-xmax,xmax)
     ax[0].plot([-xmax,xmax],[t,t],'k',linewidth=2)
     if t_pointer:
@@ -236,11 +234,14 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
     ax[0].set_title('Waves in x-t plane')
 
     if conserved_variables is None:
-        conserved_variables = ['q[%s]' % i for i in range(num_eqn)]
+        if num_eqn == 1:
+            conserved_variables = ['q']
+        else:
+            conserved_variables = ['$q_%s$' % i for i in range(num_eqn)]
 
     for i in range(num_eqn):
         ax[i+1].set_xlim((-1,1))
-        qmax = states[i,:].max()  #max([state[i] for state in states])
+        qmax = states[i,:].max()  # max([state[i] for state in states])
         qmin = states[i,:].min()  # min([state[i] for state in states])
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
@@ -249,7 +250,7 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
             ax[i+1].set_title(conserved_variables[i]+' at t = %6.3f' % t)
         elif layout == 'vertical':
             ax[i+1].set_ylabel(conserved_variables[i])
-    
+
     if t == 0:
         q = riemann_eval(x/1e-10)
     else:
@@ -259,13 +260,14 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
         ax[i+1].plot(x,q[i][:],color=color,lw=2)
 
     return fig
-            
+
 
 def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layout='horizontal',conserved_variables=None):
     """
     Utility function to create a plot_function that takes a single argument t.
     This function can then be used with ipywidgets.interact.
-    Version that takes an arbitrary list of sets of states and speeds in order to make a comparison.
+    Version that takes an arbitrary list of sets of states and speeds in order
+    to make a comparison.
     """
     colors = "kbrg"
     if type(states_list) is not list:
@@ -309,14 +311,14 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, times=None, **kwargs):
         fig = plot_riemann(states,speeds,riemann_eval,t, **kwargs)
         figs.append(fig)
         plt.close(fig)
-        
+
     images = animation_tools.make_images(figs)
     anim = animation_tools.JSAnimate_images(images, figsize=(10,5))
     return anim
 
- 
-def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1, 
-            fig=None, color='b', num_left=10, num_right=10):
+
+def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
+                              fig=None, color='b', num_left=10, num_right=10):
     """
     Take an array of states and speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
@@ -328,7 +330,7 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
     which are the wave speeds that bound the rarefaction fan.
 
     """
-    
+
     num_eqn,num_states = states.shape
     if fig is None:
         fig, ax = plt.subplots()
@@ -340,15 +342,13 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
             x1 = tmax * s[i]
             ax.plot([0,x1],[0,tmax],color=color, lw=2)
             xmax = max(xmax,abs(x1))
-        else: #plot rarefaction fan
+        else:  # plot rarefaction fan
             speeds = np.linspace(s[i][0],s[i][1],5)
             for ss in speeds:
                 x1 = tmax * ss
                 ax.plot([0,x1],[0,tmax],color=color,lw=1)
                 xmax = max(xmax,abs(x1))
 
-    x = np.linspace(-xmax,xmax,1000)
-                   
     ax.set_xlim(-xmax,xmax)
 
     xx_left = np.linspace(-xmax,0,num_left)
@@ -372,6 +372,7 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
         plt.plot(xtraj[:,j],tt,'k')
 
     ax.set_title('Waves and particle trajectories in x-t plane')
+
 
 if __name__ == '__main__':
     import doctest
