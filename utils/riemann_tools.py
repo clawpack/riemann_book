@@ -316,7 +316,8 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, times=None, **kwargs):
 
  
 def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1, 
-            fig=None, color='b', num_left=10, num_right=10):
+            fig=None, color='b', num_left=10, num_right=10, xmax=None,
+            rho_left=None,rho_right=None):
     """
     Take an array of states and speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
@@ -333,19 +334,25 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
     if fig is None:
         fig, ax = plt.subplots()
 
+    # auto scale the x axis?
+    xmax_auto = (xmax is None)
+        
     tmax = 1.0
-    xmax = 0.
+    if xmax_auto: 
+        xmax = 0.
     for i in range(len(s)):
         if type(s[i]) not in (tuple, list):  # this is a jump
             x1 = tmax * s[i]
             ax.plot([0,x1],[0,tmax],color=color, lw=2)
-            xmax = max(xmax,abs(x1))
+            if xmax_auto: 
+                xmax = max(xmax,abs(x1))
         else: #plot rarefaction fan
             speeds = np.linspace(s[i][0],s[i][1],5)
             for ss in speeds:
                 x1 = tmax * ss
                 ax.plot([0,x1],[0,tmax],color=color,lw=1)
-                xmax = max(xmax,abs(x1))
+                if xmax_auto: 
+                    xmax = max(xmax,abs(x1))
 
     x = np.linspace(-xmax,xmax,1000)
                    
@@ -353,6 +360,13 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
 
     xx_left = np.linspace(-xmax,0,num_left)
     xx_right = np.linspace(0,xmax,num_right)
+
+    # instead define spacing based on density if available:
+    if rho_left is not None:
+        xx_left = np.arange(-xmax, 0, xmax*0.02/(rho_left + 1e-8))
+    if rho_right is not None:
+        xx_right = np.arange(0, xmax, xmax*0.02/(rho_right + 1e-8))
+
     xx = np.hstack((xx_left, xx_right))
     xtraj = [xx]
 
