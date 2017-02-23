@@ -19,13 +19,14 @@ Chapters with a complete draft have the box checked.  Chapters that are required
 - [ ] **Advection** - conservative and color equation
 - [x] **Acoustics** - constant coefficient and arbitrary rho, K on each side - Mauricio
 - [x] **Traffic flow** - scalar - David
+- [x] Traffic flow with variable speed limit - David
 - [ ] **Burgers'** - with/without entropy fix - Mauricio
 - [x] **Buckley-Leverett** - Randy
 - [ ] **Shallow water** - Exact, Roe, HLLE  (and with tracer) - Randy
 - [ ] **Shallow water with topography**, Augmented solver - Randy
 - [x] **p-system / nonlinear elasticity** - David
 - [x] **Euler** - Exact, Roe, HLL, HLLE, HLLC 
-- [ ] **Euler with general EOS** - Mauricio
+- [x] **Euler with general EOS** - Mauricio
 - [ ] Reactive Euler
 - [ ] Traffic - systems
 - [ ] LLF and HLL solvers for arbitrary equations
