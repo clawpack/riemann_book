@@ -15,7 +15,12 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
     c_l = c(q_l,v_l)
     c_r = c(q_r,v_r)
 
-    if (f_r <= f_l) and (q_r > 0.5):
+    if f_r == f_l:
+        states = [q_l, q_r]
+        speeds = [0]
+        reval = lambda xi: np.ones((1,len(xi)))*q_l
+
+    elif (f_r < f_l) and (q_r > 0.5):
         # Left-going shock (1)
         q_star = (1. + np.sqrt(1.-4*f_r/v_l))/2.
         states = [q_l, q_star, q_r]
@@ -28,7 +33,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
               + (xi>=0)*q_r
             return q
 
-    elif (f_r >= f_l) and (q_l < 0.5):
+    elif (f_r > f_l) and (q_l < 0.5):
         # Right-going shock (2)
         q_star = (1. - np.sqrt(1.-4*f_l/v_r))/2.
         states = [q_l, q_star, q_r]
@@ -41,7 +46,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
               + (xi>=shock_speed)*q_r
             return q
 
-    elif (f_l >= v_r/4.) and (q_r <= 0.5):
+    elif (f_l > v_r/4.) and (q_r <= 0.5):
         # Left-going shock and right-going rarefaction (3)
         q_star = (1. + np.sqrt(1.-v_r/v_l))/2.
         shock_speed = -(f_l-v_r/4.)/(q_star-q_l)
@@ -55,7 +60,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
               + (xi>=c_r)*q_r
             return q
 
-    elif (f_r >= v_l/4.) and (q_l >= 0.5):
+    elif (f_r > v_l/4.) and (q_l >= 0.5):
         # Left-going rarefaction and right-going shock (4)
         q_star = (1. - np.sqrt(1.-v_l/v_r))/2.
         shock_speed = (f_r-v_l/4.)/(q_r-q_star)
@@ -114,7 +119,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
                     + (c_r<xi)*q_r
                 return q
 
-        elif v_r >= v_l:
+        elif v_r > v_l:
             # q* on right side (5b)
             q_star = (1. - np.sqrt(1.-v_l/v_r))/2.
             states = [q_l, q_star, q_r]
@@ -137,6 +142,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
                 q[0,:] = (xi<=c_l)*q_l \
                     + (c_l<xi)*(xi<=c_r)*(1.-xi/v_l)/2. \
                     + (c_r<xi)*q_r
+                return q
 
     else:
         print f_l, f_r
