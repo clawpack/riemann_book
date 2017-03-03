@@ -2,6 +2,13 @@
 Book in progress to illustrate Riemann solvers in Jupyter notebooks.
 Contributors: @rjleveque, @ketch, and @maojrs.
   
+# Dependencies
+- matplotlib
+- numpy
+- clawpack
+- jupyter
+- ipywidgets
+- mpl_toolkits
 
 ## Early chapters
 Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
