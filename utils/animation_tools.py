@@ -314,11 +314,12 @@ def imshow_noaxes(im, figsize=(8,6)):
     plt.imshow(im)
     ax.axis('off')
     return fig
-    
+
 def interact_animate_images(images, figsize=(10,6), manual=False, TextInput=False):
 
-    def display_frame(frameno): 
+    def display_frame(frameno):
         imshow_noaxes(images[frameno], figsize=figsize)
+        plt.show()
 
     if TextInput:
         if TextInput:
