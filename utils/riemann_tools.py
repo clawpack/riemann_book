@@ -181,8 +181,9 @@ def plot_phase_3d(states):
     ax.set_title('phase space')
     ax.text(states[0,0]+0.05,states[1,0],states[2,0],'q_left')
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
- 
-def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizontal',conserved_variables=None,t_pointer=True):
+
+
+def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be tuple of two values,
@@ -190,16 +191,19 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
 
     Plots in the x-t plane and also produces a separate plot for each component of q.
     """
-    
+
     num_eqn,num_states = states.shape
+
     if fig is None:
+        num_axes = num_eqn+1
+        if extra_axes: num_axes += 1
         if layout == 'horizontal':
-            fig_width = 4*(num_eqn+1)
-            fig, ax = plt.subplots(1,num_eqn+1,figsize=(fig_width,4))
+            fig_width = 4*num_axes
+            fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,4))
         elif layout == 'vertical':
             fig_width = 9
-            fig_height = 4*num_eqn
-            fig, ax = plt.subplots(num_eqn+1,1,figsize=(fig_width,fig_height),sharex=True)
+            fig_height = 4*(num_axes-1)
+            fig, ax = plt.subplots(num_axes,1,figsize=(fig_width,fig_height),sharex=True)
             plt.subplots_adjust(hspace=0)
             ax[-1].set_xlabel('x')
             ax[0].set_ylabel('t')
