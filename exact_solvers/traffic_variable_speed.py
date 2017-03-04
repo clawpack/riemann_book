@@ -189,6 +189,9 @@ def phase_plane_plot(q_l, q_r, v_l, v_r):
                 v = v_r
             plt.plot(q, f(q,v), 'ok')
 
-    plt.text(q_l+0.01, f_l+0.01, '$q_l$')
-    plt.text(q_r+0.01, f_r+0.01, '$q_r$')
+    plt.text(q_l, f_l+0.02, '$q_l$')
+    plt.text(q_r, f_r+0.02, '$q_r$')
     plt.xlim(0,1)
+    ymax = 0.3*max(v_l,v_r)
+    plt.ylim(0,ymax)
+    plt.plot([0.5,0.5],[0,ymax],'--k',linewidth=1,alpha=0.5)
