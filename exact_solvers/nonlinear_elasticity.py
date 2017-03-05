@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 conserved_variables = ('Strain', 'Momentum')
 primitive_variables = ('Strain', 'Velocity')
+colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
 
 
 def primitive_to_conservative(eps, u, rho):
@@ -99,19 +100,24 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
     ws = np.zeros(5)
     # The stationary wave at x=0:
     ws[2] = 0.
+    wave_types = ['', 'contact', '']
 
     # Find shock and rarefaction speeds
     if eps_star_l > eps_l:  # 1-Shock
+        wave_types[0] = 'shock'
         ws[0] = np.sqrt((sigma(eps_star_l,K1_l,K2_l)-sigma_l)/(rho_l*(eps_star_l-eps_l)))
         ws[1] = ws[0]
     else:  # 1-Rarefaction
+        wave_types[0] = 'raref'
         ws[0] = -sound_speed(eps_l,K1_l,K2_l,rho_l)
         ws[1] = -sound_speed(eps_star_l,K1_l,K2_l,rho_l)
 
     if eps_star_r > eps_r:  # 2-shock
+        wave_types[2] = 'shock'
         ws[4] = np.sqrt((sigma(eps_star_r,K1_r,K2_r)-sigma_r)/(rho_r*(eps_star_r-eps_r)))
         ws[3] = ws[4]
     else:  # 2-rarefaction
+        wave_types[2] = 'raref'
         ws[3] = sound_speed(eps_star_r,K1_r,K2_r,rho_r)
         ws[4] = sound_speed(eps_r,K1_r,K2_r,rho_r)
 
@@ -130,7 +136,15 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
     q_star_r = np.array([eps_star_r, u_star_r*rho_r])
 
     states = np.column_stack([q_l, q_star_l, q_star_r, q_r])
-    speeds = [(ws[0], ws[1]), ws[2], (ws[3], ws[4])]
+    speeds = [[], ws[2], []]
+    if wave_types[0] is 'shock':
+        speeds[0] = ws[0]
+    else:
+        speeds[0] = (ws[0],ws[1])
+    if wave_types[2] is 'shock':
+        speeds[2] = ws[3]
+    else:
+        speeds[2] = (ws[3],ws[4])
 
     def reval(xi):
         r"""Returns the Riemann solution in primitive variables for any
@@ -138,33 +152,33 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
         """
         rar1 = raref1(xi)
         rar2 = raref2(xi)
-        eps_out =  (xi<=speeds[0][0]                  )*eps_l      \
-                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[0]    \
-                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*eps_star_l \
-                 + (xi>speeds[1])   *(xi<=speeds[2][0])*eps_star_r \
-                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar2[0]    \
-                 + (xi>speeds[2][1]                   )*eps_r
+        eps_out =  (xi<=ws[0]                  )*eps_l      \
+                 + (xi> ws[0])*(xi<=ws[1])*rar1[0]    \
+                 + (xi> ws[1])*(xi<=speeds[1]   )*eps_star_l \
+                 + (xi>speeds[1])   *(xi<=ws[3])*eps_star_r \
+                 + (xi> ws[3])*(xi<=ws[4])*rar2[0]    \
+                 + (xi> ws[4]                   )*eps_r
 
-        u_out   =  (xi<=speeds[0][0]                  )*u_l     \
-                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[1] \
-                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*u_star_l       \
-                 + (xi>speeds[1]   )*(xi<=speeds[2][0])*u_star_r       \
-                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar2[1] \
-                 + (xi>speeds[2][1]                   )*u_r
+        u_out   =  (xi<=ws[0]                  )*u_l     \
+                 + (xi> ws[0])*(xi<=ws[1])*rar1[1] \
+                 + (xi> ws[1])*(xi<=speeds[1]   )*u_star_l       \
+                 + (xi>speeds[1]   )*(xi<=ws[3])*u_star_r       \
+                 + (xi> ws[3])*(xi<=ws[4])*rar2[1] \
+                 + (xi> ws[4]                   )*u_r
 
         rho_out = (xi<=0)*rho_l + (xi>0)*rho_r
         return primitive_to_conservative(eps_out, u_out, rho_out)
 
     if phase_plane_curves:
-        return states, speeds, reval, (eps_star_l, eps_star_r, phi_l, phi_r)
+        return states, speeds, reval, wave_types, (eps_star_l, eps_star_r, phi_l, phi_r)
     else:
-        return states, speeds, reval
+        return states, speeds, reval, wave_types
 
 
 def phase_plane_plot(q_l, q_r, aux_l, aux_r):
     r"""Plot the Hugoniot loci or integral curves in the epsilon-u plane."""
     # Solve Riemann problem
-    ex_states, ex_speeds, reval, ppc = \
+    ex_states, ex_speeds, reval, wave_types, ppc = \
         exact_riemann_solution(q_l, q_r, aux_l, aux_r, phase_plane_curves=True)
     eps_star_l, eps_star_r, w1, w2 = ppc
     rho_l = aux_l[0]
@@ -188,11 +202,11 @@ def phase_plane_plot(q_l, q_r, aux_l, aux_r):
     w1v, w2v = (np.vectorize(w1), np.vectorize(w2))
     eps1 = np.linspace(q_l[0], eps_star_l)
     eps2 = np.linspace(q_r[0], eps_star_r)
-    ax.plot(eps1, w1v(eps1), 'k', lw=2)
-    ax.plot(eps2, w2v(eps2), 'k', lw=2)
-    ax.plot([eps_star_l,eps_star_r],[w1v(eps_star_l),w2v(eps_star_r)],'--')
+    ax.plot(eps1, w1v(eps1), colors[wave_types[0]], lw=2)
+    ax.plot(eps2, w2v(eps2), colors[wave_types[2]], lw=2)
+    ax.plot([eps_star_l,eps_star_r],[w1v(eps_star_l),w2v(eps_star_r)],colors[wave_types[1]])
     for xp, yp in zip(x, y):
-        ax.plot(xp, yp, 'or', markersize=10)
+        ax.plot(xp, yp, 'ok', markersize=10)
     # Label states
     for i, label in enumerate(('$q_l$', '$q_l^*$', '$q_r^*$', '$q_r$')):
         ax.text(x[i] + 0.025*dx, y[i] + 0.025*dy, label)
