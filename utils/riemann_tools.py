@@ -293,6 +293,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layo
                 # We could use fig.legend here if we had the line plot handles
                 fig.axes[1].legend(names,loc='best')
 
+        plt.show()
         return None
 
     return plot_function
