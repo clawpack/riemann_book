@@ -3,6 +3,8 @@ import subprocess
 import tempfile
 import sys
 import nbformat
+import doctest
+import utils
 
 if sys.version_info >= (3,0):
     kernel = 'python3'
@@ -29,10 +31,15 @@ def _notebook_run(path):
 
     return nb, errors
 
+def run_tests():
+    doctest.testmod(utils.riemann_tools)
 
-if __name__ == '__main__':
     for filename in os.listdir('.'):
         if (filename.split('.')[-1] == 'ipynb'):
             nb, errors = _notebook_run(filename)
             if errors != []:
                 raise(Exception)
+
+
+if __name__ == '__main__':
+    run_tests()
