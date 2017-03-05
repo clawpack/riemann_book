@@ -155,7 +155,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
                 return q
 
     else:
-        print f_l, f_r
+        print(f_l, f_r)
         raise Exception('Unhandled state!')
 
     return np.array([states]), speeds, reval, wave_types

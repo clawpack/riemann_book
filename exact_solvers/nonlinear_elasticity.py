@@ -89,8 +89,8 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
     eps, info, ier, msg = fsolve(rsol, guess, full_output=True, xtol=1.e-10)
     # This should not happen:
     if ier != 1:
-        print 'Warning: fsolve did not converge.'
-        print msg
+        print('Warning: fsolve did not converge.')
+        print(msg)
 
     eps_star_l, eps_star_r = eps
     u_star_l = phi_l(eps_star_l)
