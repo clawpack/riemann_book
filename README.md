@@ -5,10 +5,37 @@ Contributors: @rjleveque, @ketch, and @maojrs.
 # Dependencies
 - matplotlib
 - numpy
-- clawpack
+- clawpack, including the bleeding edge version of clawpack.riemann
 - jupyter
 - ipywidgets
 - mpl_toolkits
+
+# Installation
+First, install a Fortran compiler.  Then:
+
+```
+git clone --branch=master --depth=100 --quiet git://github.com/clawpack/clawpack
+cd clawpack
+git submodule init
+git submodule update clawutil visclaw riemann
+cd riemann
+git checkout master
+git pull # get very latest Riemann
+cd ..
+python setup.py install
+cd ..
+git clone https://github.com/clawpack/riemann_book
+cd riemann_book
+pip install -r requirements.txt
+jupyter nbextension enable --py widgetsnbextension
+```
+
+You can test your installation by running
+
+```
+python test.py
+```
+
 
 ## Early chapters
 Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:

@@ -41,7 +41,7 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
 
     # Check for cavitation
     if u_l - u_r + 2*(c_l+c_r)/(gamma-1.) < 0:
-        print 'Cavitation detected!  Exiting.'
+        print('Cavitation detected!  Exiting.')
         return None
 
     # Define the integral curves and hugoniot loci
@@ -69,8 +69,8 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         p, info, ier, msg = fsolve(phi, (p_l+p_r)/2., full_output=True, factor=0.1, xtol=1.e-10)
         # This should not happen:
         if ier != 1:
-            print 'Warning: fsolve did not converge.'
-            print msg
+            print('Warning: fsolve did not converge.')
+            print(msg)
 
     u = phi_l(p)
 
