@@ -314,11 +314,12 @@ def imshow_noaxes(im, figsize=(8,6)):
     plt.imshow(im)
     ax.axis('off')
     return fig
-    
+
 def interact_animate_images(images, figsize=(10,6), manual=False, TextInput=False):
 
-    def display_frame(frameno): 
+    def display_frame(frameno):
         imshow_noaxes(images[frameno], figsize=figsize)
+        plt.show()
 
     if TextInput:
         if TextInput:
@@ -369,13 +370,14 @@ def animate_figs(figs, style='ipywidgets', figsize=(10,6),  **kwargs):
     return anim
 
 def make_anim_from_plotdir(plotdir='_plots', fignos='all',
-        outputs=['mp4','html','rst'], file_name_prefix=None,
-        figsize=(5,4), dpi=None, fps=5):
+        outputs=[], file_name_prefix='', figsize=(5,4), dpi=None, fps=5):
 
     """
     After running `make plots` using VisClaw, convert the png files in 
-    the plots directory into stand-alone files that can be embedded in
-    webpages or Sphinx documentation.
+    the plots directory into an animation, and perhaps also
+    stand-alone files that can be embedded in webpages or Sphinx documentation.
+
+    outputs can be a list containing any of 'mp4','html','rst'
 
     Call this from a script that starts with:
         import matplotlib
@@ -419,4 +421,5 @@ def make_anim_from_plotdir(plotdir='_plots', fignos='all',
             make_rst(anim, file_name, fps=fps, \
                 embed_frames=True, default_mode='once')
 
+    return anim
 

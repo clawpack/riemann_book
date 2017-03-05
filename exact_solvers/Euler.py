@@ -41,7 +41,7 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
 
     # Check for cavitation
     if u_l - u_r + 2*(c_l+c_r)/(gamma-1.) < 0:
-        print 'Cavitation detected!  Exiting.'
+        print('Cavitation detected!  Exiting.')
         return None
 
     # Define the integral curves and hugoniot loci
@@ -69,8 +69,8 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         p, info, ier, msg = fsolve(phi, (p_l+p_r)/2., full_output=True, factor=0.1, xtol=1.e-10)
         # This should not happen:
         if ier != 1:
-            print 'Warning: fsolve did not converge.'
-            print msg
+            print('Warning: fsolve did not converge.')
+            print(msg)
 
     u = phi_l(p)
 
@@ -80,22 +80,27 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
 
     # compute the wave speeds
     ws = np.zeros(5)
+    wave_types = ['', 'contact', '']
     # The contact speed:
     ws[2] = u
 
     # Find shock and rarefaction speeds
     if p > p_l:
+        wave_types[0] = 'shock'
         ws[0] = (rho_l*u_l - rho_l_star*u)/(rho_l - rho_l_star)
         ws[1] = ws[0]
     else:
+        wave_types[0] = 'raref'
         c_l_star = np.sqrt(gamma*p/rho_l_star)
         ws[0] = u_l - c_l
         ws[1] = u - c_l_star
 
     if p > p_r:
+        wave_types[2] = 'shock'
         ws[4] = (rho_r*u_r - rho_r_star*u)/(rho_r - rho_r_star)
         ws[3] = ws[4]
     else:
+        wave_types[2] = 'raref'
         c_r_star = np.sqrt(gamma*p/rho_r_star)
         ws[3] = u+c_r_star
         ws[4] = u_r + c_r
@@ -117,7 +122,15 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
     q_r_star = np.squeeze(np.array(primitive_to_conservative(rho_r_star,u,p)))
 
     states = np.column_stack([q_l,q_l_star,q_r_star,q_r])
-    speeds = [(ws[0],ws[1]),ws[2],(ws[3],ws[4])]
+    speeds = [[], ws[2], []]
+    if wave_types[0] is 'shock':
+        speeds[0] = ws[0]
+    else:
+        speeds[0] = (ws[0],ws[1])
+    if wave_types[2] is 'shock':
+        speeds[2] = ws[3]
+    else:
+        speeds[2] = (ws[3],ws[4])
 
     def reval(xi):
         r"""Returns the Riemann solution in primitive variables for any
@@ -125,32 +138,32 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         """
         rar1 = raref1(xi)
         rar3 = raref3(xi)
-        rho_out =  (xi<=speeds[0][0]                  )*rho_l      \
-                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[0]    \
-                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*rho_l_star \
-                 + (xi>speeds[1])   *(xi<=speeds[2][0])*rho_r_star \
-                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[0]    \
-                 + (xi>speeds[2][1]                   )*rho_r
+        rho_out =  (xi<=ws[0]                  )*rho_l      \
+                 + (xi>ws[0])*(xi<=ws[1])*rar1[0]    \
+                 + (xi>ws[1])*(xi<=ws[2]   )*rho_l_star \
+                 + (xi>ws[2])   *(xi<=ws[3])*rho_r_star \
+                 + (xi>ws[3])*(xi<=ws[4])*rar3[0]    \
+                 + (xi>ws[4]                   )*rho_r
 
-        u_out   =  (xi<=speeds[0][0]                  )*u_l     \
-                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[1] \
-                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*u       \
-                 + (xi>speeds[1]   )*(xi<=speeds[2][0])*u       \
-                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[1] \
-                 + (xi>speeds[2][1]                   )*u_r
+        u_out   =  (xi<=ws[0]                  )*u_l     \
+                 + (xi>ws[0])*(xi<=ws[1])*rar1[1] \
+                 + (xi>ws[1])*(xi<=ws[2]   )*u       \
+                 + (xi>ws[2]   )*(xi<=ws[3])*u       \
+                 + (xi>ws[3])*(xi<=ws[4])*rar3[1] \
+                 + (xi>ws[4]                   )*u_r
 
-        p_out   =  (xi<=speeds[0][0]                  )*p_l     \
-                 + (xi>speeds[0][0])*(xi<=speeds[0][1])*rar1[2] \
-                 + (xi>speeds[0][1])*(xi<=speeds[1]   )*p       \
-                 + (xi>speeds[1]   )*(xi<=speeds[2][0])*p       \
-                 + (xi>speeds[2][0])*(xi<=speeds[2][1])*rar3[2] \
-                 + (xi>speeds[2][1]                   )*p_r
+        p_out   =  (xi<=ws[0]                  )*p_l     \
+                 + (xi>ws[0])*(xi<=ws[1])*rar1[2] \
+                 + (xi>ws[1])*(xi<=ws[2]   )*p       \
+                 + (xi>ws[2]   )*(xi<=ws[3])*p       \
+                 + (xi>ws[3])*(xi<=ws[4])*rar3[2] \
+                 + (xi>ws[4]                   )*p_r
         return primitive_to_conservative(rho_out,u_out,p_out)
 
     if phase_plane_curves:
-        return states, speeds, reval, (p, phi_l, phi_r)
+        return states, speeds, reval, wave_types, (p, phi_l, phi_r)
     else:
-        return states, speeds, reval
+        return states, speeds, reval, wave_types
 
 
 def phase_plane_plot(left_state, right_state, gamma=1.4):
@@ -158,10 +171,9 @@ def phase_plane_plot(left_state, right_state, gamma=1.4):
     # Solve Riemann problem
     q_left  = primitive_to_conservative(*left_state)
     q_right = primitive_to_conservative(*right_state)
-    ex_states, ex_speeds, reval, ppc = exact_riemann_solution(q_left,
-                                                              q_right,
-                                                              gamma,
-                                                              phase_plane_curves=True)
+    ex_states, ex_speeds, reval, wave_types, ppc = \
+                        exact_riemann_solution(q_left, q_right, gamma,
+                                               phase_plane_curves=True)
     pm, w1, w3 = ppc
 
     # Set plot bounds
@@ -180,10 +192,18 @@ def phase_plane_plot(left_state, right_state, gamma=1.4):
     w1v, w3v = (np.vectorize(w1), np.vectorize(w3))
     press1 = np.linspace(left_state.Pressure, pm)
     press3 = np.linspace(right_state.Pressure, pm)
-    ax.plot(press1,w1v(press1),'k',lw=2)
-    ax.plot(press3,w3v(press3),'k',lw=2)
+    if type(ex_speeds[0]) not in (tuple, list):  # this is a jump
+        color = 'r'
+    else:
+        color = 'b'
+    ax.plot(press1,w1v(press1),color,lw=2)
+    if type(ex_speeds[2]) not in (tuple, list):  # this is a jump
+        color = 'r'
+    else:
+        color = 'b'
+    ax.plot(press3,w3v(press3),color,lw=2)
     for xp,yp in zip(x,y):
-        ax.plot(xp,yp,'or',markersize=10)
+        ax.plot(xp,yp,'ok',markersize=10)
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
