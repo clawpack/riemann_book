@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/clawpack/riemann_book.svg?branch=master)](https://travis-ci.org/clawpack/riemann_book)
+
 # Riemann_book
 Book in progress to illustrate Riemann solvers in Jupyter notebooks.
 Contributors: @rjleveque, @ketch, and @maojrs.
