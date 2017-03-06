@@ -1,18 +1,16 @@
 """
-This version of riemann_tools.py was adapted from the 
+This version of riemann_tools.py was adapted from the
 version in clawpack/riemann/src from Clawpack V5.3.1 to
 add some new features and improve the plots.
 
 This may be modified further as the notebooks in this
-directory are improved and expanded.  Eventually a 
+directory are improved and expanded.  Eventually a
 stable version of this should be moved back to
 clawpack/riemann/src in a future release.
 """
 
 from __future__ import absolute_import
 from __future__ import print_function
-from matplotlib import animation
-import ipywidgets
 import sympy
 import numpy as np
 import matplotlib.pyplot as plt
@@ -72,7 +70,7 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
                                  aux_l.reshape((num_aux,1)),aux_r.reshape((num_aux,1)),problem_data)
 
     num_waves = wave.shape[1]
-    
+
     if fwave:
         for i in range(num_waves):
             # This will break for zero wave speed
@@ -104,27 +102,27 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
         if not np.allclose(states[:,-1],q_r):
             print("""Warning: Computed right state does not match input.
                    You may need to set stationary_wave=True.""")
-    
+
     num_states = num_waves + 1
-    
+
     if verbose:
         print('States in Riemann solution:')
         states_sym = sympy.Matrix(states)
         display([states_sym[:,k] for k in range(num_states)])
-    
+
         print('Waves (jumps between states):')
         wave_sym = sympy.Matrix(wave[:,:,0])
         display([wave_sym[:,k] for k in range(num_waves)])
-    
+
         print("Speeds: ")
         s_sym = sympy.Matrix(s)
         display(s_sym.T)
-    
+
         print("Fluctuations amdq, apdq: ")
         amdq_sym = sympy.Matrix(amdq).T
         apdq_sym = sympy.Matrix(apdq).T
         display([amdq_sym, apdq_sym])
-    
+
     def riemann_eval(xi):
         "Return Riemann solution as function of xi = x/t."
         qout = np.zeros((num_eqn,len(xi)))
@@ -145,14 +143,14 @@ def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     and vertical axes via i_h and i_v.
     """
 
-    if label_h is None: 
+    if label_h is None:
         label_h = 'q[%s]' % i_h
-    if label_v is None: 
+    if label_v is None:
         label_v = 'q[%s]' % i_v
 
     q0 = states[i_h,:]
     q1 = states[i_v,:]
-    
+
     if ax is None:
         fig, ax = plt.subplots()
     ax.plot(q0,q1,'o-k')
@@ -166,7 +164,7 @@ def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     ax.axis([q0.min()-0.1*dq0, q0.max()+0.1*dq0, q1.min()-0.1*dq1, q1.max()+0.1*dq1])
     ax.set_xlabel(label_h)
     ax.set_ylabel(label_v)
-    
+
 def plot_phase_3d(states):
     """
     3d phase space plot
@@ -181,8 +179,9 @@ def plot_phase_3d(states):
     ax.set_title('phase space')
     ax.text(states[0,0]+0.05,states[1,0],states[2,0],'q_left')
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
- 
-def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizontal',conserved_variables=None,t_pointer=True):
+
+
+def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be tuple of two values,
@@ -190,16 +189,31 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
 
     Plots in the x-t plane and also produces a separate plot for each component of q.
     """
-    
     num_eqn,num_states = states.shape
+    colors = {}
+
+    if wave_types is None:
+        wave_types = ['contact']*len(s)
+
+    if color == 'multi':
+        colors['shock'] = 'r'
+        colors['raref'] = 'b'
+        colors['contact'] = 'k'
+    else:
+        colors['shock'] = color
+        colors['raref'] = color
+        colors['contact'] = color
+
     if fig is None:
+        num_axes = num_eqn+1
+        if extra_axes: num_axes += 1
         if layout == 'horizontal':
-            fig_width = 4*(num_eqn+1)
-            fig, ax = plt.subplots(1,num_eqn+1,figsize=(fig_width,4))
+            fig_width = 4*num_axes
+            fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,4))
         elif layout == 'vertical':
             fig_width = 9
-            fig_height = 4*num_eqn
-            fig, ax = plt.subplots(num_eqn+1,1,figsize=(fig_width,fig_height),sharex=True)
+            fig_height = 4*(num_axes-1)
+            fig, ax = plt.subplots(num_axes,1,figsize=(fig_width,fig_height),sharex=True)
             plt.subplots_adjust(hspace=0)
             ax[-1].set_xlabel('x')
             ax[0].set_ylabel('t')
@@ -216,21 +230,21 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
     tmax = 1.0
     xmax = 0.
     for i in range(len(s)):
-        if type(s[i]) not in (tuple, list):  # this is a jump
+        if wave_types[i] in ['shock','contact']:
             x1 = tmax * s[i]
-            ax[0].plot([0,x1],[0,tmax],color=color)
+            ax[0].plot([0,x1],[0,tmax],color=colors[wave_types[i]])
             xmax = max(xmax,abs(x1))
-        else: #plot rarefaction fan
+        else:  # plot rarefaction fan
             speeds = np.linspace(s[i][0],s[i][1],5)
             for ss in speeds:
                 x1 = tmax * ss
-                ax[0].plot([0,x1],[0,tmax],color=color,lw=0.3)
+                ax[0].plot([0,x1],[0,tmax],color=colors['raref'],lw=0.3)
                 xmax = max(xmax,abs(x1))
 
     x = np.linspace(-xmax,xmax,1000)
-                   
+
     ax[0].set_xlim(-xmax,xmax)
-    ax[0].plot([-xmax,xmax],[t,t],'k',linewidth=2)
+    ax[0].plot([-xmax,xmax],[t,t],'--k',linewidth=0.5)
     if t_pointer:
         ax[0].text(-1.8*xmax,t,'t = %4.2f -->' % t)
     ax[0].set_title('Waves in x-t plane')
@@ -249,29 +263,34 @@ def plot_riemann(states, s, riemann_eval, t, fig=None, color='b', layout='horizo
             ax[i+1].set_title(conserved_variables[i]+' at t = %6.3f' % t)
         elif layout == 'vertical':
             ax[i+1].set_ylabel(conserved_variables[i])
-    
+
     if t == 0:
         q = riemann_eval(x/1e-10)
     else:
         q = riemann_eval(x/t)
 
     for i in range(num_eqn):
-        ax[i+1].plot(x,q[i][:],color=color,lw=2)
+        ax[i+1].plot(x,q[i][:],color=colors['contact'],lw=2)
 
     return fig
-            
 
-def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layout='horizontal',conserved_variables=None):
+
+def make_plot_function(states_list,speeds_list,riemann_eval_list,wave_types_list=None,names=None,layout='horizontal',conserved_variables=None,colors=('multi','green','orange')):
     """
     Utility function to create a plot_function that takes a single argument t.
     This function can then be used with ipywidgets.interact.
     Version that takes an arbitrary list of sets of states and speeds in order to make a comparison.
     """
-    colors = "kbrg"
+
     if type(states_list) is not list:
         states_list = [states_list]
         speeds_list = [speeds_list]
         riemann_eval_list = [riemann_eval_list]
+        if wave_types_list is not None:
+            wave_types_list = [wave_types_list]
+
+    if wave_types_list is None:
+        wave_types_list= [['contact']*len(speeds_list[0])]*len(speeds_list)
 
     def plot_function(t):
         fig = None
@@ -279,21 +298,23 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,names=None,layo
             states = states_list[i]
             speeds = speeds_list[i]
             riemann_eval = riemann_eval_list[i]
+            wave_types = wave_types_list[i]
 
             if fig is None:
-                fig = plot_riemann(states,speeds,riemann_eval,t,color=colors[i],layout=layout,conserved_variables=conserved_variables)
+                fig = plot_riemann(states,speeds,riemann_eval,wave_types,t,color=colors[i],layout=layout,conserved_variables=conserved_variables)
             else:
-                fig = plot_riemann(states,speeds,riemann_eval,t,fig,colors[i],layout=layout,conserved_variables=conserved_variables,t_pointer=False)
+                fig = plot_riemann(states,speeds,riemann_eval,wave_types,t,fig,colors[i],layout=layout,conserved_variables=conserved_variables,t_pointer=False)
 
             if names is not None:
                 # We could use fig.legend here if we had the line plot handles
                 fig.axes[1].legend(names,loc='best')
 
+        plt.show()
         return None
 
     return plot_function
 
-def JSAnimate_plot_riemann(states,speeds,riemann_eval, times=None, **kwargs):
+def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=None, **kwargs):
     try:
         from utils import animation_tools
     except:
@@ -306,16 +327,16 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, times=None, **kwargs):
     if times is None:
         times = np.linspace(0,0.9,10)
     for t in times:
-        fig = plot_riemann(states,speeds,riemann_eval,t, **kwargs)
+        fig = plot_riemann(states,speeds,riemann_eval,wave_types,t=t, **kwargs)
         figs.append(fig)
         plt.close(fig)
-        
+
     images = animation_tools.make_images(figs)
     anim = animation_tools.JSAnimate_images(images, figsize=(10,5))
     return anim
 
- 
-def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1, 
+
+def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None, i_vel=1,
             fig=None, color='b', num_left=10, num_right=10, xmax=None,
             rho_left=None,rho_right=None):
     """
@@ -329,33 +350,34 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
     which are the wave speeds that bound the rarefaction fan.
 
     """
-    
+    colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
+    if wave_types is None:
+        wave_types = ['contact']*len(s)
+
     num_eqn,num_states = states.shape
     if fig is None:
         fig, ax = plt.subplots()
 
     # auto scale the x axis?
     xmax_auto = (xmax is None)
-        
+
     tmax = 1.0
-    if xmax_auto: 
+    if xmax_auto:
         xmax = 0.
     for i in range(len(s)):
-        if type(s[i]) not in (tuple, list):  # this is a jump
+        if wave_types[i] in ['shock','contact']:
             x1 = tmax * s[i]
-            ax.plot([0,x1],[0,tmax],color=color, lw=2)
-            if xmax_auto: 
+            ax.plot([0,x1],[0,tmax],color=colors[wave_types[i]])
+            if xmax_auto:
                 xmax = max(xmax,abs(x1))
-        else: #plot rarefaction fan
+        else:  # plot rarefaction fan
             speeds = np.linspace(s[i][0],s[i][1],5)
             for ss in speeds:
                 x1 = tmax * ss
-                ax.plot([0,x1],[0,tmax],color=color,lw=1)
-                if xmax_auto: 
+                ax.plot([0,x1],[0,tmax],color=colors['raref'],lw=0.5)
+                if xmax_auto:
                     xmax = max(xmax,abs(x1))
 
-    x = np.linspace(-xmax,xmax,1000)
-                   
     ax.set_xlim(-xmax,xmax)
 
     xx_left = np.linspace(-xmax,0,num_left)
@@ -386,6 +408,8 @@ def plot_riemann_trajectories(states, s, riemann_eval, i_vel=1,
         plt.plot(xtraj[:,j],tt,'k')
 
     ax.set_title('Waves and particle trajectories in x-t plane')
+    plt.show()
+
 
 if __name__ == '__main__':
     import doctest
