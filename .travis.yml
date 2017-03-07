@@ -16,6 +16,10 @@ before_install:
   - git checkout master
   - git pull # get very latest Riemann
   - cd ..
+  - cd visclaw
+  - git checkout master
+  - git pull # get very latest visclaw
+  - cd ..
   - python setup.py install
   - cd ..
 
