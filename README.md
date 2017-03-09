@@ -63,7 +63,7 @@ Chapters with a complete draft have the box checked.  Chapters that are required
 - [x] **p-system / nonlinear elasticity** - David
 - [x] **Euler** - Exact, Roe, HLL, HLLE, HLLC 
 - [x] **Euler with general EOS** - Mauricio
-- [ ] Reactive Euler
+- [ ] Reactive Euler - Luiz Faria wrote some solvers here: https://github.com/ketch/pyclaw-detonation
 - [ ] Traffic - systems
 - [ ] LLF and HLL solvers for arbitrary equations
 - [ ] Layered shallow water - David
