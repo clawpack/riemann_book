@@ -136,6 +136,7 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
 
     return states, s, riemann_eval
 
+
 def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     """
     Plot 2d phase space plot.
@@ -254,7 +255,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, colo
 
     for i in range(num_eqn):
         ax[i+1].set_xlim((-1,1))
-        qmax = states[i,:].max()  #max([state[i] for state in states])
+        qmax = states[i,:].max()  # max([state[i] for state in states])
         qmin = states[i,:].min()  # min([state[i] for state in states])
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
@@ -275,11 +276,18 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, colo
     return fig
 
 
-def make_plot_function(states_list,speeds_list,riemann_eval_list,wave_types_list=None,names=None,layout='horizontal',conserved_variables=None,colors=('multi','green','orange')):
+def make_plot_function(states_list,speeds_list,riemann_eval_list,
+                       wave_types_list=None,names=None,layout='horizontal',
+                       conserved_variables=None,colors=('multi','green','orange'),
+                       plot_chars=False):
     """
     Utility function to create a plot_function that takes a single argument t.
     This function can then be used with ipywidgets.interact.
     Version that takes an arbitrary list of sets of states and speeds in order to make a comparison.
+
+    plot_chars: If provided, ordinary characteristics are included in the x-t plot.
+                The value of this argument should be a function c(q,x) that gives
+                the characteristic speed.
     """
 
     if type(states_list) is not list:
@@ -309,6 +317,9 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,wave_types_list
                 # We could use fig.legend here if we had the line plot handles
                 fig.axes[1].legend(names,loc='best')
 
+            if plot_chars:
+                plot_characteristics(states,speeds,plot_chars,fig.axes[0])
+
         plt.show()
         return None
 
@@ -336,9 +347,10 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
     return anim
 
 
-def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None, i_vel=1,
-            fig=None, color='b', num_left=10, num_right=10, xmax=None,
-            rho_left=None,rho_right=None):
+def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
+                              i_vel=1, fig=None, color='b', num_left=10,
+                              num_right=10, xmax=None, rho_left=None,
+                              rho_right=None):
     """
     Take an array of states and speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
@@ -409,6 +421,80 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None, i_vel=1,
 
     ax.set_title('Waves and particle trajectories in x-t plane')
     plt.show()
+
+def plot_characteristics(states, speeds, char_speed, ax):
+    """
+    Plot characteristics in constant regions.
+
+    c: Function c(q,xi) that gives the characteristic speed.
+    """
+
+    # Find constant state regions, in terms of xi = x/t
+    constant_regions = []
+    current = -1.e3
+    for s in speeds:
+        if type(s) in (tuple, list):
+            constant_regions.append((current,s[0]))
+            current = s[1]
+        else:
+            constant_regions.append((current,s))
+            current = s
+    constant_regions.append((current,1.e3))
+    ax.set_xlim(-0.5,0.5)
+    ax.set_ylim(0,1)
+    xmin, xmax, tmin, tmax = ax.axis()
+
+    for i,region in enumerate(constant_regions):
+        xi_m = region[0]  # characteristic bounding this constant region on the left
+        xi_p = region[1]  # characteristic bounding this constant region on the right
+        if xi_m == xi_p: continue
+        if xi_m == -np.Inf:
+            xi_bar = xi_p*2.
+        elif xi_p == np.Inf:
+            xi_bar = xi_m*2.
+        else:
+            xi_bar = (xi_m+xi_p)/2.
+        c = char_speed(states[0][i], xi_bar)
+
+        if xi_bar < 0:
+            x_bar = max(xmin, xi_bar*tmax)
+        else:
+            x_bar = min(xmax, xi_bar*tmax)
+
+        for x0 in np.linspace(0, x_bar, 7)[1:-1]:
+            t0 = x0/xi_bar
+            # Plot characteristic passing through (x0, t0)
+
+            # Find intersection of this characteristic with bounding rays
+            if c == xi_m:
+                x_m = -np.Inf
+            else:
+                x_m = (x0-c*t0)/(1-c/xi_m)
+            if c == xi_p:
+                x_p = np.Inf
+            else:
+                x_p = (x0-c*t0)/(1-c/xi_p)
+            # Find intersection with bottom and top of axes:
+            x_bottom = x0 + c*(tmin - t0)
+            x_top = x0 + c*(tmax - t0)
+
+            if c < 0:
+                x_left = max(xmin, x_top)
+                x_right = min(xmax, x_bottom)
+            else:
+                x_left = max(xmin, x_bottom)
+                x_right = min(xmax, x_top)
+
+            if x_m < x0: x_left = max(x_m, x_left)
+            if x_p < x0: x_left = max(x_p, x_left)
+            if x_m > x0: x_right = min(x_m, x_right)
+            if x_p > x0: x_right = min(x_p, x_right)
+
+            t = lambda x: (x - x0)/c + t0
+            ax.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
+
+        ax.set_xlim(-0.5,0.5)
+        ax.set_ylim(0,1)
 
 
 if __name__ == '__main__':
