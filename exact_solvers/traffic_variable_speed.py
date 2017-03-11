@@ -161,10 +161,14 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
     return np.array([states]), speeds, reval, wave_types
 
 
-def phase_plane_plot(q_l, q_r, v_l, v_r):
+def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
+                     reval=None, wave_types=None, axes=None, show=True):
     r"""Plot Riemann solution in the q-f plane."""
+    if axes is None:
+        fig, axes = plt.subplots()
 
-    states, speeds, reval, wave_types = exact_riemann_solution(q_l, q_r, v_l, v_r)
+    if states is None:
+        states, speeds, reval, wave_types = exact_riemann_solution(q_l, q_r, v_l, v_r)
     states = states[0]
     colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
 
@@ -175,10 +179,10 @@ def phase_plane_plot(q_l, q_r, v_l, v_r):
 
     # Plot flux curves
     q = np.linspace(0,1,500)
-    plt.plot(q, f(q,v_l))
-    plt.plot(q, f(q,v_r))
-    plt.plot([q_l], [f(q_l,v_l)],'o')
-    plt.plot([q_r], [f(q_r,v_r)],'o')
+    axes.plot(q, f(q,v_l))
+    axes.plot(q, f(q,v_r))
+    axes.plot([q_l], [f(q_l,v_l)],'o')
+    axes.plot([q_r], [f(q_r,v_r)],'o')
 
     fluxes = [f_l,f_r]
     if len(states) == 4:
@@ -202,9 +206,9 @@ def phase_plane_plot(q_l, q_r, v_l, v_r):
                 ff = f(q,v_l)
             else:  # right-going
                 ff = f(q,v_r)
-            plt.plot(q,ff,color=colors['raref'],lw=3)
+            axes.plot(q,ff,color=colors['raref'],lw=3)
         else:
-            plt.plot([states[i],states[i+1]],[fluxes[i],fluxes[i+1]],color=colors[wave_types[i]],lw=3)
+            axes.plot([states[i],states[i+1]],[fluxes[i],fluxes[i+1]],color=colors[wave_types[i]],lw=3)
 
     eps = 1.e-7
     speedlist = []
@@ -220,12 +224,16 @@ def phase_plane_plot(q_l, q_r, v_l, v_r):
                 v = v_l
             else:
                 v = v_r
-            plt.plot(q, f(q,v), 'ok')
+            axes.plot(q, f(q,v), 'ok')
 
-    plt.text(q_l, f_l+0.02, '$q_l$')
-    plt.text(q_r, f_r+0.02, '$q_r$')
-    plt.xlim(0,1)
+    axes.text(q_l, f_l+0.02, '$q_l$')
+    axes.text(q_r, f_r+0.02, '$q_r$')
+    axes.set_xlim(0,1)
     ymax = 0.3*max(v_l,v_r)
-    plt.ylim(0,ymax)
-    plt.plot([0.5,0.5],[0,ymax],'--k',linewidth=1,alpha=0.5)
-    plt.show()
+    axes.set_ylim(0,ymax)
+    axes.plot([0.5,0.5],[0,ymax],'--k',linewidth=1,alpha=0.5)
+    axes.set_xlabel('q')
+    axes.set_ylabel('f(q)')
+
+    if show:
+        plt.show()
