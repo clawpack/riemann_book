@@ -233,7 +233,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color
     Plots in the x-t plane and also produces a separate plot for each component of q.
     """
     num_eqn,num_states = states.shape
-    if ax:
+    if ax is not None:
         assert len(ax) == num_eqn + 1 + extra_axes
 
     if wave_types is None:
