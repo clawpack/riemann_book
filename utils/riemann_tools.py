@@ -182,20 +182,14 @@ def plot_phase_3d(states):
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
 
 
-def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False):
-    """
-    Take an array of states and speeds s and plot the solution at time t.
-    For rarefaction waves, the corresponding entry in s should be tuple of two values,
-    which are the wave speeds that bound the rarefaction fan.
+def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi', t_pointer=True):
 
-    Plots in the x-t plane and also produces a separate plot for each component of q.
-    """
     num_eqn,num_states = states.shape
-    colors = {}
 
     if wave_types is None:
         wave_types = ['contact']*len(s)
 
+    colors = {}
     if color == 'multi':
         colors['shock'] = 'r'
         colors['raref'] = 'b'
@@ -205,12 +199,53 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, colo
         colors['raref'] = color
         colors['contact'] = color
 
-    if fig is None:
+    if ax is None:
+        fig, ax = plt.subplots()
+
+    tmax = 1.0
+    xmax = 0.
+    for i in range(len(s)):
+        if wave_types[i] in ['shock','contact']:
+            x1 = tmax * s[i]
+            ax.plot([0,x1],[0,tmax],color=colors[wave_types[i]])
+            xmax = max(xmax,abs(x1))
+        else:  # plot rarefaction fan
+            speeds = np.linspace(s[i][0],s[i][1],5)
+            for ss in speeds:
+                x1 = tmax * ss
+                ax.plot([0,x1],[0,tmax],color=colors['raref'],lw=0.6)
+                xmax = max(xmax,abs(x1))
+
+    ax.set_xlim(-xmax,xmax)
+    ax.plot([-xmax,xmax],[t,t],'--k',linewidth=0.5)
+    if t_pointer:
+        ax.text(-1.8*xmax,t,'t = %4.2f -->' % t)
+    ax.set_title('Waves in x-t plane')
+    ax.set_ylim(0,tmax)
+
+
+def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False):
+    """
+    Take an array of states and speeds s and plot the solution at time t.
+    For rarefaction waves, the corresponding entry in s should be tuple of two values,
+    which are the wave speeds that bound the rarefaction fan.
+
+    Plots in the x-t plane and also produces a separate plot for each component of q.
+    """
+    num_eqn,num_states = states.shape
+    if ax is not None:
+        assert len(ax) == num_eqn + 1 + extra_axes
+
+    if wave_types is None:
+        wave_types = ['contact']*len(s)
+
+    if ax is None:
         num_axes = num_eqn+1
         if extra_axes: num_axes += 1
         if layout == 'horizontal':
             fig_width = 4*num_axes
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,4))
+            plt.subplots_adjust(wspace=0.5)
         elif layout == 'vertical':
             fig_width = 9
             fig_height = 4*(num_axes-1)
@@ -220,7 +255,6 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, colo
             ax[0].set_ylabel('t')
             ax[0].set_title('t = %6.3f' % t)
     else:
-        ax = fig.axes
         xmin, xmax = ax[1].get_xlim()
 
     for axis in ax:
@@ -228,28 +262,11 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, colo
             if isinstance(child, matplotlib.spines.Spine):
                 child.set_color('#dddddd')
 
-    tmax = 1.0
-    xmax = 0.
-    for i in range(len(s)):
-        if wave_types[i] in ['shock','contact']:
-            x1 = tmax * s[i]
-            ax[0].plot([0,x1],[0,tmax],color=colors[wave_types[i]])
-            xmax = max(xmax,abs(x1))
-        else:  # plot rarefaction fan
-            speeds = np.linspace(s[i][0],s[i][1],5)
-            for ss in speeds:
-                x1 = tmax * ss
-                ax[0].plot([0,x1],[0,tmax],color=colors['raref'],lw=0.3)
-                xmax = max(xmax,abs(x1))
+    # Plot waves in x-t plane
+    plot_waves(states, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color, t_pointer=t_pointer)
+    xmax = ax[0].get_xlim()[1]
 
-    x = np.linspace(-xmax,xmax,1000)
-
-    ax[0].set_xlim(-xmax,xmax)
-    ax[0].plot([-xmax,xmax],[t,t],'--k',linewidth=0.5)
-    if t_pointer:
-        ax[0].text(-1.8*xmax,t,'t = %4.2f -->' % t)
-    ax[0].set_title('Waves in x-t plane')
-
+    # Plot conserved quantities as function of x for fixed t
     if conserved_variables is None:
         conserved_variables = ['q[%s]' % i for i in range(num_eqn)]
 
@@ -265,15 +282,17 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, fig=None, colo
         elif layout == 'vertical':
             ax[i+1].set_ylabel(conserved_variables[i])
 
+    x = np.linspace(-xmax,xmax,1000)
+
     if t == 0:
         q = riemann_eval(x/1e-10)
     else:
         q = riemann_eval(x/t)
 
     for i in range(num_eqn):
-        ax[i+1].plot(x,q[i][:],color=colors['contact'],lw=2)
+        ax[i+1].plot(x,q[i][:],'-k',lw=2)
 
-    return fig
+    return ax
 
 
 def make_plot_function(states_list,speeds_list,riemann_eval_list,
@@ -289,7 +308,6 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
                 The value of this argument should be a function c(q,x) that gives
                 the characteristic speed.
     """
-
     if type(states_list) is not list:
         states_list = [states_list]
         speeds_list = [speeds_list]
@@ -300,25 +318,36 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
     if wave_types_list is None:
         wave_types_list= [['contact']*len(speeds_list[0])]*len(speeds_list)
 
+    num_eqn,num_states = states_list[0].shape
+
+    num_axes = num_eqn + 1
+
     def plot_function(t):
-        fig = None
+        if layout == 'horizontal':
+            fig_width = 4*num_axes
+            fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,4))
+        elif layout == 'vertical':
+            fig_width = 9
+            fig_height = 4*(num_axes-1)
+            fig, ax = plt.subplots(num_axes,1,figsize=(fig_width,fig_height),sharex=True)
+            plt.subplots_adjust(hspace=0)
+            ax[-1].set_xlabel('x')
+            ax[0].set_ylabel('t')
+
         for i in range(len(states_list)):
             states = states_list[i]
             speeds = speeds_list[i]
             riemann_eval = riemann_eval_list[i]
             wave_types = wave_types_list[i]
 
-            if fig is None:
-                fig = plot_riemann(states,speeds,riemann_eval,wave_types,t,color=colors[i],layout=layout,conserved_variables=conserved_variables)
-            else:
-                fig = plot_riemann(states,speeds,riemann_eval,wave_types,t,fig,colors[i],layout=layout,conserved_variables=conserved_variables,t_pointer=False)
+            plot_riemann(states,speeds,riemann_eval,wave_types,t,ax,colors[i],layout=layout,conserved_variables=conserved_variables,t_pointer=False)
 
             if names is not None:
                 # We could use fig.legend here if we had the line plot handles
-                fig.axes[1].legend(names,loc='best')
+                ax[1].legend(names,loc='best')
 
             if plot_chars:
-                plot_characteristics(states,speeds,plot_chars,fig.axes[0])
+                plot_characteristics(states,speeds,plot_chars,ax[0])
 
         plt.show()
         return None
@@ -338,9 +367,9 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
     if times is None:
         times = np.linspace(0,0.9,10)
     for t in times:
-        fig = plot_riemann(states,speeds,riemann_eval,wave_types,t=t, **kwargs)
-        figs.append(fig)
-        plt.close(fig)
+        ax = plot_riemann(states,speeds,riemann_eval,wave_types,t=t, **kwargs)
+        figs.append(ax[0].figure)
+        plt.close(ax[0].figure)
 
     images = animation_tools.make_images(figs)
     anim = animation_tools.JSAnimate_images(images, figsize=(10,5))
@@ -422,11 +451,11 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
     ax.set_title('Waves and particle trajectories in x-t plane')
     plt.show()
 
-def plot_characteristics(states, speeds, char_speed, ax):
+def plot_characteristics(states, speeds, char_speed, axes=None):
     """
     Plot characteristics in constant regions.
 
-    c: Function c(q,xi) that gives the characteristic speed.
+    char_speed: Function char_speed(q,xi) that gives the characteristic speed.
     """
 
     # Find constant state regions, in terms of xi = x/t
@@ -440,9 +469,10 @@ def plot_characteristics(states, speeds, char_speed, ax):
             constant_regions.append((current,s))
             current = s
     constant_regions.append((current,1.e3))
-    ax.set_xlim(-0.5,0.5)
-    ax.set_ylim(0,1)
-    xmin, xmax, tmin, tmax = ax.axis()
+    if axes:
+        xmin, xmax, tmin, tmax = axes.axis()
+    else:
+        xmin, xmax, tmin, tmax = (-1., 1., 0., 0.5)
 
     for i,region in enumerate(constant_regions):
         xi_m = region[0]  # characteristic bounding this constant region on the left
@@ -468,12 +498,16 @@ def plot_characteristics(states, speeds, char_speed, ax):
             # Find intersection of this characteristic with bounding rays
             if c == xi_m:
                 x_m = -np.Inf
+            elif xi_m == 0:
+                x_m = 0
             else:
-                x_m = (x0-c*t0)/(1-c/xi_m)
+                x_m = (x0-c*t0)/(1.-c/xi_m)
             if c == xi_p:
                 x_p = np.Inf
+            elif xi_p == 0:
+                x_p = 0
             else:
-                x_p = (x0-c*t0)/(1-c/xi_p)
+                x_p = (x0-c*t0)/(1.-c/xi_p)
             # Find intersection with bottom and top of axes:
             x_bottom = x0 + c*(tmin - t0)
             x_top = x0 + c*(tmax - t0)
@@ -491,10 +525,13 @@ def plot_characteristics(states, speeds, char_speed, ax):
             if x_p > x0: x_right = min(x_p, x_right)
 
             t = lambda x: (x - x0)/c + t0
-            ax.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
+            if axes:
+                axes.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
+            else:
+                plt.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
 
-        ax.set_xlim(-0.5,0.5)
-        ax.set_ylim(0,1)
+    if axes:
+        axes.axis((xmin, xmax, tmin, tmax))
 
 
 if __name__ == '__main__':
