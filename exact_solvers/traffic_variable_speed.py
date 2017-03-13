@@ -18,6 +18,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
     if f_r == f_l:
         states = [q_l, q_r]
         speeds = [0]
+        wave_types = ['contact']
         reval = lambda xi: np.ones((1,len(xi)))*q_l
 
     elif (f_r < f_l) and (q_r > 0.5):
@@ -26,6 +27,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l, q_star, q_r]
         shock_speed = (f_r-f_l)/(q_star-q_l)
         speeds = [shock_speed,0]
+        wave_types = ['shock', 'contact']
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=shock_speed)*q_l \
@@ -39,6 +41,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l, q_star, q_r]
         shock_speed = (f_r-f_l)/(q_r-q_star)
         speeds = [0,shock_speed]
+        wave_types = ['contact', 'shock']
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=0)*q_l \
@@ -50,8 +53,9 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         # Left-going shock and right-going rarefaction (3)
         q_star = (1. + np.sqrt(1.-v_r/v_l))/2.
         shock_speed = -(f_l-v_r/4.)/(q_star-q_l)
-        states = [q_l, q_star, q_r]
-        speeds = [shock_speed,(0,c_r)]
+        states = [q_l, q_star, 0.5, q_r]
+        speeds = [shock_speed,0,(0,c_r)]
+        wave_types = ['shock', 'contact', 'raref']
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=shock_speed)*q_l \
@@ -64,8 +68,9 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         # Left-going rarefaction and right-going shock (4)
         q_star = (1. - np.sqrt(1.-v_l/v_r))/2.
         shock_speed = (f_r-v_l/4.)/(q_r-q_star)
-        states = [q_l,q_star,q_r]
-        speeds = [(c_l, 0), shock_speed]
+        states = [q_l,0.5,q_star,q_r]
+        speeds = [(c_l, 0), 0, shock_speed]
+        wave_types = ['raref', 'contact', 'shock']
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=c_l)*q_l \
@@ -80,6 +85,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l, q_star, q_r]
         c_star = c(q_star,v_l)
         speeds = [(c_l,c_star),0]
+        wave_types = ['raref', 'contact']
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=c_l)*q_l \
@@ -94,6 +100,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l, q_star, q_r]
         c_star = c(q_star,v_r)
         speeds = [0,(c_star,c_r)]
+        wave_types = ['contact', 'raref']
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=0)*q_l \
@@ -107,9 +114,10 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         if v_r < v_l:
             # q* on left side (5a)
             q_star = (1. + np.sqrt(1.-v_r/v_l))/2.
-            states = [q_l, q_star, q_r]
+            states = [q_l, q_star, 0.5, q_r]
             c_star = c(q_star, v_l)
-            speeds = [(c_l,c_star),(0,c_r)]
+            speeds = [(c_l,c_star),0,(0,c_r)]
+            wave_types = ['raref', 'contact', 'raref']
             def reval(xi):
                 q = np.zeros((1,len(xi)))
                 q[0,:] = (xi<=c_l)*q_l \
@@ -122,9 +130,10 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         elif v_r > v_l:
             # q* on right side (5b)
             q_star = (1. - np.sqrt(1.-v_l/v_r))/2.
-            states = [q_l, q_star, q_r]
+            states = [q_l, 0.5, q_star, q_r]
             c_star = c(q_star, v_r)
-            speeds = [(c_l,0),(c_star,c_r)]
+            speeds = [(c_l,0),0,(c_star,c_r)]
+            wave_types = ['raref', 'contact', 'raref']
             def reval(xi):
                 q = np.zeros((1,len(xi)))
                 q[0,:] = (xi<=c_l)*q_l \
@@ -137,6 +146,7 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         else:  # v_r == v_l
             states = [q_l, q_r]
             speeds = [(c_l,c_r),]
+            wave_types = ['raref']
             def reval(xi):
                 q = np.zeros((1,len(xi)))
                 q[0,:] = (xi<=c_l)*q_l \
@@ -145,16 +155,22 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
                 return q
 
     else:
-        print f_l, f_r
+        print(f_l, f_r)
         raise Exception('Unhandled state!')
 
-    return np.array([states]), speeds, reval
+    return np.array([states]), speeds, reval, wave_types
 
 
-def phase_plane_plot(q_l, q_r, v_l, v_r):
+def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
+                     reval=None, wave_types=None, axes=None, show=True):
     r"""Plot Riemann solution in the q-f plane."""
+    if axes is None:
+        fig, axes = plt.subplots()
 
-    states, speeds, reval = exact_riemann_solution(q_l, q_r, v_l, v_r)
+    if states is None:
+        states, speeds, reval, wave_types = exact_riemann_solution(q_l, q_r, v_l, v_r)
+    states = states[0]
+    colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
 
     f = lambda q, v: v*q*(1-q)
 
@@ -163,15 +179,36 @@ def phase_plane_plot(q_l, q_r, v_l, v_r):
 
     # Plot flux curves
     q = np.linspace(0,1,500)
-    plt.plot(q, f(q,v_l))
-    plt.plot(q, f(q,v_r))
-    plt.plot([q_l], [f(q_l,v_l)],'o')
-    plt.plot([q_r], [f(q_r,v_r)],'o')
+    axes.plot(q, f(q,v_l))
+    axes.plot(q, f(q,v_r))
+    axes.plot([q_l], [f(q_l,v_l)],'o')
+    axes.plot([q_r], [f(q_r,v_r)],'o')
 
-    xi = np.linspace(-10,10,500)
-    q = reval(xi)
-    ff = (xi<=0)*f(q,v_l) + (xi>0)*f(q,v_r)
-    plt.plot(q[0,:],ff[0,:],'-k',lw=3)
+    fluxes = [f_l,f_r]
+    if len(states) == 4:
+        fluxes = [f_l, f(states[1],v_l), f(states[2],v_r), f_r]
+    elif len(states) == 3:
+        if isinstance(speeds[0],tuple):
+            if speeds[0][1] >= 0:
+                fluxes.insert(1,f(states[1],v_r))
+            else:
+                fluxes.insert(1,f(states[1],v_l))
+        else:
+            if speeds[0] < 0:
+                fluxes.insert(1,f(states[1],v_l))
+            else:
+                fluxes.insert(1,f(states[1],v_r))
+
+    for i, w in enumerate(wave_types):
+        if w is 'raref':
+            q = np.linspace(states[i],states[i+1],500)
+            if min(speeds[i])<0:  # left-going
+                ff = f(q,v_l)
+            else:  # right-going
+                ff = f(q,v_r)
+            axes.plot(q,ff,color=colors['raref'],lw=3)
+        else:
+            axes.plot([states[i],states[i+1]],[fluxes[i],fluxes[i+1]],color=colors[wave_types[i]],lw=3)
 
     eps = 1.e-7
     speedlist = []
@@ -187,8 +224,16 @@ def phase_plane_plot(q_l, q_r, v_l, v_r):
                 v = v_l
             else:
                 v = v_r
-            plt.plot(q, f(q,v), 'ok')
+            axes.plot(q, f(q,v), 'ok')
 
-    plt.text(q_l+0.01, f_l+0.01, '$q_l$')
-    plt.text(q_r+0.01, f_r+0.01, '$q_r$')
-    plt.xlim(0,1)
+    axes.text(q_l, f_l+0.02, '$q_l$')
+    axes.text(q_r, f_r+0.02, '$q_r$')
+    axes.set_xlim(0,1)
+    ymax = 0.3*max(v_l,v_r)
+    axes.set_ylim(0,ymax)
+    axes.plot([0.5,0.5],[0,ymax],'--k',linewidth=1,alpha=0.5)
+    axes.set_xlabel('q')
+    axes.set_ylabel('f(q)')
+
+    if show:
+        plt.show()
