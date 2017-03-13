@@ -24,11 +24,11 @@ def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'p
     gammal, gammar = gamma
     pinfl, pinfr = pinf
     if varin == 'conservative':
-    	rhol, ul, pl = conservative_to_primitive(*ql, gamma = gammal, pinf = pinfl)
-    	rhor, ur, pr = conservative_to_primitive(*qr, gamma = gammar, pinf = pinfr)
+        rhol, ul, pl = conservative_to_primitive(*ql, gamma = gammal, pinf = pinfl)
+        rhor, ur, pr = conservative_to_primitive(*qr, gamma = gammar, pinf = pinfr)
     else: 
-    	rhol, ul, pl = ql
-    	rhor, ur, pr = qr
+        rhol, ul, pl = ql
+        rhor, ur, pr = qr
 
     # Bar pressure (convenient change of variable)
     pbl = pl + pinfl
@@ -41,9 +41,9 @@ def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'p
     br = (gammar + 1.0)/(gammar - 1.0)
     betal = pbl/bl
     betar = pbr/br
-    al = 2.0/((gammal + 1.0)*rhol)
-    ar = 2.0/((gammar + 1.0)*rhor
-             )
+    alphal = 2.0/((gammal + 1.0)*rhol)
+    alphar = 2.0/((gammar + 1.0)*rhor)
+    
     # Calculate velocities (sound speed)
     cl =  np.sqrt(gammal*(pl + pinfl)/rhol)
     cr =  np.sqrt(gammar*(pr + pinfr)/rhor)
@@ -51,8 +51,8 @@ def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'p
     # Functions to calculate integral curves (rarefactions) and hugoniot locii (shocks)
     integral_curve_1 = lambda p : ul + 2*cl/gl1*(1 - ((p + pinfl)/pbl)**(gl1/(2.0*gammal)))
     integral_curve_3 = lambda p : ur - 2*cr/gr1*(1 - ((p + pinfr)/pbr)**(gr1/(2.0*gammar)))
-    hugoniot_locus_1 = lambda p : ul - (p - pl)*np.sqrt(al/(p + pinfl + betal))
-    hugoniot_locus_3 = lambda p : ur + (p - pr)*np.sqrt(ar/(p + pinfr + betar))
+    hugoniot_locus_1 = lambda p : ul - (p - pl)*np.sqrt(alphal/(p + pinfl + betal))
+    hugoniot_locus_3 = lambda p : ur + (p - pr)*np.sqrt(alphar/(p + pinfr + betar))
     
     # Check whether the 1-wave is a shock or rarefaction
     def phi_l(p):
@@ -102,8 +102,7 @@ def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'p
     elif wave3 == 'rarefaction':
         rhor_star = rhor*(pbsr/pbr)**(1.0/gammar)
      
-    # Arrange final states for output
-    # Output correct name of variables
+    # Arrange final states for output and name of variables
     if varout == 'conservative':
         outvars = conserved_variables
         ql      = primitive_to_conservative(rhol, ul, pl ,gammal, pinfl)
@@ -121,10 +120,6 @@ def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'p
     
     #Calculate wave speeds for output and rho_star states
     ws = np.zeros(5)
-    betal = (pl + pinfl)*(gammal - 1.0)/(gammal + 1.0)
-    betar = (pr + pinfr)*(gammar - 1.0)/(gammar + 1.0)
-    alphal = 2.0/(rhol*(gammal + 1.0))
-    alphar = 2.0/(rhor*(gammar + 1.0))
     cl_star = np.sqrt(gammal*(pbsl)/rhol_star)
     cr_star = np.sqrt(gammar*(pbsr)/rhor_star)
     ws[2] = u_star # Contact discontinuity
