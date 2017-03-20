@@ -11,22 +11,49 @@ To install the dependencies for the book, see https://github.com/clawpack/rieman
 Parentheticals indicate concepts introduced for the first time.
 
 - [Prologue: background and motivation](https://github.com/clawpack/riemann_book/wiki/Introductory-notebook-outline)
+Part I: Exact Riemann solutions
 1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
 2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
-3. Burgers' (weak solutions, approximate solvers, entropy fix)
-4. [Shallow water](https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb) (jump conditions for a nonlinear system; Riemann invariants, integral curves, Hugoniot Loci; Roe solver; HLL solver) (see also [this](http://nbviewer.jupyter.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb) and [this](http://nbviewer.jupyter.org/gist/rjleveque/8994740)
+3. Burgers' (weak solutions)
+4. [Shallow water](https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb) (jump conditions for a nonlinear system; Riemann invariants, integral curves, Hugoniot Loci) (see also [this](http://nbviewer.jupyter.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb) and [this](http://nbviewer.jupyter.org/gist/rjleveque/8994740))
+5. How to solve the Riemann problem exactly -- go in depth into SW solver, including Newton iteration to find root of piecewise function
 5. Shallow water with a tracer (contact waves)
 5. [Euler equations](https://github.com/clawpack/riemann_book/blob/master/Euler_equations.ipynb)
-6. [Euler approximate solvers](https://github.com/clawpack/riemann_book/blob/master/Euler_approximate_solvers.ipynb) (more in-depth look at Roe and HLL solvers; could just be combined with previous chapter)
 7. [Euler with Tamman EOS](https://github.com/clawpack/riemann_book/blob/master/Euler_equations_TammannEOS.ipynb)
-8. Shallow water with topography (source terms)
-9. The "kitchen sink" problem (geometric source terms; non-uniform left/right states)
-10. Traffic flow with a variable speed limit (spatially-varying flux)
-11. [Nonlinear elasticity](https://github.com/clawpack/riemann_book/blob/master/Nonlinear_elasticity.ipynb) (f-wave approximate solvers)
-12. [Non-convex flux](https://github.com/clawpack/riemann_book/blob/master/Nonconvex_Scalar_Osher_Solution.ipynb): Buckley-Leverett, night-time traffic
-13. [2D Acoustics](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb) (2D, transverse solvers)
-14. [2/3D Elasticity](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb) (3D)
-15. 2D Euler (do quadrants problem, discuss 2D Riemann problems)
+
+Part II: Approximate solvers
+1. Motivation and approaches to approximate solvers (waves vs fluxes)
+1. Transonic rarefactions and entropy fixes
+2. Linearized solvers (Roe) (SW, Euler) (non-physical solutions)
+3. LLF and HLL and extensions (SW, Euler) (smearing of contacts)
+
+Part III: Riemann problems in heterogeneous media
+1. Advection (conservative vs color)
+1. Acoustics (conservative vs non-conservative)
+2. [Variable speed-limit traffic](https://github.com/clawpack/riemann_book/blob/master/Traffic_variable_speed.ipynb)
+3. [Nonlinear elasticity](https://github.com/clawpack/riemann_book/blob/master/Nonlinear_elasticity.ipynb) (forward reference to nonconservative nonlinear problems)
+4. Shock tube with different diameters on left and right?
+
+Part IV: Source terms
+1. Approaches: source at interface vs other approaches (not covered here), well-balancing? stiffness?
+1. Scalar example(s) (advection-reaction, traffic with on-ramps, burgers-reaction) (well-balancing)
+1. Shallow water with bathymetry
+2. Euler with gravity
+3. Reactive Euler?
+
+Part V: Non-classical problems
+1. [Nonconvex fluxes](https://github.com/clawpack/riemann_book/blob/master/Nonconvex_Scalar_Osher_Solution.ipynb) (Buckley-Leverett, Osher solution)
+2. Pressureless gas (non-diagonalizable)
+3. (nonconvex flux systems -- MHD?)
+4. Nonconservative, nonlinear systems (path-conservative solvers)
+
+Part VI: Multidimensional systems
+1. Planar Riemann problem for a multi-D system (e.g. [Acoustics](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb), SW, Euler) (shear waves)
+2. [Elasticity]](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
+3. Quadrants problem (2D Euler Riemann-like problem)
+3. Cylindrical shallow water
+
+
 
 ## Chapters
 Chapters with a complete draft have the box checked.  Chapters that are required are in bold.  The remaining chapters are optional and will depend on the authors finding time to complete them.
