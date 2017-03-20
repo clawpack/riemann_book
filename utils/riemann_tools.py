@@ -379,7 +379,7 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
 def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
                               i_vel=1, fig=None, color='b', num_left=10,
                               num_right=10, xmax=None, rho_left=None,
-                              rho_right=None):
+                              rho_right=None,ax=None):
     """
     Take an array of states and speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
@@ -396,7 +396,7 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
         wave_types = ['contact']*len(s)
 
     num_eqn,num_states = states.shape
-    if fig is None:
+    if ax is None:
         fig, ax = plt.subplots()
 
     # auto scale the x axis?
@@ -449,7 +449,7 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
         plt.plot(xtraj[:,j],tt,'k')
 
     ax.set_title('Waves and particle trajectories in x-t plane')
-    plt.show()
+
 
 def plot_characteristics(states, speeds, char_speed, axes=None):
     """
