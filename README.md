@@ -13,6 +13,7 @@ Parentheticals indicate concepts introduced for the first time.
 - [Prologue: background and motivation](https://github.com/clawpack/riemann_book/wiki/Introductory-notebook-outline)
 
 **Part I: Exact Riemann solutions**
+1. Advection?
 1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
 2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
 3. Burgers' (weak solutions)
@@ -50,7 +51,7 @@ Parentheticals indicate concepts introduced for the first time.
 
 **Part VI: Multidimensional systems**
 1. Planar Riemann problem for a multi-D system (e.g. [Acoustics](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb), SW, Euler) (shear waves)
-2. [Elasticity]](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
+2. [Elasticity](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
 3. Quadrants problem (2D Euler Riemann-like problem)
 3. Cylindrical shallow water
 
