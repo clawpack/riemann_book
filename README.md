@@ -3,40 +3,9 @@
 # Riemann_book
 Book in progress to illustrate Riemann solvers in Jupyter notebooks.
 Contributors: @rjleveque, @ketch, and @maojrs.
-  
-# Dependencies
-- matplotlib
-- numpy
-- clawpack, including the bleeding edge version of clawpack.riemann
-- jupyter
-- ipywidgets
-- mpl_toolkits
 
 # Installation
-First, install a Fortran compiler.  Then:
-
-```
-git clone --branch=master --depth=100 --quiet git://github.com/clawpack/clawpack
-cd clawpack
-git submodule init
-git submodule update clawutil visclaw riemann
-cd riemann
-git checkout master
-git pull # get very latest Riemann
-cd ..
-python setup.py install
-cd ..
-git clone https://github.com/clawpack/riemann_book
-cd riemann_book
-pip install -r requirements.txt
-jupyter nbextension enable --py widgetsnbextension
-```
-
-You can test your installation by running
-
-```
-python test.py
-```
+To install the dependencies for the book, see https://github.com/clawpack/riemann_book/wiki/Installation
 
 ## Outline
 Parentheticals indicate concepts introduced for the first time.
@@ -118,39 +87,5 @@ Chapters with a complete draft have the box checked.  Chapters that are required
 - [Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
 
 
-# Citations
-
-We are using bibtex for citations; add entries as necessary to `riemann.bib`.
-To insert a citation in a notebook, follow this pattern:
-
-    <cite data-cite="toro2013riemann"><a href="riemann.html#toro2013riemann">(Toro, 2013)<a></cite>
-
-The value appearing in the html tag and the hyperlink should match the cite key
-in the bibtex file.
-
-## How to generate the html bibliography
-
-Use bibtex2html, downloadable from https://www.lri.fr/~filliatr/bibtex2html/.
-Then:
-
-    export TMPDIR=.
-    bibtex2html riemann.bib
-    
-This creates riemann.html which includes an anchor for each citation.
-
-We are keeping the HTML file under version control for convenience, even
-though it is generated from the .bib file.
-
-
-## How to generate the PDF with bibliography
-
-I've tested this with Jupyter 5.2.
-
-    jupyter nbconvert --to latex --template citations.tplx Euler_equations.ipynb
-    pdflatex Euler_equations
-    bibtex Euler_equations
-    pdflatex Euler_equations
-
-This generates a single chapter with a bibliography at the end.  To actually
-generate the book, we'll want to merge all the notebooks first; see
-discussion at https://github.com/jupyter/nbconvert/issues/253.
+## Inserting citations
+See https://github.com/clawpack/riemann_book/wiki/Citations
