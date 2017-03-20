@@ -38,14 +38,25 @@ You can test your installation by running
 python test.py
 ```
 
+## Outline
+Parentheticals indicate concepts introduced for the first time.
 
-## Early chapters
-Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
-- Similarity solutions
-- Characteristics and characteristic velocities
-- Conservation, weak solutions, and jump conditions
-- Riemann invariants and integral curves
-- How approximate solvers are used in numerical discretizations
+- [Prologue: background and motivation](https://github.com/clawpack/riemann_book/wiki/Introductory-notebook-outline)
+1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
+2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
+3. Burgers' (weak solutions, approximate solvers, entropy fix)
+4. [Shallow water](https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb) (jump conditions for a nonlinear system; Riemann invariants, integral curves, Hugoniot Loci; Roe solver; HLL solver) (see also [this](http://nbviewer.jupyter.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb) and [this](http://nbviewer.jupyter.org/gist/rjleveque/8994740)
+5. [Euler equations](https://github.com/clawpack/riemann_book/blob/master/Euler_equations.ipynb) (contact waves)
+6. [Euler approximate solvers](https://github.com/clawpack/riemann_book/blob/master/Euler_approximate_solvers.ipynb) (more in-depth look at Roe and HLL solvers; could just be combined with previous chapter)
+7. [Euler with Tamman EOS](https://github.com/clawpack/riemann_book/blob/master/Euler_equations_TammannEOS.ipynb)
+8. Shallow water with topography (source terms)
+9. The "kitchen sink" problem (geometric source terms; non-uniform left/right states)
+10. Traffic flow with a variable speed limit (spatially-varying flux)
+11. [Nonlinear elasticity](https://github.com/clawpack/riemann_book/blob/master/Nonlinear_elasticity.ipynb) (f-wave approximate solvers)
+12. [Non-convex flux](https://github.com/clawpack/riemann_book/blob/master/Nonconvex_Scalar_Osher_Solution.ipynb): Buckley-Leverett, night-time traffic
+13. [2D Acoustics](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb) (2D, transverse solvers)
+14. [2/3D Elasticity](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb) (3D)
+15. 2D Euler (do quadrants problem, discuss 2D Riemann problems)
 
 ## Chapters
 Chapters with a complete draft have the box checked.  Chapters that are required are in bold.  The remaining chapters are optional and will depend on the authors finding time to complete them.
@@ -60,6 +71,7 @@ Chapters with a complete draft have the box checked.  Chapters that are required
 - [x] **Buckley-Leverett** - Randy
 - [ ] **Shallow water** - Exact, Roe, HLLE  (and with tracer) - Randy
 - [ ] **Shallow water with topography**, Augmented solver - Randy
+- [ ] **Shallow water in cylindrical coordinates** - David
 - [x] **p-system / nonlinear elasticity** - David
 - [x] **Euler** - Exact, Roe, HLL, HLLE, HLLC 
 - [x] **Euler with general EOS** - Mauricio
