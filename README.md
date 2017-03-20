@@ -11,7 +11,8 @@ To install the dependencies for the book, see https://github.com/clawpack/rieman
 Parentheticals indicate concepts introduced for the first time.
 
 - [Prologue: background and motivation](https://github.com/clawpack/riemann_book/wiki/Introductory-notebook-outline)
-Part I: Exact Riemann solutions
+
+**Part I: Exact Riemann solutions**
 1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
 2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
 3. Burgers' (weak solutions)
@@ -21,33 +22,33 @@ Part I: Exact Riemann solutions
 5. [Euler equations](https://github.com/clawpack/riemann_book/blob/master/Euler_equations.ipynb)
 7. [Euler with Tamman EOS](https://github.com/clawpack/riemann_book/blob/master/Euler_equations_TammannEOS.ipynb)
 
-Part II: Approximate solvers
+**Part II: Approximate solvers**
 1. Motivation and approaches to approximate solvers (waves vs fluxes)
 1. Transonic rarefactions and entropy fixes
 2. Linearized solvers (Roe) (SW, Euler) (non-physical solutions)
 3. LLF and HLL and extensions (SW, Euler) (smearing of contacts)
 
-Part III: Riemann problems in heterogeneous media
+**Part III: Riemann problems in heterogeneous media**
 1. Advection (conservative vs color)
 1. Acoustics (conservative vs non-conservative)
 2. [Variable speed-limit traffic](https://github.com/clawpack/riemann_book/blob/master/Traffic_variable_speed.ipynb)
 3. [Nonlinear elasticity](https://github.com/clawpack/riemann_book/blob/master/Nonlinear_elasticity.ipynb) (forward reference to nonconservative nonlinear problems)
 4. Shock tube with different diameters on left and right?
 
-Part IV: Source terms
+**Part IV: Source terms**
 1. Approaches: source at interface vs other approaches (not covered here), well-balancing? stiffness?
 1. Scalar example(s) (advection-reaction, traffic with on-ramps, burgers-reaction) (well-balancing)
 1. Shallow water with bathymetry
 2. Euler with gravity
 3. Reactive Euler?
 
-Part V: Non-classical problems
+**Part V: Non-classical problems**
 1. [Nonconvex fluxes](https://github.com/clawpack/riemann_book/blob/master/Nonconvex_Scalar_Osher_Solution.ipynb) (Buckley-Leverett, Osher solution)
 2. Pressureless gas (non-diagonalizable)
 3. (nonconvex flux systems -- MHD?)
 4. Nonconservative, nonlinear systems (path-conservative solvers)
 
-Part VI: Multidimensional systems
+**Part VI: Multidimensional systems**
 1. Planar Riemann problem for a multi-D system (e.g. [Acoustics](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb), SW, Euler) (shear waves)
 2. [Elasticity]](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
 3. Quadrants problem (2D Euler Riemann-like problem)
