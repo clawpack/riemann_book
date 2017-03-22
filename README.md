@@ -13,7 +13,7 @@ Parentheticals indicate concepts introduced for the first time.
 - [Prologue: background and motivation](https://github.com/clawpack/riemann_book/wiki/Introductory-notebook-outline)
 
 **Part I: Exact Riemann solutions**
-1. Advection?
+1. [Advection](https://github.com/clawpack/riemann_book/blob/master/Advection.ipynb)
 1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
 2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
 3. Burgers' (weak solutions)
