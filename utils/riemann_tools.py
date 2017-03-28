@@ -484,7 +484,7 @@ def plot_characteristics(states, speeds, char_speed, axes=None):
             xi_bar = xi_m*2.
         else:
             xi_bar = (xi_m+xi_p)/2.
-        c = char_speed(states[0][i], xi_bar)
+        c = char_speed(states[:,i], xi_bar)
 
         if xi_bar < 0:
             x_bar = max(xmin, xi_bar*tmax)

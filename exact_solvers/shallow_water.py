@@ -18,7 +18,7 @@ def conservative_to_primitive(h, hu):
     return h, u
 
 
-def exact_riemann_solution(q_l, q_r, grav=1.):
+def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None):
     """Return the exact solution to the Riemann problem with initial states q_l, q_r.
        The solution is given in terms of a list of states, a list of speeds (each of which
        may be a pair in case of a rarefaction fan), and a function reval(xi) that gives the
@@ -47,13 +47,17 @@ def exact_riemann_solution(q_l, q_r, grav=1.):
 
     # Check whether the 1-wave is a shock or rarefaction
     def phi_l(h):
-        if h>=h_l: return hugoniot_locus_1(h)
-        else: return integral_curve_1(h)
+        if (h>=h_l and force_waves!='raref') or force_waves=='shock':
+            return hugoniot_locus_1(h)
+        else:
+            return integral_curve_1(h)
 
     # Check whether the 2-wave is a shock or rarefaction
     def phi_r(h):
-        if h>=h_r: return hugoniot_locus_2(h)
-        else: return integral_curve_2(h)
+        if (h>=h_r and force_waves!='raref') or force_waves=='shock':
+            return hugoniot_locus_2(h)
+        else:
+            return integral_curve_2(h)
 
     phi = lambda h: phi_l(h)-phi_r(h)
 
@@ -75,7 +79,7 @@ def exact_riemann_solution(q_l, q_r, grav=1.):
     wave_types = ['', '']
 
     # Find shock and rarefaction speeds
-    if h_m>h_l:
+    if (h_m>h_l and force_waves!='raref') or force_waves=='shock':
         wave_types[0] = 'shock'
         ws[0] = (hu_l - hu_m) / (h_l - h_m)
         ws[1] = ws[0]
@@ -85,7 +89,7 @@ def exact_riemann_solution(q_l, q_r, grav=1.):
         ws[0] = u_l - c_l
         ws[1] = u_m - c_m
 
-    if h_m>h_r:
+    if (h_m>h_r and force_waves!='raref') or force_waves=='shock':
         wave_types[1] = 'shock'
         ws[2] = (hu_r - hu_m) / (h_r - h_m)
         ws[3] = ws[2]
@@ -225,3 +229,58 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.legend()
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
+
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None):
+    r"""Plot the Hugoniot loci or integral curves in the h-hu plane."""
+    # Solve Riemann problem
+    states, speeds, reval, wave_types = \
+                        exact_riemann_solution(q_l, q_r, g, force_waves=force_waves)
+
+    # Set plot bounds
+    if ax is None:
+        fig, ax = plt.subplots()
+    x = states[0,:]
+    y = states[1,:]
+    xmax, xmin = max(x), min(x)
+    ymax, ymin = max(y), min(y)
+    dx, dy = xmax - xmin, ymax - ymin
+    ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
+    ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
+    ax.set_xlabel('Depth (h)')
+    ax.set_ylabel('Momentum (hu)')
+
+    left, middle, right = (0, 1, 2)
+    # Plot curves
+    h = np.linspace(min(states[0,left],states[0,middle]),max(states[0,left],states[0,middle]))
+    if wave_types[0] == 'shock':
+        hu = hugoniot_locus(h, states[0,left], states[1,left], wave_family=1, g=g)
+        if states[0,middle] >= states[0,left]:
+            ax.plot(h,hu,'r')
+        else:
+            ax.plot(h,hu,'--r')
+    else:
+        hu = integral_curve(h, states[0,left], states[1,left], wave_family=1, g=g)
+        if states[0,middle] >= states[0,left]:
+            ax.plot(h,hu,'--b')
+        else:
+            ax.plot(h,hu,'b')
+
+    h = np.linspace(min(states[0,middle],states[0,right]),max(states[0,middle],states[0,right]))
+    if wave_types[1] == 'shock':
+        hu = hugoniot_locus(h, states[0,right], states[1,right], wave_family=2, g=g)
+        if states[0,middle] >= states[0,right]:
+            ax.plot(h,hu,'r')
+        else:
+            ax.plot(h,hu,'--r')
+    else:
+        hu = integral_curve(h, states[0,right], states[1,right], wave_family=2, g=g)
+        if states[0,middle] >= states[0,right]:
+            ax.plot(h,hu,'--b')
+        else:
+            ax.plot(h,hu,'b')
+
+    for xp,yp in zip(x,y):
+        ax.plot(xp,yp,'ok',markersize=10)
+    # Label states
+    for i,label in enumerate(('Left', 'Middle', 'Right')):
+        ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
