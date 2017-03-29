@@ -450,11 +450,14 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
-def plot_characteristics(reval, char_speed, axes=None):
+def plot_characteristics(reval, char_speed, axes=None, extra_lines=None):
     """
     Plot characteristics in x-t plane by integration.
 
     char_speed: Function char_speed(q,xi) that gives the characteristic speed.
+    axes: matplotlib axes on which to plot
+    extra_lines: tuple of pairs of pairs; each entry specifies the endpoints of a line
+                    along which to start more characteristics
     """
     if axes:
         xmin, xmax, tmin, tmax = axes.axis()
@@ -469,7 +472,7 @@ def plot_characteristics(reval, char_speed, axes=None):
     dt = t[1]-t[0]
     c = np.zeros(len(x))
     for i in range(1,len(t)):
-        xi = chars[:,i-1]/t[i]
+        xi = chars[:,i-1]/max(t[i-1],dt)
         q = np.array(reval(xi))
         for j in range(len(x)):
             c[j] = char_speed(q[:,j],xi[j])
@@ -477,6 +480,24 @@ def plot_characteristics(reval, char_speed, axes=None):
 
     for j in range(len(x)):
         axes.plot(chars[j,:],t,'-k',linewidth=0.2,zorder=0)
+
+    if extra_lines:
+        for endpoints in extra_lines:
+            begin, end = endpoints
+            x = np.linspace(begin[0], end[0], 10)
+            tstart = np.linspace(begin[1], end[1], 10)
+            for epsilon in (-1.e-3, 1.e-3):
+                for xx, tt in zip(x+epsilon,tstart):
+                    t = np.linspace(tt,tmax,200)
+                    dt = t[1]-t[0]
+                    char = np.zeros(len(t))
+                    char[0] = xx
+                    for i in range(1,len(t)):
+                        xi = char[i-1]/max(t[i-1],dt)
+                        q = np.array(reval(np.array([xi])))
+                        c = char_speed(q,xi)
+                        char[i] = char[i-1] + dt*c
+                    axes.plot(char,t,'-k',linewidth=0.2,zorder=0)
 
     axes.axis((xmin, xmax, tmin, tmax))
 

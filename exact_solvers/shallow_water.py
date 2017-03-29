@@ -230,8 +230,8 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
 
-def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None):
-    r"""Plot the Hugoniot loci or integral curves in the h-hu plane."""
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
+    r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
                         exact_riemann_solution(q_l, q_r, g, force_waves=force_waves)
@@ -240,47 +240,99 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None):
     if ax is None:
         fig, ax = plt.subplots()
     x = states[0,:]
-    y = states[1,:]
+    if y_axis == 'hu':
+        y = states[1,:]
+    else:
+        y = states[1,:]/states[0,:]
+
     xmax, xmin = max(x), min(x)
     ymax, ymin = max(y), min(y)
     dx, dy = xmax - xmin, ymax - ymin
-    ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
-    ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
+    ymax = max(abs(y))
+    #ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
+    ax.set_xlim(0, xmax + 0.5*dx)
+    #ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
+    ax.set_ylim(-ymax - 0.5*dy, ymax + 0.5*dy)
     ax.set_xlabel('Depth (h)')
-    ax.set_ylabel('Momentum (hu)')
+    if y_axis == 'u':
+        ax.set_ylabel('Velocity (u)')
+    else:
+        ax.set_ylabel('Momentum (hu)')
 
     left, middle, right = (0, 1, 2)
     # Plot curves
-    h = np.linspace(min(states[0,left],states[0,middle]),max(states[0,left],states[0,middle]))
+    #h = np.linspace(min(states[0,left],states[0,middle]),max(states[0,left],states[0,middle]))
+    h_l = states[0,left]
+    h1 = np.linspace(1.e-2,h_l)
+    h2 = np.linspace(h_l,xmax+0.5*dx)
     if wave_types[0] == 'shock':
-        hu = hugoniot_locus(h, states[0,left], states[1,left], wave_family=1, g=g)
-        if states[0,middle] >= states[0,left]:
-            ax.plot(h,hu,'r')
-        else:
-            ax.plot(h,hu,'--r')
+        hu1 = hugoniot_locus(h1, states[0,left], states[1,left], wave_family=1, g=g)
+        hu2 = hugoniot_locus(h2, states[0,left], states[1,left], wave_family=1, g=g)
+        if y_axis == 'u':
+            hu1 = hu1/h1
+            hu2 = hu2/h2
+        ax.plot(h1,hu1,'--r')
+        ax.plot(h2,hu2,'r')
     else:
-        hu = integral_curve(h, states[0,left], states[1,left], wave_family=1, g=g)
-        if states[0,middle] >= states[0,left]:
-            ax.plot(h,hu,'--b')
-        else:
-            ax.plot(h,hu,'b')
+        hu1 = integral_curve(h1, states[0,left], states[1,left], wave_family=1, g=g)
+        hu2 = integral_curve(h2, states[0,left], states[1,left], wave_family=1, g=g)
+        if y_axis == 'u':
+            hu1 = hu1/h1
+            hu2 = hu2/h2
+        ax.plot(h1,hu1,'b')
+        ax.plot(h2,hu2,'--b')
 
-    h = np.linspace(min(states[0,middle],states[0,right]),max(states[0,middle],states[0,right]))
+    h_r = states[0,right]
+    h1 = np.linspace(1.e-2,h_r)
+    h2 = np.linspace(h_r,xmax+0.5*dx)
     if wave_types[1] == 'shock':
-        hu = hugoniot_locus(h, states[0,right], states[1,right], wave_family=2, g=g)
-        if states[0,middle] >= states[0,right]:
-            ax.plot(h,hu,'r')
-        else:
-            ax.plot(h,hu,'--r')
+        hu1 = hugoniot_locus(h1, states[0,right], states[1,right], wave_family=2, g=g)
+        hu2 = hugoniot_locus(h2, states[0,right], states[1,right], wave_family=2, g=g)
+        if y_axis == 'u':
+            hu1 = hu1/h1
+            hu2 = hu2/h2
+        ax.plot(h1,hu1,'--r')
+        ax.plot(h2,hu2,'r')
     else:
-        hu = integral_curve(h, states[0,right], states[1,right], wave_family=2, g=g)
-        if states[0,middle] >= states[0,right]:
-            ax.plot(h,hu,'--b')
-        else:
-            ax.plot(h,hu,'b')
+        hu1 = integral_curve(h1, states[0,right], states[1,right], wave_family=2, g=g)
+        hu2 = integral_curve(h2, states[0,right], states[1,right], wave_family=2, g=g)
+        if y_axis == 'u':
+            hu1 = hu1/h1
+            hu2 = hu2/h2
+        ax.plot(h1,hu1,'b')
+        ax.plot(h2,hu2,'--b')
 
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'ok',markersize=10)
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
+
+def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
+    h = np.linspace(0.001,3,100)
+    hstar = 1.0
+    legend = plot_1*['1-loci'] + plot_2*['2-loci']
+    for hustar in np.linspace(-4,4,15):
+        if plot_1:
+            hu = hugoniot_locus(h,hstar,hustar,wave_family=1)
+            if y_axis=='hu':
+                plt.plot(h,hu,'-',color='coral')
+            else:
+                u = hu/h
+                plt.plot(h,u,'-',color='coral')
+        if plot_2:
+            hu = hugoniot_locus(h,hstar,hustar,wave_family=2)
+            if y_axis=='hu':
+                plt.plot(h,hu,'-',color='maroon')
+            else:
+                u = hu/h
+                plt.plot(h,u,'-',color='maroon')
+        plt.axis((0,3,-3,3))
+        plt.xlabel('depth h')
+        if y_axis=='hu':
+            plt.ylabel('momentum hu')
+        else:
+            plt.ylabel('velocity u')
+        plt.title('Hugoniot loci')
+        plt.legend(legend,loc=1)
+    plt.show()
