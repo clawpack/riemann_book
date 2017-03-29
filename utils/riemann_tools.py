@@ -450,88 +450,35 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
-
-def plot_characteristics(states, speeds, char_speed, axes=None):
+def plot_characteristics(reval, char_speed, axes=None):
     """
-    Plot characteristics in constant regions.
+    Plot characteristics in x-t plane by integration.
 
     char_speed: Function char_speed(q,xi) that gives the characteristic speed.
     """
-
-    # Find constant state regions, in terms of xi = x/t
-    constant_regions = []
-    current = -1.e3
-    for s in speeds:
-        if type(s) in (tuple, list):
-            constant_regions.append((current,s[0]))
-            current = s[1]
-        else:
-            constant_regions.append((current,s))
-            current = s
-    constant_regions.append((current,1.e3))
     if axes:
         xmin, xmax, tmin, tmax = axes.axis()
     else:
         xmin, xmax, tmin, tmax = (-1., 1., 0., 0.5)
 
-    for i,region in enumerate(constant_regions):
-        xi_m = region[0]  # characteristic bounding this constant region on the left
-        xi_p = region[1]  # characteristic bounding this constant region on the right
-        if xi_m == xi_p: continue
-        if xi_m == -np.Inf:
-            xi_bar = xi_p*2.
-        elif xi_p == np.Inf:
-            xi_bar = xi_m*2.
-        else:
-            xi_bar = (xi_m+xi_p)/2.
-        c = char_speed(states[:,i], xi_bar)
+    Dx = xmax-xmin
+    x = np.linspace(xmin-Dx, xmax+Dx, 60)
+    t = np.linspace(tmin,tmax,500)
+    chars = np.zeros((len(x),len(t)))  # x-t coordinates of characteristics, one curve per row
+    chars[:,0] = x
+    dt = t[1]-t[0]
+    c = np.zeros(len(x))
+    for i in range(1,len(t)):
+        xi = chars[:,i-1]/t[i]
+        q = np.array(reval(xi))
+        for j in range(len(x)):
+            c[j] = char_speed(q[:,j],xi[j])
+        chars[:,i] = chars[:,i-1] + dt*c  # Euler's method
 
-        if xi_bar < 0:
-            x_bar = max(xmin, xi_bar*tmax)
-        else:
-            x_bar = min(xmax, xi_bar*tmax)
+    for j in range(len(x)):
+        axes.plot(chars[j,:],t,'-k',linewidth=0.2,zorder=0)
 
-        for x0 in np.linspace(0, x_bar, 7)[1:-1]:
-            t0 = x0/xi_bar
-            # Plot characteristic passing through (x0, t0)
-
-            # Find intersection of this characteristic with bounding rays
-            if c == xi_m:
-                x_m = -np.Inf
-            elif xi_m == 0:
-                x_m = 0
-            else:
-                x_m = (x0-c*t0)/(1.-c/xi_m)
-            if c == xi_p:
-                x_p = np.Inf
-            elif xi_p == 0:
-                x_p = 0
-            else:
-                x_p = (x0-c*t0)/(1.-c/xi_p)
-            # Find intersection with bottom and top of axes:
-            x_bottom = x0 + c*(tmin - t0)
-            x_top = x0 + c*(tmax - t0)
-
-            if c < 0:
-                x_left = max(xmin, x_top)
-                x_right = min(xmax, x_bottom)
-            else:
-                x_left = max(xmin, x_bottom)
-                x_right = min(xmax, x_top)
-
-            if x_m < x0: x_left = max(x_m, x_left)
-            if x_p < x0: x_left = max(x_p, x_left)
-            if x_m > x0: x_right = min(x_m, x_right)
-            if x_p > x0: x_right = min(x_p, x_right)
-
-            t = lambda x: (x - x0)/c + t0
-            if axes:
-                axes.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
-            else:
-                plt.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
-
-    if axes:
-        axes.axis((xmin, xmax, tmin, tmax))
+    axes.axis((xmin, xmax, tmin, tmax))
 
 
 if __name__ == '__main__':
