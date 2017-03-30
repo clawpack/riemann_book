@@ -1,13 +1,16 @@
+"""
+Interactive phase plane plot for Euler equations with ideal gas
+and Tammann equations of state.
+"""
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
-from ipywidgets import interact, interactive, widgets
+from ipywidgets import interact, widgets
 from IPython.display import display
 
-# INTERACTIVE PHASE PLANE PLOT FOR EULER EQUATIONS WITH IDEAL GAS EOS
-# Function to return phase plane function ready to use with interact
 def euler_phase_plane_plot():
-    
+    "Return phase plane function ready to use with interact."
+
     # Define hugoniot locus and intergal curves independently (needed for interact version)
     def hugoniot_locus_1(p,ql,gamma):
         rhol, ul, pl = ql
@@ -24,49 +27,42 @@ def euler_phase_plane_plot():
     def integral_curve_1(p,ql,gamma):
         rhol, ul, pl = ql
         cl = np.sqrt(gamma*pl/rhol)
-        return  ul + 2*cl/(gamma-1.)*(1.-(p/pl)**((gamma-1.)/(2.*gamma)))
+        return ul + 2*cl/(gamma-1.)*(1.-(p/pl)**((gamma-1.)/(2.*gamma)))
 
     def integral_curve_3(p,qr,gamma):
         rhor, ur, pr = qr
         cr = np.sqrt(gamma*pr/rhor)
-        return  ur - 2*cr/(gamma-1.)*(1.-(p/pr)**((gamma-1.)/(2.*gamma)))
-    
-    # Subfunction required for interactive (function of only interactive parameters)
+        return ur - 2*cr/(gamma-1.)*(1.-(p/pr)**((gamma-1.)/(2.*gamma)))
+
     def plot_function(rhol,ul,pl,rhor,ur,pr,gamma,
                       xmin,xmax,ymin,ymax,show_phys,show_unphys):
+        "Subfunction required for interactive (function of only interactive parameters)."
         ql = [rhol, ul, pl]
         qr = [rhor, ur, pr]
-        
-        #update_q_values(variable, q1, q2, q3)
-        hugoloc1 = lambda p : hugoniot_locus_1(p,ql,gamma) 
-        hugoloc3 = lambda p : hugoniot_locus_3(p,qr,gamma)
-        intcurv1 = lambda p : integral_curve_1(p,ql,gamma) 
-        intcurv3 = lambda p : integral_curve_3(p,qr,gamma)
-        
-        # Check whether the 1-wave is a shock or rarefaction
+
+        hugoloc1 = lambda p: hugoniot_locus_1(p,ql,gamma)
+        hugoloc3 = lambda p: hugoniot_locus_3(p,qr,gamma)
+        intcurv1 = lambda p: integral_curve_1(p,ql,gamma)
+        intcurv3 = lambda p: integral_curve_3(p,qr,gamma)
+
         def phi_l(p):
-            global wave1
+            "Check whether the 1-wave is a shock or rarefaction."
             if p >= pl:
-                wave1 = 'shock'
                 return hugoloc1(p)
-            else: 
-                wave1 = 'rarefaction'
+            else:
                 return intcurv1(p)
 
         # Check whether the 3-wave is a shock or rarefaction
         def phi_r(p):
-            global wave3
-            if p >= pr: 
-                wave3 = 'shock'
+            if p >= pr:
                 return hugoloc3(p)
-            else: 
-                wave3 = 'rarefaction'
+            else:
                 return intcurv3(p)
 
-        phi = lambda p : phi_l(p)-phi_r(p)
-        
+        phi = lambda p: phi_l(p)-phi_r(p)
+
         # Use fsolve to find p_star such that Phi(p_star)=0
-        p0 = (ql[2] + qr[2])/2.0 # initial guess is the average of initial pressures
+        p0 = (ql[2] + qr[2])/2.0  # initial guess is the average of initial pressures
         p_star, info, ier, msg = fsolve(phi, p0, full_output=True, xtol=1.e-14)
         # For strong rarefactions, sometimes fsolve needs help
         if ier != 1:
@@ -76,160 +72,126 @@ def euler_phase_plane_plot():
                 print('Warning: fsolve did not converge.')
         u_star = 0.5*(phi_l(p_star) + phi_r(p_star))
 
-    
         # Set plot bounds
         fig, ax = plt.subplots(figsize=(12,4))
-        x = (ql[2] , qr[2], p_star)
+        x = (ql[2], qr[2], p_star)
         y = (ql[1], qr[1], u_star)
-        #xmin, xmax = min(x), max(x)
-        #ymin, ymax = min(y), max(y)
         dx, dy = xmax - xmin, ymax - ymin
-        #ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
-        #ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
         ax.set_xlim(min(0.00000001,xmin),xmax)
         ax.set_ylim(ymin,ymax)
-        ax.set_xlabel('Pressure (p)', fontsize =15)
-        ax.set_ylabel('Velocity (u)', fontsize =15)
-        
-        #p1 = np.linspace(min(ql[2],p_star),max(ql[2],p_star), 20)
-        #p2 = np.linspace(min(p_star,qr[2]),max(p_star, qr[2]), 20)
+        ax.set_xlabel('Pressure (p)', fontsize=15)
+        ax.set_ylabel('Velocity (u)', fontsize=15)
+
         p = np.linspace(xmin,xmax,500)
         p1_shk = p[p>=pl]
         p1_rar = p[p<pl]
         p3_shk = p[p>=pr]
         p3_rar = p[p<pr]
-        
-        #Plot unphyisical solutions
+
         if show_unphys:
-            hugol1_un = hugoloc1(p1_rar)
-            hugol3_un = hugoloc3(p3_rar)
-            intcu1_un = intcurv1(p1_shk)
-            intcu3_un = intcurv3(p3_shk)
-            ax.plot(p1_rar,hugol1_un,'--r')
-            ax.plot(p3_rar,hugol3_un,'--r')
-            ax.plot(p1_shk,intcu1_un,'--b')
-            ax.plot(p3_shk,intcu3_un,'--b')
-        
-        # Plot physical solutions
+            # Plot unphysical solutions
+            ax.plot(p1_rar,hugoloc1(p1_rar),'--r')
+            ax.plot(p3_rar,hugoloc3(p3_rar),'--r')
+            ax.plot(p1_shk,intcurv1(p1_shk),'--b')
+            ax.plot(p3_shk,intcurv3(p3_shk),'--b')
+
         if show_phys:
-            hugol1_ph = hugoloc1(p1_shk)
-            hugol3_ph = hugoloc3(p3_shk)
-            intcu1_ph = intcurv1(p1_rar)
-            intcu3_ph = intcurv3(p3_rar)
-            ax.plot(p1_shk,hugol1_ph,'-r')
-            ax.plot(p3_shk,hugol3_ph,'-r')
-            ax.plot(p1_rar,intcu1_ph,'-b')
-            ax.plot(p3_rar,intcu3_ph,'-b')
+            # Plot physical solutions
+            ax.plot(p1_shk,hugoloc1(p1_shk),'-r')
+            ax.plot(p3_shk,hugoloc3(p3_shk),'-r')
+            ax.plot(p1_rar,intcurv1(p1_rar),'-b')
+            ax.plot(p3_rar,intcurv3(p3_rar),'-b')
             if (p_star <= xmax and u_star >ymin and u_star < ymax):
-                ax.plot(p_star, u_star, '-ok', markersize = 10)
-                ax.text(x[2] + 0.025*dx,y[2] + 0.025*dy, '$q_m$', fontsize =15)
-        
+                ax.plot(p_star, u_star, '-ok', markersize=10)
+                ax.text(x[2] + 0.025*dx,y[2] + 0.025*dy, '$q_m$', fontsize=15)
+
         # Plot initial states and markers
-        ax.plot(ql[2], ql[1], '-ok', markersize = 10)
-        ax.plot(qr[2], qr[1], '-ok', markersize = 10)
+        ax.plot(ql[2], ql[1], '-ok', markersize=10)
+        ax.plot(qr[2], qr[1], '-ok', markersize=10)
         for i,label in enumerate(('$q_l$', '$q_r$')):
-            ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label, fontsize =15)
+            ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label, fontsize=15)
         plt.show()
     return plot_function
 
 
-# Create the GUI and output the interact app
-def euler_interactive_phase_plane(ql=None,qr=None,gamma=None):
-        # Define initial parameters 
-        if ql ==None:   
-                ql = [1.0, -3.0, 100.0]
-        if qr == None:
-                qr = [1.0, 3.0, 100.0]
-        if gamma == None:
-                gamma = 1.4
+def euler_interactive_phase_plane(ql=(1.0, -3.0, 100.0),
+                                  qr=(1.0, 3.0, 100.0),
+                                  gamma=1.4):
+    "Create the GUI and output the interact app."
+    # Create plot function for interact
+    pp_plot = euler_phase_plane_plot()
 
-        # Creat plot function for interact
-        pp_plot = euler_phase_plane_plot()
+    # Declare all widget sliders
+    ql1_widget = widgets.FloatSlider(value=ql[0],min=0.01,max=100.0, description=r'$\rho_l$')
+    ql2_widget = widgets.FloatSlider(value=ql[1],min=-15,max=15.0, description='$u_l$')
+    ql3_widget = widgets.FloatSlider(value=ql[2],min=1,max=200.0, description='$p_l$')
+    qr1_widget = widgets.FloatSlider(value=qr[0],min=0.01,max=100.0, description=r'$\rho_r$')
+    qr2_widget = widgets.FloatSlider(value=qr[1],min=-15,max=15.0, description='$u_r$')
+    qr3_widget = widgets.FloatSlider(value=qr[2],min=1,max=200.0, description='$p_r$')
+    gamm_widget = widgets.FloatSlider(value=gamma,min=0.01,max=10.0, description='$\gamma$')
+    xmin_widget = widgets.BoundedFloatText(value=0.0000001, description='$p_{min}:$')
+    xmax_widget = widgets.FloatText(value=200, description='$p_{max}:$')
+    ymin_widget = widgets.FloatText(value=-15, description='$u_{min}:$')
+    ymax_widget = widgets.FloatText(value=15, description='$u_{max}:$')
+    show_physical = widgets.Checkbox(value=True, description='Physical solution')
+    show_unphysical = widgets.Checkbox(value=True, description='Unphysical solution')
+    # Additional control widgets not called by function
+    rhomax_widget = widgets.FloatText(value=100, description=r'$\rho_{max}$')
+    gammax_widget = widgets.FloatText(value=10, description='$\gamma_{max}$')
 
-        # Declare all widget sliders
-        ql1_widget = widgets.FloatSlider(value=ql[0],min=0.01,max=100.0, description=r'$\rho_l$')
-        ql2_widget = widgets.FloatSlider(value=ql[1],min=-15,max=15.0, description='$u_l$')
-        ql3_widget = widgets.FloatSlider(value=ql[2],min=1,max=200.0, description='$p_l$')
-        qr1_widget = widgets.FloatSlider(value=qr[0],min=0.01,max=100.0, description=r'$\rho_r$')
-        qr2_widget = widgets.FloatSlider(value=qr[1],min=-15,max=15.0, description='$u_r$')
-        qr3_widget = widgets.FloatSlider(value=qr[2],min=1,max=200.0, description='$p_r$')
-        gamm_widget = widgets.FloatSlider(value=gamma,min=0.01,max=10.0, description='$\gamma$')
-        xmin_widget = widgets.BoundedFloatText(value=0.0000001, description='$p_{min}:$')
-        xmax_widget = widgets.FloatText(value=200, description='$p_{max}:$')
-        ymin_widget = widgets.FloatText(value=-15, description='$u_{min}:$')
-        ymax_widget = widgets.FloatText(value=15, description='$u_{max}:$')
-        show_physical = widgets.Checkbox(value=True, description='Physical solution')
-        show_unphysical = widgets.Checkbox(value=True, description='Unphysical solution')
-        # Additional control widgets not called by function
-        rhomax_widget = widgets.FloatText(value=100, description=r'$\rho_{max}$')
-        gammax_widget = widgets.FloatText(value=10, description='$\gamma_{max}$')
+    # Allow for dependent widgets to update
+    def update_xmin(*args):
+        ql3_widget.min = xmin_widget.value
+        qr3_widget.min = xmin_widget.value
+    def update_xmax(*args):
+        ql3_widget.max = xmax_widget.value
+        qr3_widget.max = xmax_widget.value
+    def update_ymin(*args):
+        ql2_widget.min = ymin_widget.value
+        qr2_widget.min = ymin_widget.value
+    def update_ymax(*args):
+        ql2_widget.max = ymax_widget.value
+        qr2_widget.max = ymax_widget.value
+    def update_rhomax(*args):
+        ql1_widget.max = rhomax_widget.value
+        qr1_widget.max = rhomax_widget.value
+    def update_gammax(*args):
+        gamm_widget.max = gammax_widget.value
+    xmin_widget.observe(update_xmin, 'value')
+    xmax_widget.observe(update_xmax, 'value')
+    ymin_widget.observe(update_ymin, 'value')
+    ymax_widget.observe(update_ymax, 'value')
+    rhomax_widget.observe(update_rhomax, 'value')
+    gammax_widget.observe(update_gammax, 'value')
 
-        # Allow for dependent widgets to update
-        def update_xmin(*args):
-            ql3_widget.min = xmin_widget.value
-            qr3_widget.min = xmin_widget.value
-        def update_xmax(*args):
-            ql3_widget.max = xmax_widget.value
-            qr3_widget.max = xmax_widget.value
-        def update_ymin(*args):
-            ql2_widget.min = ymin_widget.value
-            qr2_widget.min = ymin_widget.value
-        def update_ymax(*args):
-            ql2_widget.max = ymax_widget.value
-            qr2_widget.max = ymax_widget.value
-        def update_rhomax(*args):
-            ql1_widget.max = rhomax_widget.value
-            qr1_widget.max = rhomax_widget.value
-        def update_gammax(*args):
-            gamml_widget.max = gammax_widget.value
-            gammr_widget.max = gammax_widget.value
-        xmin_widget.observe(update_xmin, 'value')
-        xmax_widget.observe(update_xmax, 'value')
-        ymin_widget.observe(update_ymin, 'value')
-        ymax_widget.observe(update_ymax, 'value')
-        rhomax_widget.observe(update_rhomax, 'value')
-        gammax_widget.observe(update_gammax, 'value')
+    # Organize slider widgets into boxes
+    qleft = widgets.HBox([ql1_widget, ql2_widget, ql3_widget])
+    qright = widgets.HBox([qr1_widget, qr2_widget, qr3_widget])
+    plot_opts = widgets.HBox([widgets.VBox([show_physical, xmin_widget, ymin_widget]),
+                              widgets.VBox([show_unphysical, xmax_widget, ymax_widget]),
+                              widgets.VBox([gamm_widget, gammax_widget, rhomax_widget])])
 
+    # Set up interactive GUI (tab style)
+    interact_gui = widgets.Tab(children=[qleft, qright, plot_opts])
+    interact_gui.set_title(0, 'Left state')
+    interact_gui.set_title(1, 'Right state')
+    interact_gui.set_title(2, 'Plot options')
 
-        # Organize slider widgets into boxes
-        qleft = widgets.HBox([ql1_widget, ql2_widget, ql3_widget])
-        qright = widgets.HBox([qr1_widget, qr2_widget, qr3_widget])
-        plot_opts = widgets.HBox([widgets.VBox([show_physical, xmin_widget, ymin_widget]),
-                                  widgets.VBox([show_unphysical, xmax_widget, ymax_widget]),
-                                  widgets.VBox([gamm_widget, gammax_widget, rhomax_widget])])
-
-        ## Set up interactive GUI (accordion style)
-        #interact_gui = widgets.Accordion(children=[qleft, qright, plot_opts])
-        #interact_gui.set_title(0, 'Left state')
-        #interact_gui.set_title(1, 'Right state')
-        #interact_gui.set_title(2, 'Plot options and EOS')
-        
-        # Set up interactive GUI (tab style)
-        interact_gui = widgets.Tab(children=[qleft, qright, plot_opts])
-        interact_gui.set_title(0, 'Left state')
-        interact_gui.set_title(1, 'Right state')
-        interact_gui.set_title(2, 'Plot options')
+    # Define interactive widget and run GUI
+    ppwidget = interact(pp_plot, rhol=ql1_widget, ul=ql2_widget, pl=ql3_widget,
+                        rhor=qr1_widget, ur=qr2_widget, pr=qr3_widget,
+                        gamma=gamm_widget,
+                        xmin=xmin_widget, xmax=xmax_widget,
+                        ymin=ymin_widget, ymax=ymax_widget,
+                        show_phys=show_physical, show_unphys=show_unphysical)
+    ppwidget.widget.close()
+    display(interact_gui)
+    display(ppwidget.widget.out)
 
 
-        # Define interactive widget and run GUI
-        ppwidget = interact(pp_plot, rhol = ql1_widget, ul = ql2_widget, pl = ql3_widget,
-                              rhor = qr1_widget, ur = qr2_widget, pr = qr3_widget,
-                              gamma = gamm_widget,
-                              xmin = xmin_widget, xmax = xmax_widget,
-                              ymin = ymin_widget, ymax = ymax_widget,
-                              show_phys = show_physical, show_unphys = show_unphysical)
-        ppwidget.widget.close()
-        display(interact_gui)
-        display(ppwidget.widget.out)
-        
-        
-        
-        
-# INTERACTIVE PHASE PLANE PLOT FOR EULER EQUATIONS WITH TAMMANN EOS
-# Function to return phase plane function ready to use with interact
 def euler_tammann_phase_plane_plot():
-    
-    # Define hugoniot locus and intergal curves independently (needed for interact version)
+    "Return phase plane function ready to use with interact."
+    # Define hugoniot locus and integral curves independently (needed for interact version)
     def hugoniot_locus_1(p,ql,params):
         gammal, pinfl = params
         rhol, ul, pl = ql
@@ -249,53 +211,46 @@ def euler_tammann_phase_plane_plot():
         rhol, ul, pl = ql
         cl =  np.sqrt(gammal*(pl + pinfl)/rhol)
         gl1 = gammal - 1.0
-        return  ul + 2*cl/gl1*(1 - ((p + pinfl)/(pl+pinfl))**(gl1/(2.0*gammal)))
+        return ul + 2*cl/gl1*(1 - ((p + pinfl)/(pl+pinfl))**(gl1/(2.0*gammal)))
 
     def integral_curve_3(p,qr,params):
         gammar, pinfr =  params
         rhor, ur, pr = qr
         cr =  np.sqrt(gammar*(pr + pinfr)/rhor)
         gr1 = gammar - 1.0
-        return  ur - 2*cr/gr1*(1 - ((p + pinfr)/(pr + pinfr))**(gr1/(2.0*gammar)))
-    
-    # Subfunction required for interactive (function of only interactive parameters)
+        return ur - 2*cr/gr1*(1 - ((p + pinfr)/(pr + pinfr))**(gr1/(2.0*gammar)))
+
     def plot_function(rhol,ul,pl,rhor,ur,pr,gammal,pinfl,gammar,pinfr,
                       xmin,xmax,ymin,ymax,show_phys,show_unphys):
+        "Subfunction required for interactive (function of only interactive parameters)."
         ql = [rhol, ul, pl]
         qr = [rhor, ur, pr]
         paramsl = [gammal, pinfl]
         paramsr = [gammar, pinfr]
-        
-        #update_q_values(variable, q1, q2, q3)
-        hugoloc1 = lambda p : hugoniot_locus_1(p,ql,paramsl) 
-        hugoloc3 = lambda p : hugoniot_locus_3(p,qr,paramsr)
-        intcurv1 = lambda p : integral_curve_1(p,ql,paramsl) 
-        intcurv3 = lambda p : integral_curve_3(p,qr,paramsr)
-        
-        # Check whether the 1-wave is a shock or rarefaction
+
+        hugoloc1 = lambda p: hugoniot_locus_1(p,ql,paramsl)
+        hugoloc3 = lambda p: hugoniot_locus_3(p,qr,paramsr)
+        intcurv1 = lambda p: integral_curve_1(p,ql,paramsl)
+        intcurv3 = lambda p: integral_curve_3(p,qr,paramsr)
+
         def phi_l(p):
-            global wave1
+            "Check whether the 1-wave is a shock or rarefaction."
             if p >= pl:
-                wave1 = 'shock'
                 return hugoloc1(p)
-            else: 
-                wave1 = 'rarefaction'
+            else:
                 return intcurv1(p)
 
-        # Check whether the 3-wave is a shock or rarefaction
         def phi_r(p):
-            global wave3
-            if p >= pr: 
-                wave3 = 'shock'
+            "Check whether the 3-wave is a shock or rarefaction."
+            if p >= pr:
                 return hugoloc3(p)
-            else: 
-                wave3 = 'rarefaction'
+            else:
                 return intcurv3(p)
 
-        phi = lambda p : phi_l(p)-phi_r(p)
-        
+        phi = lambda p: phi_l(p)-phi_r(p)
+
         # Use fsolve to find p_star such that Phi(p_star)=0
-        p0 = (ql[2] + qr[2])/2.0 # initial guess is the average of initial pressures
+        p0 = (ql[2] + qr[2])/2.0  # initial guess is the average of initial pressures
         p_star, info, ier, msg = fsolve(phi, p0, full_output=True, xtol=1.e-14)
         # For strong rarefactions, sometimes fsolve needs help
         if ier != 1:
@@ -305,164 +260,132 @@ def euler_tammann_phase_plane_plot():
                 print('Warning: fsolve did not converge.')
         u_star = 0.5*(phi_l(p_star) + phi_r(p_star))
 
-    
         # Set plot bounds
         fig, ax = plt.subplots(figsize=(12,4))
-        x = (ql[2] , qr[2], p_star)
+        x = (ql[2], qr[2], p_star)
         y = (ql[1], qr[1], u_star)
-        #xmin, xmax = min(x), max(x)
-        #ymin, ymax = min(y), max(y)
         dx, dy = xmax - xmin, ymax - ymin
-        #ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
-        #ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
         ax.set_xlim(min(0.00000001,xmin),xmax)
         ax.set_ylim(ymin,ymax)
-        ax.set_xlabel('Pressure (p)', fontsize =15)
-        ax.set_ylabel('Velocity (u)', fontsize =15)
-        
-        #p1 = np.linspace(min(ql[2],p_star),max(ql[2],p_star), 20)
-        #p2 = np.linspace(min(p_star,qr[2]),max(p_star, qr[2]), 20)
+        ax.set_xlabel('Pressure (p)', fontsize=15)
+        ax.set_ylabel('Velocity (u)', fontsize=15)
+
         p = np.linspace(xmin,xmax,500)
         p1_shk = p[p>=pl]
         p1_rar = p[p<pl]
         p3_shk = p[p>=pr]
         p3_rar = p[p<pr]
-        
-        #Plot unphyisical solutions
+
+        # Plot unphysical solutions
         if show_unphys:
-            hugol1_un = hugoloc1(p1_rar)
-            hugol3_un = hugoloc3(p3_rar)
-            intcu1_un = intcurv1(p1_shk)
-            intcu3_un = intcurv3(p3_shk)
-            ax.plot(p1_rar,hugol1_un,'--r')
-            ax.plot(p3_rar,hugol3_un,'--r')
-            ax.plot(p1_shk,intcu1_un,'--b')
-            ax.plot(p3_shk,intcu3_un,'--b')
-        
+            ax.plot(p1_rar,hugoloc1(p1_rar),'--r')
+            ax.plot(p3_rar,hugoloc3(p3_rar),'--r')
+            ax.plot(p1_shk,intcurv1(p1_shk),'--b')
+            ax.plot(p3_shk,intcurv3(p3_shk),'--b')
+
         # Plot physical solutions
         if show_phys:
-            hugol1_ph = hugoloc1(p1_shk)
-            hugol3_ph = hugoloc3(p3_shk)
-            intcu1_ph = intcurv1(p1_rar)
-            intcu3_ph = intcurv3(p3_rar)
-            ax.plot(p1_shk,hugol1_ph,'-r')
-            ax.plot(p3_shk,hugol3_ph,'-r')
-            ax.plot(p1_rar,intcu1_ph,'-b')
-            ax.plot(p3_rar,intcu3_ph,'-b')
-            if (p_star <= xmax and u_star >ymin and u_star < ymax):
-                ax.plot(p_star, u_star, '-ok', markersize = 10)
-                ax.text(x[2] + 0.025*dx,y[2] + 0.025*dy, '$q_m$', fontsize =15)
-        
+            ax.plot(p1_shk,hugoloc1(p1_shk),'-r')
+            ax.plot(p3_shk,hugoloc3(p3_shk),'-r')
+            ax.plot(p1_rar,intcurv1(p1_rar),'-b')
+            ax.plot(p3_rar,intcurv3(p3_rar),'-b')
+            if (p_star <= xmax and u_star > ymin and u_star < ymax):
+                ax.plot(p_star, u_star, '-ok', markersize=10)
+                ax.text(x[2] + 0.025*dx,y[2] + 0.025*dy, '$q_m$', fontsize=15)
+
         # Plot initial states and markers
-        ax.plot(ql[2], ql[1], '-ok', markersize = 10)
-        ax.plot(qr[2], qr[1], '-ok', markersize = 10)
+        ax.plot(ql[2], ql[1], '-ok', markersize=10)
+        ax.plot(qr[2], qr[1], '-ok', markersize=10)
         for i,label in enumerate(('$q_l$', '$q_r$')):
-            ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label, fontsize =15)
+            ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label, fontsize=15)
         plt.show()
     return plot_function
 
 
-# Create the GUI and output the interact app
-def euler_tammann_interactive_phase_plane(ql=None,qr=None,paramsl=None,paramsr=None):
-        # Define initial parameters 
-        if ql ==None:   
-                ql = [600.0, 10.0, 50000.0]
-        if qr == None:
-                qr = [50.0, -10.0, 25000.0]
-        if paramsl == None:
-                paramsl = [1.4, 0.0]
-        if paramsr == None:
-                paramsr = [7.0, 100.0]
+def euler_tammann_interactive_phase_plane(ql=(600.0, 10.0, 50000.0),
+                                          qr=(50.0, -10.0, 25000.0),
+                                          paramsl=(1.4, 0.0),
+                                          paramsr=(7.0, 100.0)):
+    "Create the GUI and output the interact app."
+    # Create plot function for interact
+    pp_plot = euler_tammann_phase_plane_plot()
 
+    # Declare all widget sliders
+    ql1_widget = widgets.FloatSlider(value=ql[0],min=0.01,max=1000.0, description=r'$\rho_l$')
+    ql2_widget = widgets.FloatSlider(value=ql[1],min=-15,max=15.0, description='$u_l$')
+    ql3_widget = widgets.FloatSlider(value=ql[2],min=1,max=200000.0, description='$p_l$')
+    qr1_widget = widgets.FloatSlider(value=qr[0],min=0.01,max=1000.0, description=r'$\rho_r$')
+    qr2_widget = widgets.FloatSlider(value=qr[1],min=-15,max=15.0, description='$u_r$')
+    qr3_widget = widgets.FloatSlider(value=qr[2],min=1,max=200000.0, description='$p_r$')
+    gamml_widget = widgets.FloatSlider(value=paramsl[0],min=0.01,max=10.0, description='$\gamma_l$')
+    gammr_widget = widgets.FloatSlider(value=paramsr[0],min=0.01,max=10.0, description='$\gamma_r$')
+    pinfl_widget = widgets.FloatSlider(value=paramsl[1],min=0.0,max=300000.0, description='$p_{\infty l}$')
+    pinfr_widget = widgets.FloatSlider(value=paramsr[1],min=0.0,max=300000.0, description='$p_{\infty r}$')
+    xmin_widget = widgets.BoundedFloatText(value=0.0000001, description='$p_{min}:$')
+    xmax_widget = widgets.FloatText(value=200000, description='$p_{max}:$')
+    ymin_widget = widgets.FloatText(value=-15, description='$u_{min}:$')
+    ymax_widget = widgets.FloatText(value=15, description='$u_{max}:$')
+    show_physical = widgets.Checkbox(value=True, description='Physical solution')
+    show_unphysical = widgets.Checkbox(value=True, description='Unphysical solution')
+    # Additional control widgets not called by function
+    rhomax_widget = widgets.FloatText(value=1000, description=r'$\rho_{max}$')
+    gammax_widget = widgets.FloatText(value=10, description='$\gamma_{max}$')
+    pinfmax_widget = widgets.FloatText(value=300000, description='$p_{\infty max}$')
 
-        # Creat plot function for interact
-        pp_plot = euler_tammann_phase_plane_plot()
+    # Allow for dependent widgets to update
+    def update_xmin(*args):
+        ql3_widget.min = xmin_widget.value
+        qr3_widget.min = xmin_widget.value
+    def update_xmax(*args):
+        ql3_widget.max = xmax_widget.value
+        qr3_widget.max = xmax_widget.value
+    def update_ymin(*args):
+        ql2_widget.min = ymin_widget.value
+        qr2_widget.min = ymin_widget.value
+    def update_ymax(*args):
+        ql2_widget.max = ymax_widget.value
+        qr2_widget.max = ymax_widget.value
+    def update_rhomax(*args):
+        ql1_widget.max = rhomax_widget.value
+        qr1_widget.max = rhomax_widget.value
+    def update_gammax(*args):
+        gamml_widget.max = gammax_widget.value
+        gammr_widget.max = gammax_widget.value
+    def update_pinfmax(*args):
+        pinfl_widget.max = pinfmax_widget.value
+        pinfr_widget.max = pinfmax_widget.value
+    xmin_widget.observe(update_xmin, 'value')
+    xmax_widget.observe(update_xmax, 'value')
+    ymin_widget.observe(update_ymin, 'value')
+    ymax_widget.observe(update_ymax, 'value')
+    rhomax_widget.observe(update_rhomax, 'value')
+    gammax_widget.observe(update_gammax, 'value')
+    pinfmax_widget.observe(update_pinfmax, 'value')
 
-        # Declare all widget sliders
-        ql1_widget = widgets.FloatSlider(value=ql[0],min=0.01,max=1000.0, description=r'$\rho_l$')
-        ql2_widget = widgets.FloatSlider(value=ql[1],min=-15,max=15.0, description='$u_l$')
-        ql3_widget = widgets.FloatSlider(value=ql[2],min=1,max=200000.0, description='$p_l$')
-        qr1_widget = widgets.FloatSlider(value=qr[0],min=0.01,max=1000.0, description=r'$\rho_r$')
-        qr2_widget = widgets.FloatSlider(value=qr[1],min=-15,max=15.0, description='$u_r$')
-        qr3_widget = widgets.FloatSlider(value=qr[2],min=1,max=200000.0, description='$p_r$')
-        gamml_widget = widgets.FloatSlider(value=paramsl[0],min=0.01,max=10.0, description='$\gamma_l$')
-        gammr_widget = widgets.FloatSlider(value=paramsr[0],min=0.01,max=10.0, description='$\gamma_r$')
-        pinfl_widget = widgets.FloatSlider(value=paramsl[1],min=0.0,max=300000.0, description='$p_{\infty l}$')
-        pinfr_widget = widgets.FloatSlider(value=paramsr[1],min=0.0,max=300000.0, description='$p_{\infty r}$')
-        xmin_widget = widgets.BoundedFloatText(value=0.0000001, description='$p_{min}:$')
-        xmax_widget = widgets.FloatText(value=200000, description='$p_{max}:$')
-        ymin_widget = widgets.FloatText(value=-15, description='$u_{min}:$')
-        ymax_widget = widgets.FloatText(value=15, description='$u_{max}:$')
-        show_physical = widgets.Checkbox(value=True, description='Physical solution')
-        show_unphysical = widgets.Checkbox(value=True, description='Unphysical solution')
-        # Additional control widgets not called by function
-        rhomax_widget = widgets.FloatText(value=1000, description=r'$\rho_{max}$')
-        gammax_widget = widgets.FloatText(value=10, description='$\gamma_{max}$')
-        pinfmax_widget = widgets.FloatText(value=300000, description='$p_{\infty max}$')
+    # Organize slider widgets into boxes
+    qleft = widgets.HBox([ql1_widget, ql2_widget, ql3_widget])
+    qright = widgets.HBox([qr1_widget, qr2_widget, qr3_widget])
+    params = widgets.HBox([widgets.VBox([gamml_widget, gammr_widget]),
+                           widgets.VBox([pinfl_widget, pinfr_widget])])
+    plot_opts = widgets.HBox([widgets.VBox([show_physical, xmin_widget, ymin_widget]),
+                              widgets.VBox([show_unphysical, xmax_widget, ymax_widget]),
+                              widgets.VBox([rhomax_widget, gammax_widget, pinfmax_widget])])
 
-        # Allow for dependent widgets to update
-        def update_xmin(*args):
-            ql3_widget.min = xmin_widget.value
-            qr3_widget.min = xmin_widget.value
-        def update_xmax(*args):
-            ql3_widget.max = xmax_widget.value
-            qr3_widget.max = xmax_widget.value
-        def update_ymin(*args):
-            ql2_widget.min = ymin_widget.value
-            qr2_widget.min = ymin_widget.value
-        def update_ymax(*args):
-            ql2_widget.max = ymax_widget.value
-            qr2_widget.max = ymax_widget.value
-        def update_rhomax(*args):
-            ql1_widget.max = rhomax_widget.value
-            qr1_widget.max = rhomax_widget.value
-        def update_gammax(*args):
-            gamml_widget.max = gammax_widget.value
-            gammr_widget.max = gammax_widget.value
-        def update_pinfmax(*args):
-            pinfl_widget.max = pinfmax_widget.value
-            pinfr_widget.max = pinfmax_widget.value
-        xmin_widget.observe(update_xmin, 'value')
-        xmax_widget.observe(update_xmax, 'value')
-        ymin_widget.observe(update_ymin, 'value')
-        ymax_widget.observe(update_ymax, 'value')
-        rhomax_widget.observe(update_rhomax, 'value')
-        gammax_widget.observe(update_gammax, 'value')
-        pinfmax_widget.observe(update_pinfmax, 'value')
+    # Set up interactive GUI (tab style)
+    interact_gui = widgets.Tab(children=[qleft, qright, params, plot_opts])
+    interact_gui.set_title(0, 'Left state')
+    interact_gui.set_title(1, 'Right state')
+    interact_gui.set_title(2, 'Tammann EOS')
+    interact_gui.set_title(3, 'Plot options')
 
-
-        # Organize slider widgets into boxes
-        qleft = widgets.HBox([ql1_widget, ql2_widget, ql3_widget])
-        qright = widgets.HBox([qr1_widget, qr2_widget, qr3_widget])
-        params = widgets.HBox([widgets.VBox([gamml_widget, gammr_widget]), 
-                               widgets.VBox([pinfl_widget , pinfr_widget])])
-        plot_opts = widgets.HBox([widgets.VBox([show_physical, xmin_widget, ymin_widget]),
-                                  widgets.VBox([show_unphysical, xmax_widget , ymax_widget]),
-                                  widgets.VBox([rhomax_widget, gammax_widget, pinfmax_widget])])
-
-        ## Set up interactive GUI (accordion style)
-        #interact_gui = widgets.Accordion(children=[qleft, qright, params, plot_opts])
-        #interact_gui.set_title(0, 'Left state')
-        #interact_gui.set_title(1, 'Right state')
-        #interact_gui.set_title(2, 'Tammann EOS parameters')
-        #interact_gui.set_title(3, 'Plot options')
-        
-        # Set up interactive GUI (tab style)
-        interact_gui = widgets.Tab(children=[qleft, qright, params, plot_opts])
-        interact_gui.set_title(0, 'Left state')
-        interact_gui.set_title(1, 'Right state')
-        interact_gui.set_title(2, 'Tammann EOS')
-        interact_gui.set_title(3, 'Plot options')
-
-
-        # Define interactive widget and run GUI
-        ppwidget = interact(pp_plot, rhol = ql1_widget, ul = ql2_widget, pl = ql3_widget,
-                              rhor = qr1_widget, ur = qr2_widget, pr = qr3_widget,
-                              gammal = gamml_widget, pinfl = pinfl_widget,
-                              gammar = gammr_widget, pinfr = pinfr_widget,
-                              xmin = xmin_widget, xmax = xmax_widget,
-                              ymin = ymin_widget, ymax = ymax_widget,
-                              show_phys = show_physical, show_unphys = show_unphysical)
-        ppwidget.widget.close()
-        display(interact_gui)
-        display(ppwidget.widget.out)
+    # Define interactive widget and run GUI
+    ppwidget = interact(pp_plot, rhol=ql1_widget, ul=ql2_widget, pl=ql3_widget,
+                          rhor=qr1_widget, ur=qr2_widget, pr=qr3_widget,
+                          gammal=gamml_widget, pinfl=pinfl_widget,
+                          gammar=gammr_widget, pinfr=pinfr_widget,
+                          xmin=xmin_widget, xmax=xmax_widget,
+                          ymin=ymin_widget, ymax=ymax_widget,
+                          show_phys=show_physical, show_unphys=show_unphysical)
+    ppwidget.widget.close()
+    display(interact_gui)
+    display(ppwidget.widget.out)
