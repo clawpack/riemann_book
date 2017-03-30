@@ -165,17 +165,17 @@ def euler_interactive_phase_plane(ql=(1.0, -3.0, 100.0),
     gammax_widget.observe(update_gammax, 'value')
 
     # Organize slider widgets into boxes
-    qleft = widgets.HBox([ql1_widget, ql2_widget, ql3_widget])
-    qright = widgets.HBox([qr1_widget, qr2_widget, qr3_widget])
-    plot_opts = widgets.HBox([widgets.VBox([show_physical, xmin_widget, ymin_widget]),
-                              widgets.VBox([show_unphysical, xmax_widget, ymax_widget]),
-                              widgets.VBox([gamm_widget, gammax_widget, rhomax_widget])])
+    qleftright = widgets.VBox([widgets.HBox([ql1_widget, ql2_widget, ql3_widget]),
+                               widgets.HBox([qr1_widget, qr2_widget, qr3_widget]),
+                               widgets.HBox([gamm_widget])])
+    plot_opts = widgets.VBox([widgets.HBox([show_physical, show_unphysical]),
+                              widgets.HBox([xmin_widget, xmax_widget, rhomax_widget]),
+                              widgets.HBox([ymin_widget, ymax_widget, gammax_widget])])
 
     # Set up interactive GUI (tab style)
-    interact_gui = widgets.Tab(children=[qleft, qright, plot_opts])
-    interact_gui.set_title(0, 'Left state')
-    interact_gui.set_title(1, 'Right state')
-    interact_gui.set_title(2, 'Plot options')
+    interact_gui = widgets.Tab(children=[qleftright, plot_opts])
+    interact_gui.set_title(0, 'Left and right states')
+    interact_gui.set_title(1, 'Plot options')
 
     # Define interactive widget and run GUI
     ppwidget = interact(pp_plot, rhol=ql1_widget, ul=ql2_widget, pl=ql3_widget,
@@ -363,8 +363,8 @@ def euler_tammann_interactive_phase_plane(ql=(600.0, 10.0, 50000.0),
     pinfmax_widget.observe(update_pinfmax, 'value')
 
     # Organize slider widgets into boxes
-    qleft = widgets.HBox([ql1_widget, ql2_widget, ql3_widget])
-    qright = widgets.HBox([qr1_widget, qr2_widget, qr3_widget])
+    qleftright = widgets.VBox([widgets.HBox([ql1_widget, ql2_widget, ql3_widget]),
+                              widgets.HBox([qr1_widget, qr2_widget, qr3_widget])])
     params = widgets.HBox([widgets.VBox([gamml_widget, gammr_widget]),
                            widgets.VBox([pinfl_widget, pinfr_widget])])
     plot_opts = widgets.HBox([widgets.VBox([show_physical, xmin_widget, ymin_widget]),
@@ -372,11 +372,10 @@ def euler_tammann_interactive_phase_plane(ql=(600.0, 10.0, 50000.0),
                               widgets.VBox([rhomax_widget, gammax_widget, pinfmax_widget])])
 
     # Set up interactive GUI (tab style)
-    interact_gui = widgets.Tab(children=[qleft, qright, params, plot_opts])
-    interact_gui.set_title(0, 'Left state')
-    interact_gui.set_title(1, 'Right state')
-    interact_gui.set_title(2, 'Tammann EOS')
-    interact_gui.set_title(3, 'Plot options')
+    interact_gui = widgets.Tab(children=[qleftright, params, plot_opts])
+    interact_gui.set_title(0, 'Left and right states')
+    interact_gui.set_title(1, 'Tammann EOS')
+    interact_gui.set_title(2, 'Plot options')
 
     # Define interactive widget and run GUI
     ppwidget = interact(pp_plot, rhol=ql1_widget, ul=ql2_widget, pl=ql3_widget,
