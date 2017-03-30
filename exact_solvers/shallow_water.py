@@ -62,10 +62,11 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None):
     phi = lambda h: phi_l(h)-phi_r(h)
 
     # Compute middle state h, hu by finding curve intersection
-    h_m,info, ier, msg = fsolve(phi, (h_l+h_r)/2.,full_output=True,xtol=1.e-14)
+    guess = (u_l-u_r+2.*np.sqrt(grav)*(np.sqrt(h_l)+np.sqrt(h_r)))**2./16./grav
+    h_m,info, ier, msg = fsolve(phi, guess, full_output=True, xtol=1.e-14)
     # For strong rarefactions, sometimes fsolve needs help
     if ier!=1:
-        h_m,info, ier, msg = fsolve(phi, (h_l+h_r)/2.,full_output=True,factor=0.1,xtol=1.e-10)
+        h_m,info, ier, msg = fsolve(phi, guess,full_output=True,factor=0.1,xtol=1.e-10)
         # This should not happen:
         if ier!=1:
             print('Warning: fsolve did not converge.')
