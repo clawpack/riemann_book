@@ -198,11 +198,17 @@ def euler_interactive_phase_plane(ql=None,qr=None,gamma=None):
                                   widgets.VBox([show_unphysical, xmax_widget, ymax_widget]),
                                   widgets.VBox([gamm_widget, gammax_widget, rhomax_widget])])
 
-        # Set up interactive GUI
-        interact_gui = widgets.Accordion(children=[qleft, qright, plot_opts])
+        ## Set up interactive GUI (accordion style)
+        #interact_gui = widgets.Accordion(children=[qleft, qright, plot_opts])
+        #interact_gui.set_title(0, 'Left state')
+        #interact_gui.set_title(1, 'Right state')
+        #interact_gui.set_title(2, 'Plot options and EOS')
+        
+        # Set up interactive GUI (tab style)
+        interact_gui = widgets.Tab(children=[qleft, qright, plot_opts])
         interact_gui.set_title(0, 'Left state')
         interact_gui.set_title(1, 'Right state')
-        interact_gui.set_title(2, 'Plot options and EOS')
+        interact_gui.set_title(2, 'Plot options')
 
 
         # Define interactive widget and run GUI
@@ -434,11 +440,18 @@ def euler_tammann_interactive_phase_plane(ql=None,qr=None,paramsl=None,paramsr=N
                                   widgets.VBox([show_unphysical, xmax_widget , ymax_widget]),
                                   widgets.VBox([rhomax_widget, gammax_widget, pinfmax_widget])])
 
-        # Set up interactive GUI
-        interact_gui = widgets.Accordion(children=[qleft, qright, params, plot_opts])
+        ## Set up interactive GUI (accordion style)
+        #interact_gui = widgets.Accordion(children=[qleft, qright, params, plot_opts])
+        #interact_gui.set_title(0, 'Left state')
+        #interact_gui.set_title(1, 'Right state')
+        #interact_gui.set_title(2, 'Tammann EOS parameters')
+        #interact_gui.set_title(3, 'Plot options')
+        
+        # Set up interactive GUI (tab style)
+        interact_gui = widgets.Tab(children=[qleft, qright, params, plot_opts])
         interact_gui.set_title(0, 'Left state')
         interact_gui.set_title(1, 'Right state')
-        interact_gui.set_title(2, 'Tammann EOS parameters')
+        interact_gui.set_title(2, 'Tammann EOS')
         interact_gui.set_title(3, 'Plot options')
 
 
