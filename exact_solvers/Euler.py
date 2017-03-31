@@ -45,10 +45,14 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         return None
 
     # Define the integral curves and hugoniot loci
-    integral_curve_1   = lambda p : u_l + 2*c_l/(gamma-1.)*(1.-(max(p,0)/p_l)**((gamma-1.)/(2.*gamma)))
-    integral_curve_3   = lambda p : u_r - 2*c_r/(gamma-1.)*(1.-(max(p,0)/p_r)**((gamma-1.)/(2.*gamma)))
-    hugoniot_locus_1 = lambda p : u_l + 2*c_l/np.sqrt(2*gamma*(gamma-1.)) * ((1-p/p_l)/np.sqrt(1+beta*p/p_l))
-    hugoniot_locus_3 = lambda p : u_r - 2*c_r/np.sqrt(2*gamma*(gamma-1.)) * ((1-p/p_r)/np.sqrt(1+beta*p/p_r))
+    integral_curve_1 = lambda p: u_l + 2*c_l/(gamma-1.)* \
+                (1.-(max(p,0)/p_l)**((gamma-1.)/(2.*gamma)))
+    integral_curve_3 = lambda p: u_r - 2*c_r/(gamma-1.)* \
+                (1.-(max(p,0)/p_r)**((gamma-1.)/(2.*gamma)))
+    hugoniot_locus_1 = lambda p: u_l + 2*c_l/np.sqrt(2*gamma*(gamma-1.)) \
+                * ((1-p/p_l)/np.sqrt(1+beta*p/p_l))
+    hugoniot_locus_3 = lambda p: u_r - 2*c_r/np.sqrt(2*gamma*(gamma-1.)) \
+                * ((1-p/p_r)/np.sqrt(1+beta*p/p_r))
 
     # Check whether the 1-wave is a shock or rarefaction
     def phi_l(p):
@@ -60,7 +64,7 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         if p >= p_r: return hugoniot_locus_3(p)
         else: return integral_curve_3(p)
 
-    phi = lambda p : phi_l(p)-phi_r(p)
+    phi = lambda p: phi_l(p)-phi_r(p)
 
     # Compute middle state p, u by finding curve intersection
     p, info, ier, msg = fsolve(phi, (p_l+p_r)/2., full_output=True, xtol=1.e-14)
