@@ -224,7 +224,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
     ax.set_ylim(0,tmax)
 
 
-def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False, fill=None):
+def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False, fill=()):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be tuple of two values,
