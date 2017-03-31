@@ -1,5 +1,10 @@
+from __future__ import print_function
 import numpy as np
 from scipy.optimize import fsolve
+import matplotlib.pyplot as plt
+from utils import riemann_tools
+from ipywidgets import interact, interactive, widgets
+from IPython.display import display
 
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
@@ -195,3 +200,5 @@ def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'p
             return rho_out,u_out,p_out
 
     return states, speeds, reval, wave_types, outvars
+
+
