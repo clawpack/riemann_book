@@ -224,7 +224,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
     ax.set_ylim(0,tmax)
 
 
-def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False):
+def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False, fill=None):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be tuple of two values,
@@ -270,10 +270,11 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color
     if conserved_variables is None:
         conserved_variables = ['q[%s]' % i for i in range(num_eqn)]
 
+    q_sample = riemann_eval(np.linspace(-10,10))
     for i in range(num_eqn):
         ax[i+1].set_xlim((-1,1))
-        qmax = states[i,:].max()  # max([state[i] for state in states])
-        qmin = states[i,:].min()  # min([state[i] for state in states])
+        qmax = q_sample[i][:].max()
+        qmin = q_sample[i][:].min()
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
         ax[i+1].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))
@@ -291,6 +292,9 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color
 
     for i in range(num_eqn):
         ax[i+1].plot(x,q[i][:],'-k',lw=2)
+        if i in fill:
+            ax[i+1].fill_between(x,q[i][:],color='b')
+            ax[i+1].set_ybound(lower=0)
 
     return ax
 
