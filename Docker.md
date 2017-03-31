@@ -15,8 +15,7 @@ Don't forget the last `.` on this line!
 
 Then do:
 
-    $ docker run -i -t -p 8889:8889 --name riemann_book_container \
-           riemann_book_dockerimage
+    $ docker run -i -t -p 8889:8889 --name riemann_book_container riemann_book_dockerimage
 
 This starts a virtual machine (*container*) named `riemann_book_container` and gives a prompt like: 
 
@@ -24,24 +23,38 @@ This starts a virtual machine (*container*) named `riemann_book_container` and g
 
 ### Updating the riemann_book files
 
-    root@...# cd riemann_book
+In case the `riemann_book` repository changed since you built the docker image, you could do:
+
+    root@...# cd /riemann_book
     root@...# git pull
-    root@...# cd ..
+    root@...# cd /
+    
+### Updating `clawpack/riemann`
+
+You may need some Riemann solvers not in the most recent release of Clawpack.  These can be obtained by checking out the master branch (and pulling any changes since you built the image, if necessary):
+
+    root@...# cd /clawpack-5.4.0/riemann
+    root@...# git checkout master
+    root@...# git pull
+
+If this brings down new Riemann solvers, you will need to compile them and re-install clawpack:
+
+    root@...# cd /clawpack-5.4.0
+    root@...# pip install -e .
     
 ### Test our WIP `Shallow_water` notebook 
 
-    root@...# cd riemann_book
+    root@...# cd /riemann_book
     root@...# git remote add ketch https://github.com/ketch/riemann_book
     root@...# git fetch ketch
     root@...# git checkout ketch/shallow_water
-    root@...# cd ..
+    root@...# cd /
     
 ### Notebook server:
 
 In order to work with the notebooks, start the notebook server via
 
-    root@...# jupyter notebook --notebook-dir=/riemann_book \
-              --ip='*' --port=8889 --no-browser
+    root@...# jupyter notebook --notebook-dir=/riemann_book --ip='*' --port=8889 --no-browser
 
 Then open a browser (on your laptop) to the URL printed out when the Jupyter server starts via the command above.  This might be of the form:
 
