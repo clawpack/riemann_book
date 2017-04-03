@@ -224,7 +224,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
     ax.set_ylim(0,tmax)
 
 
-def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False):
+def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color='multi', layout='horizontal',conserved_variables=None,t_pointer=True, extra_axes=False, fill=()):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be tuple of two values,
@@ -270,10 +270,11 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color
     if conserved_variables is None:
         conserved_variables = ['q[%s]' % i for i in range(num_eqn)]
 
+    q_sample = riemann_eval(np.linspace(-10,10))
     for i in range(num_eqn):
         ax[i+1].set_xlim((-1,1))
-        qmax = states[i,:].max()  # max([state[i] for state in states])
-        qmin = states[i,:].min()  # min([state[i] for state in states])
+        qmax = q_sample[i][:].max()
+        qmin = q_sample[i][:].min()
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
         ax[i+1].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))
@@ -291,6 +292,9 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color
 
     for i in range(num_eqn):
         ax[i+1].plot(x,q[i][:],'-k',lw=2)
+        if i in fill:
+            ax[i+1].fill_between(x,q[i][:],color='b')
+            ax[i+1].set_ybound(lower=0)
 
     return ax
 
@@ -379,7 +383,7 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
 def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
                               i_vel=1, fig=None, color='b', num_left=10,
                               num_right=10, xmax=None, rho_left=None,
-                              rho_right=None):
+                              rho_right=None,ax=None):
     """
     Take an array of states and speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
@@ -396,7 +400,7 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
         wave_types = ['contact']*len(s)
 
     num_eqn,num_states = states.shape
-    if fig is None:
+    if ax is None:
         fig, ax = plt.subplots()
 
     # auto scale the x axis?
@@ -449,89 +453,57 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
         plt.plot(xtraj[:,j],tt,'k')
 
     ax.set_title('Waves and particle trajectories in x-t plane')
-    plt.show()
 
-def plot_characteristics(states, speeds, char_speed, axes=None):
+def plot_characteristics(reval, char_speed, axes=None, extra_lines=None):
     """
-    Plot characteristics in constant regions.
+    Plot characteristics in x-t plane by integration.
 
     char_speed: Function char_speed(q,xi) that gives the characteristic speed.
+    axes: matplotlib axes on which to plot
+    extra_lines: tuple of pairs of pairs; each entry specifies the endpoints of a line
+                    along which to start more characteristics
     """
-
-    # Find constant state regions, in terms of xi = x/t
-    constant_regions = []
-    current = -1.e3
-    for s in speeds:
-        if type(s) in (tuple, list):
-            constant_regions.append((current,s[0]))
-            current = s[1]
-        else:
-            constant_regions.append((current,s))
-            current = s
-    constant_regions.append((current,1.e3))
     if axes:
         xmin, xmax, tmin, tmax = axes.axis()
     else:
         xmin, xmax, tmin, tmax = (-1., 1., 0., 0.5)
 
-    for i,region in enumerate(constant_regions):
-        xi_m = region[0]  # characteristic bounding this constant region on the left
-        xi_p = region[1]  # characteristic bounding this constant region on the right
-        if xi_m == xi_p: continue
-        if xi_m == -np.Inf:
-            xi_bar = xi_p*2.
-        elif xi_p == np.Inf:
-            xi_bar = xi_m*2.
-        else:
-            xi_bar = (xi_m+xi_p)/2.
-        c = char_speed(states[0][i], xi_bar)
+    Dx = xmax-xmin
+    x = np.linspace(xmin-Dx, xmax+Dx, 60)
+    t = np.linspace(tmin,tmax,500)
+    chars = np.zeros((len(x),len(t)))  # x-t coordinates of characteristics, one curve per row
+    chars[:,0] = x
+    dt = t[1]-t[0]
+    c = np.zeros(len(x))
+    for i in range(1,len(t)):
+        xi = chars[:,i-1]/max(t[i-1],dt)
+        q = np.array(reval(xi))
+        for j in range(len(x)):
+            c[j] = char_speed(q[:,j],xi[j])
+        chars[:,i] = chars[:,i-1] + dt*c  # Euler's method
 
-        if xi_bar < 0:
-            x_bar = max(xmin, xi_bar*tmax)
-        else:
-            x_bar = min(xmax, xi_bar*tmax)
+    for j in range(len(x)):
+        axes.plot(chars[j,:],t,'-k',linewidth=0.2,zorder=0)
 
-        for x0 in np.linspace(0, x_bar, 7)[1:-1]:
-            t0 = x0/xi_bar
-            # Plot characteristic passing through (x0, t0)
+    if extra_lines:
+        for endpoints in extra_lines:
+            begin, end = endpoints
+            x = np.linspace(begin[0], end[0], 10)
+            tstart = np.linspace(begin[1], end[1], 10)
+            for epsilon in (-1.e-3, 1.e-3):
+                for xx, tt in zip(x+epsilon,tstart):
+                    t = np.linspace(tt,tmax,200)
+                    dt = t[1]-t[0]
+                    char = np.zeros(len(t))
+                    char[0] = xx
+                    for i in range(1,len(t)):
+                        xi = char[i-1]/max(t[i-1],dt)
+                        q = np.array(reval(np.array([xi])))
+                        c = char_speed(q,xi)
+                        char[i] = char[i-1] + dt*c
+                    axes.plot(char,t,'-k',linewidth=0.2,zorder=0)
 
-            # Find intersection of this characteristic with bounding rays
-            if c == xi_m:
-                x_m = -np.Inf
-            elif xi_m == 0:
-                x_m = 0
-            else:
-                x_m = (x0-c*t0)/(1.-c/xi_m)
-            if c == xi_p:
-                x_p = np.Inf
-            elif xi_p == 0:
-                x_p = 0
-            else:
-                x_p = (x0-c*t0)/(1.-c/xi_p)
-            # Find intersection with bottom and top of axes:
-            x_bottom = x0 + c*(tmin - t0)
-            x_top = x0 + c*(tmax - t0)
-
-            if c < 0:
-                x_left = max(xmin, x_top)
-                x_right = min(xmax, x_bottom)
-            else:
-                x_left = max(xmin, x_bottom)
-                x_right = min(xmax, x_top)
-
-            if x_m < x0: x_left = max(x_m, x_left)
-            if x_p < x0: x_left = max(x_p, x_left)
-            if x_m > x0: x_right = min(x_m, x_right)
-            if x_p > x0: x_right = min(x_p, x_right)
-
-            t = lambda x: (x - x0)/c + t0
-            if axes:
-                axes.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
-            else:
-                plt.plot([x_left, x_right], [t(x_left), t(x_right)],'-k',linewidth=0.2)
-
-    if axes:
-        axes.axis((xmin, xmax, tmin, tmax))
+    axes.axis((xmin, xmax, tmin, tmax))
 
 
 if __name__ == '__main__':

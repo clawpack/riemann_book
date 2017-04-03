@@ -3,49 +3,64 @@
 # Riemann_book
 Book in progress to illustrate Riemann solvers in Jupyter notebooks.
 Contributors: @rjleveque, @ketch, and @maojrs.
-  
-# Dependencies
-- matplotlib
-- numpy
-- clawpack, including the bleeding edge version of clawpack.riemann
-- jupyter
-- ipywidgets
-- mpl_toolkits
 
 # Installation
-First, install a Fortran compiler.  Then:
+To install the dependencies for the book, see https://github.com/clawpack/riemann_book/wiki/Installation
 
-```
-git clone --branch=master --depth=100 --quiet git://github.com/clawpack/clawpack
-cd clawpack
-git submodule init
-git submodule update clawutil visclaw riemann
-cd riemann
-git checkout master
-git pull # get very latest Riemann
-cd ..
-python setup.py install
-cd ..
-git clone https://github.com/clawpack/riemann_book
-cd riemann_book
-pip install -r requirements.txt
-jupyter nbextension enable --py widgetsnbextension
-```
+## Outline
+Parentheticals indicate concepts introduced for the first time.
 
-You can test your installation by running
+- [Prologue: background and motivation](https://github.com/clawpack/riemann_book/wiki/Introductory-notebook-outline)
 
-```
-python test.py
-```
+**Part I: Exact Riemann solutions**
+1. [Advection](https://github.com/clawpack/riemann_book/blob/master/Advection.ipynb)
+1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
+2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
+3. Burgers' (weak solutions)
+4. [Shallow water](https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb) (jump conditions for a nonlinear system; Riemann invariants, integral curves, Hugoniot Loci) (see also [this](http://nbviewer.jupyter.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb) and [this](http://nbviewer.jupyter.org/gist/rjleveque/8994740))
+5. How to solve the Riemann problem exactly -- go in depth into SW solver, including Newton iteration to find root of piecewise function
+5. Shallow water with a tracer (contact waves)
+5. [Euler equations](https://github.com/clawpack/riemann_book/blob/master/Euler_equations.ipynb)
+
+**Part II: Approximate solvers**
+1. Motivation and approaches to approximate solvers (waves vs fluxes)
+1. Transonic rarefactions and entropy fixes
+2. Linearized solvers (Roe) (non-physical solutions)
+3. LLF and HLL and extensions (smearing of contacts)
+4. Comparison of solvers for shallow water
+5. Comparison of solvers for Euler
+6. Comparison of full numerical solutions for Woodward-Colella blast wave problem
+
+**Part III: Riemann problems in heterogeneous media**
+1. Advection (conservative vs color)
+1. Acoustics (conservative vs non-conservative)
+2. [Variable speed-limit traffic](https://github.com/clawpack/riemann_book/blob/master/Traffic_variable_speed.ipynb)
+3. [Nonlinear elasticity](https://github.com/clawpack/riemann_book/blob/master/Nonlinear_elasticity.ipynb) (forward reference to nonconservative nonlinear problems)
+4. Shock tube with different ratio of specific heats
+7. [Euler with Tamman EOS](https://github.com/clawpack/riemann_book/blob/master/Euler_equations_TammannEOS.ipynb)
 
 
-## Early chapters
-Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
-- Similarity solutions
-- Characteristics and characteristic velocities
-- Conservation, weak solutions, and jump conditions
-- Riemann invariants and integral curves
-- How approximate solvers are used in numerical discretizations
+**Part IV: Source terms**
+1. Approaches: source at interface vs other approaches (not covered here), well-balancing? stiffness?
+1. Scalar example(s) (advection-reaction, traffic with on-ramps, burgers-reaction) (well-balancing)
+1. Shallow water with bathymetry
+2. Euler with gravity
+3. Reactive Euler?
+4. Discuss viscous source terms?
+
+**Part V: Non-classical problems**
+1. [Nonconvex fluxes](https://github.com/clawpack/riemann_book/blob/master/Nonconvex_Scalar_Osher_Solution.ipynb) (Buckley-Leverett, Osher solution)
+2. Pressureless gas (non-diagonalizable)
+3. (nonconvex flux systems -- MHD?)
+4. Nonconservative, nonlinear systems (path-conservative solvers)
+
+**Part VI: Multidimensional systems**
+1. Planar Riemann problem for a multi-D system (e.g. [Acoustics](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb), SW, Euler) (shear waves)
+2. [Elasticity](http://nbviewer.jupyter.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
+3. Quadrants problem (2D Euler Riemann-like problem)
+3. Cylindrical shallow water
+
+
 
 ## Chapters
 Chapters with a complete draft have the box checked.  Chapters that are required are in bold.  The remaining chapters are optional and will depend on the authors finding time to complete them.
@@ -60,6 +75,7 @@ Chapters with a complete draft have the box checked.  Chapters that are required
 - [x] **Buckley-Leverett** - Randy
 - [ ] **Shallow water** - Exact, Roe, HLLE  (and with tracer) - Randy
 - [ ] **Shallow water with topography**, Augmented solver - Randy
+- [ ] **Shallow water in cylindrical coordinates** - David
 - [x] **p-system / nonlinear elasticity** - David
 - [x] **Euler** - Exact, Roe, HLL, HLLE, HLLC 
 - [x] **Euler with general EOS** - Mauricio
@@ -106,39 +122,5 @@ Chapters with a complete draft have the box checked.  Chapters that are required
 - [Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
 
 
-# Citations
-
-We are using bibtex for citations; add entries as necessary to `riemann.bib`.
-To insert a citation in a notebook, follow this pattern:
-
-    <cite data-cite="toro2013riemann"><a href="riemann.html#toro2013riemann">(Toro, 2013)<a></cite>
-
-The value appearing in the html tag and the hyperlink should match the cite key
-in the bibtex file.
-
-## How to generate the html bibliography
-
-Use bibtex2html, downloadable from https://www.lri.fr/~filliatr/bibtex2html/.
-Then:
-
-    export TMPDIR=.
-    bibtex2html riemann.bib
-    
-This creates riemann.html which includes an anchor for each citation.
-
-We are keeping the HTML file under version control for convenience, even
-though it is generated from the .bib file.
-
-
-## How to generate the PDF with bibliography
-
-I've tested this with Jupyter 5.2.
-
-    jupyter nbconvert --to latex --template citations.tplx Euler_equations.ipynb
-    pdflatex Euler_equations
-    bibtex Euler_equations
-    pdflatex Euler_equations
-
-This generates a single chapter with a bibliography at the end.  To actually
-generate the book, we'll want to merge all the notebooks first; see
-discussion at https://github.com/jupyter/nbconvert/issues/253.
+## Inserting citations
+See https://github.com/clawpack/riemann_book/wiki/Citations
