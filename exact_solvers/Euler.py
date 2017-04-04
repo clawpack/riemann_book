@@ -181,8 +181,11 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         return states, speeds, reval, wave_types
 
 
-def phase_plane_plot(left_state, right_state, gamma=1.4):
+def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None):
     r"""Plot the Hugoniot loci or integral curves in the p-u plane."""
+    if ax is None:
+        fig, ax = plt.subplots()
+
     # Solve Riemann problem
     q_left  = primitive_to_conservative(*left_state)
     q_right = primitive_to_conservative(*right_state)
@@ -191,32 +194,44 @@ def phase_plane_plot(left_state, right_state, gamma=1.4):
                                                phase_plane_curves=True)
     pm, w1, w3 = ppc
 
-    # Set plot bounds
-    fig, ax = plt.subplots()
-    x = (left_state.Pressure, pm, right_state.Pressure)
+    x = (left_state.Pressure,pm,right_state.Pressure)
     y = (left_state.Velocity, w1(pm), right_state.Velocity)
     xmax, xmin = max(x), min(x)
     ymax, ymin = max(y), min(y)
     dx, dy = xmax - xmin, ymax - ymin
-    ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
-    ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
+
+    w1v, w3v = (np.vectorize(w1), np.vectorize(w3))
     ax.set_xlabel('Pressure (p)')
     ax.set_ylabel('Velocity (u)')
 
-    # Plot curves
-    w1v, w3v = (np.vectorize(w1), np.vectorize(w3))
-    press1 = np.linspace(left_state.Pressure, pm)
-    press3 = np.linspace(right_state.Pressure, pm)
-    if type(ex_speeds[0]) not in (tuple, list):  # this is a jump
-        color = 'r'
+    p_l = left_state.Pressure
+    pa = np.linspace(1.e-2,p_l)
+    pb = np.linspace(p_l,xmax+0.5*dx)
+    ua = w1v(pa)
+    ub = w1v(pb)
+    if wave_types[0] == 'shock':
+        style1 = '--r'
+        style2 = '-r'
     else:
-        color = 'b'
-    ax.plot(press1,w1v(press1),color,lw=2)
-    if type(ex_speeds[2]) not in (tuple, list):  # this is a jump
-        color = 'r'
+        style1 = '-b'
+        style2 = '--b'
+    ax.plot(pa,ua,style1)
+    ax.plot(pb,ub,style2)
+
+    p_r = right_state.Pressure
+    pa = np.linspace(1.e-2,p_r)
+    pb = np.linspace(p_r,xmax+0.5*dx)
+    ua = w3v(pa)
+    ub = w3v(pb)
+    if wave_types[2] == 'shock':
+        style1 = '--r'
+        style2 = '-r'
     else:
-        color = 'b'
-    ax.plot(press3,w3v(press3),color,lw=2)
+        style1 = '-b'
+        style2 = '--b'
+    ax.plot(pa,ua,style1)
+    ax.plot(pb,ub,style2)
+
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'ok',markersize=10)
     # Label states
