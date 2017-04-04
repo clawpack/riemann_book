@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
 
-
 def primitive_to_conservative(rho, u, p, gamma=1.4):
     mom = rho*u
     E   = p/(gamma-1.) + 0.5*rho*u**2
@@ -39,75 +38,87 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
 
     beta = (gamma+1.)/(gamma-1.)
 
-    # Check for cavitation
-    if u_l - u_r + 2*(c_l+c_r)/(gamma-1.) < 0:
-        print('Cavitation detected!  Exiting.')
-        return None
-
-    # Define the integral curves and hugoniot loci
-    integral_curve_1 = lambda p: u_l + 2*c_l/(gamma-1.)* \
-                (1.-(max(p,0)/p_l)**((gamma-1.)/(2.*gamma)))
-    integral_curve_3 = lambda p: u_r - 2*c_r/(gamma-1.)* \
-                (1.-(max(p,0)/p_r)**((gamma-1.)/(2.*gamma)))
-    hugoniot_locus_1 = lambda p: u_l + 2*c_l/np.sqrt(2*gamma*(gamma-1.)) \
-                * ((1-p/p_l)/np.sqrt(1+beta*p/p_l))
-    hugoniot_locus_3 = lambda p: u_r - 2*c_r/np.sqrt(2*gamma*(gamma-1.)) \
-                * ((1-p/p_r)/np.sqrt(1+beta*p/p_r))
-
-    # Check whether the 1-wave is a shock or rarefaction
-    def phi_l(p):
-        if p >= p_l: return hugoniot_locus_1(p)
-        else: return integral_curve_1(p)
-
-    # Check whether the 1-wave is a shock or rarefaction
-    def phi_r(p):
-        if p >= p_r: return hugoniot_locus_3(p)
-        else: return integral_curve_3(p)
-
-    phi = lambda p: phi_l(p)-phi_r(p)
-
-    # Compute middle state p, u by finding curve intersection
-    p, info, ier, msg = fsolve(phi, (p_l+p_r)/2., full_output=True, xtol=1.e-14)
-    # For strong rarefactions, sometimes fsolve needs help
-    if ier != 1:
-        p, info, ier, msg = fsolve(phi, (p_l+p_r)/2., full_output=True, factor=0.1, xtol=1.e-10)
-        # This should not happen:
-        if ier != 1:
-            print('Warning: fsolve did not converge.')
-            print(msg)
-
-    u = phi_l(p)
-
-    # Find middle state densities
-    rho_l_star = (p/p_l)**(1./gamma) * rho_l
-    rho_r_star = (p/p_r)**(1./gamma) * rho_r
-
-    # compute the wave speeds
     ws = np.zeros(5)
     wave_types = ['', 'contact', '']
-    # The contact speed:
-    ws[2] = u
 
-    # Find shock and rarefaction speeds
-    if p > p_l:
-        wave_types[0] = 'shock'
-        ws[0] = (rho_l*u_l - rho_l_star*u)/(rho_l - rho_l_star)
-        ws[1] = ws[0]
-    else:
-        wave_types[0] = 'raref'
-        c_l_star = np.sqrt(gamma*p/rho_l_star)
+    if u_l - u_r + 2*(c_l+c_r)/(gamma-1.) < 0:
+        # Middle states are vacuum
+        p = 0.
+        rho_l_star = 0.
+        rho_r_star = 0.
+        u_vacuum_l = u_l + 2*c_l/(gamma-1.)
+        u_vacuum_r = u_r - 2*c_r/(gamma-1.)
+        u = 0.5*(u_vacuum_l + u_vacuum_r)
         ws[0] = u_l - c_l
-        ws[1] = u - c_l_star
-
-    if p > p_r:
-        wave_types[2] = 'shock'
-        ws[4] = (rho_r*u_r - rho_r_star*u)/(rho_r - rho_r_star)
-        ws[3] = ws[4]
-    else:
-        wave_types[2] = 'raref'
-        c_r_star = np.sqrt(gamma*p/rho_r_star)
-        ws[3] = u+c_r_star
+        ws[1] = u_vacuum_l
+        ws[2] = u
+        ws[3] = u_vacuum_r
         ws[4] = u_r + c_r
+        wave_types = ['raref', 'contact', 'raref']
+
+    else:
+        # Define the integral curves and hugoniot loci
+        integral_curve_1 = lambda p: u_l + 2*c_l/(gamma-1.)* \
+                    (1.-(max(p,0)/p_l)**((gamma-1.)/(2.*gamma)))
+        integral_curve_3 = lambda p: u_r - 2*c_r/(gamma-1.)* \
+                    (1.-(max(p,0)/p_r)**((gamma-1.)/(2.*gamma)))
+        hugoniot_locus_1 = lambda p: u_l + 2*c_l/np.sqrt(2*gamma*(gamma-1.)) \
+                    * ((1-p/p_l)/np.sqrt(1+beta*p/p_l))
+        hugoniot_locus_3 = lambda p: u_r - 2*c_r/np.sqrt(2*gamma*(gamma-1.)) \
+                    * ((1-p/p_r)/np.sqrt(1+beta*p/p_r))
+
+        # Check whether the 1-wave is a shock or rarefaction
+        def phi_l(p):
+            if p >= p_l: return hugoniot_locus_1(p)
+            else: return integral_curve_1(p)
+
+        # Check whether the 1-wave is a shock or rarefaction
+        def phi_r(p):
+            if p >= p_r: return hugoniot_locus_3(p)
+            else: return integral_curve_3(p)
+
+        phi = lambda p: phi_l(p)-phi_r(p)
+
+        exp = (1.-gamma)/(2.*gamma)
+        guess = ((c_l + c_r - (gamma-1.)*(u_r-u_l)/2.)/(c_l*p_l**exp+c_r*p_r**exp))**(-1./exp)
+        # Compute middle state p, u by finding curve intersection
+        p, info, ier, msg = fsolve(phi, guess, full_output=True, xtol=1.e-14)
+        # For strong rarefactions, sometimes fsolve needs help
+        if ier != 1:
+            p, info, ier, msg = fsolve(phi, guess, full_output=True, factor=0.1, xtol=1.e-10)
+            # This should not happen:
+            if ier != 1:
+                print('Warning: fsolve did not converge.')
+                print(msg)
+
+        u = phi_l(p)
+
+        ws[2] = u
+
+        # Find shock and rarefaction speeds
+        if p > p_l:
+            wave_types[0] = 'shock'
+            rho_l_star = rho_l*(1+beta*p/p_l)/(p/p_l+beta)
+            ws[0] = (rho_l*u_l - rho_l_star*u)/(rho_l - rho_l_star)
+            ws[1] = ws[0]
+        else:
+            wave_types[0] = 'raref'
+            rho_l_star = (p/p_l)**(1./gamma) * rho_l
+            c_l_star = np.sqrt(gamma*p/rho_l_star)
+            ws[0] = u_l - c_l
+            ws[1] = u - c_l_star
+
+        if p > p_r:
+            wave_types[2] = 'shock'
+            rho_r_star = rho_r*(1+beta*p/p_r)/(p/p_r+beta)
+            ws[4] = (rho_r*u_r - rho_r_star*u)/(rho_r - rho_r_star)
+            ws[3] = ws[4]
+        else:
+            wave_types[2] = 'raref'
+            rho_r_star = (p/p_r)**(1./gamma) * rho_r
+            c_r_star = np.sqrt(gamma*p/rho_r_star)
+            ws[3] = u+c_r_star
+            ws[4] = u_r + c_r
 
     # Find solution inside rarefaction fans (in primitive variables)
     def raref1(xi):
