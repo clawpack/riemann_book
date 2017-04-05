@@ -18,6 +18,9 @@ def conservative_to_primitive(rho, mom, E, gamma=1.4):
     p = (gamma-1.)*(E - 0.5*rho*u**2)
     return rho, u, p
 
+def cons_to_prim(q, gamma=1.4):
+    return conservative_to_primitive(*q,gamma=1.4)
+
 def sound_speed(rho, p, gamma=1.4):
     return np.sqrt(gamma*p/pospart(rho))
 
