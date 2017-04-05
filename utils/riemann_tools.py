@@ -302,15 +302,16 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None, color
 def make_plot_function(states_list,speeds_list,riemann_eval_list,
                        wave_types_list=None,names=None,layout='horizontal',
                        conserved_variables=None,colors=('multi','green','orange'),
-                       plot_chars=False):
+                       plot_chars=None):
     """
-    Utility function to create a plot_function that takes a single argument t.
+    Utility function to create a plot_function that takes a single argument t,
+    or (if plot_chars is specified) an argument t and an integer argument indicating
+    which characteristic family to plot.
     This function can then be used with ipywidgets.interact.
-    Version that takes an arbitrary list of sets of states and speeds in order to make a comparison.
 
     plot_chars: If provided, ordinary characteristics are included in the x-t plot.
-                The value of this argument should be a function c(q,x) that gives
-                the characteristic speed.
+                The value of this argument should be a list of functions c(q,x) that give
+                the characteristic speeds of the wave families (in order).
     """
     if type(states_list) is not list:
         states_list = [states_list]
@@ -326,7 +327,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
 
     num_axes = num_eqn + 1
 
-    def plot_function(t):
+    def plot_function(t,which_char=None):
         if layout == 'horizontal':
             fig_width = 4*num_axes
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,4))
@@ -350,13 +351,19 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
                 # We could use fig.legend here if we had the line plot handles
                 ax[1].legend(names,loc='best')
 
-            if plot_chars:
-                plot_characteristics(states,speeds,plot_chars,ax[0])
+            if which_char:
+                plot_characteristics(riemann_eval,plot_chars[which_char-1],ax[0])
 
         plt.show()
         return None
 
-    return plot_function
+    if plot_chars:
+        return plot_function
+    else:
+        def real_plot_function(t):
+            plot_function(t,None)
+
+        return real_plot_function
 
 def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=None, **kwargs):
     try:
