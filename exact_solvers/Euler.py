@@ -5,17 +5,59 @@ import matplotlib.pyplot as plt
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
 
+def pospart(x):
+    return np.maximum(1.e-15,x)
+
 def primitive_to_conservative(rho, u, p, gamma=1.4):
     mom = rho*u
     E   = p/(gamma-1.) + 0.5*rho*u**2
     return rho, mom, E
 
-
 def conservative_to_primitive(rho, mom, E, gamma=1.4):
-    u = mom/rho
+    u = mom/pospart(rho)
     p = (gamma-1.)*(E - 0.5*rho*u**2)
     return rho, u, p
 
+def sound_speed(rho, p, gamma=1.4):
+    return np.sqrt(gamma*p/pospart(rho))
+
+def beta(gamma):
+    return (gamma+1.)/(gamma-1.)
+
+def lambda1(q, xi, gamma=1.4):
+    "Characteristic speed for 1-waves."
+    rho, u, p = conservative_to_primitive(*q, gamma=gamma)
+    c = sound_speed(rho, p, gamma)
+    return u - c
+
+def lambda2(q, xi, gamma=1.4):
+    "Characteristic speed for 2-waves."
+    rho, u, p = conservative_to_primitive(*q, gamma=gamma)
+    return u
+
+def lambda3(q, xi, gamma=1.4):
+    "Characteristic speed for 3-waves."
+    rho, u, p = conservative_to_primitive(*q, gamma=gamma)
+    c = sound_speed(rho, p, gamma)
+    return u + c
+
+def integral_curve_1(p, rhostar, ustar, pstar, gamma=1.4):
+    """Velocity as a function of pressure for the 1-integral curve passing
+       through (rhostar, ustar, pstar)"""
+    c = sound_speed(rhostar, pstar, gamma)
+    return ustar + 2*c/(gamma-1.)* (1.-(pospart(p)/pstar)**((gamma-1.)/(2.*gamma)))
+
+def integral_curve_3(p, rhostar, ustar, pstar, gamma=1.4):
+    c = sound_speed(rhostar, pstar, gamma)
+    return ustar - 2*c/(gamma-1.)* (1.-(pospart(p)/pstar)**((gamma-1.)/(2.*gamma)))
+
+def hugoniot_locus_1(p, rhostar, ustar, pstar, gamma=1.4):
+    c = sound_speed(rhostar, pstar, gamma)
+    return ustar + 2*c/np.sqrt(2*gamma*(gamma-1.)) * ((1-p/pstar)/np.sqrt(1+beta(gamma)*p/pstar))
+
+def hugoniot_locus_3(p, rhostar, ustar, pstar, gamma=1.4):
+    c = sound_speed(rhostar, pstar, gamma)
+    return ustar - 2*c/np.sqrt(2*gamma*(gamma-1.)) * ((1-p/pstar)/np.sqrt(1+beta(gamma)*p/pstar))
 
 def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
     """Return the exact solution to the Riemann problem with initial states
@@ -28,26 +70,51 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
        If phase_plane_curves==True, then the appropriate Hugoniot Locus and/or
        integral curve is returned for the 1- and 3-waves.
     """
-
     rho_l, u_l, p_l = conservative_to_primitive(*q_l)
     rho_r, u_r, p_r = conservative_to_primitive(*q_r)
 
     # Compute left and right state sound speeds
-    c_l = np.sqrt(gamma*p_l/rho_l)
-    c_r = np.sqrt(gamma*p_r/rho_r)
-
-    beta = (gamma+1.)/(gamma-1.)
+    c_l = sound_speed(rho_l, p_l, gamma)
+    c_r = sound_speed(rho_r, p_r, gamma)
 
     ws = np.zeros(5)
     wave_types = ['', 'contact', '']
 
-    if u_l - u_r + 2*(c_l+c_r)/(gamma-1.) < 0:
+    if rho_l == 0:
+        # 3-rarefaction connecting right state to vacuum
+        p = 0.
+        rho_l_star = 0.
+        rho_r_star = 0.
+        u_vacuum_r = integral_curve_3(0., rho_r, u_r, p_r, gamma)
+        u = u_vacuum_r
+        ws[0] = 0.
+        ws[1] = 0.
+        ws[2] = 0.
+        ws[3] = u_vacuum_r
+        ws[4] = u_r + c_r
+        wave_types = ['contact', 'contact', 'raref']
+
+    elif rho_r == 0:
+        # 1-rarefaction connecting left state to vacuum
+        p = 0
+        rho_l_star = 0.
+        rho_r_star = 0.
+        u_vacuum_l = integral_curve_1(0., rho_l, u_l, p_l, gamma)
+        u = u_vacuum_l
+        ws[0] = u_l - c_l
+        ws[1] = u_vacuum_l
+        ws[2] = 0.
+        ws[3] = 0.
+        ws[4] = 0.
+        wave_types = ['raref', 'contact', 'contact']
+
+    elif u_l - u_r + 2*(c_l+c_r)/(gamma-1.) < 0:
         # Middle states are vacuum
         p = 0.
         rho_l_star = 0.
         rho_r_star = 0.
-        u_vacuum_l = u_l + 2*c_l/(gamma-1.)
-        u_vacuum_r = u_r - 2*c_r/(gamma-1.)
+        u_vacuum_l = integral_curve_1(0., rho_l, u_l, p_l, gamma)
+        u_vacuum_r = integral_curve_3(0., rho_r, u_r, p_r, gamma)
         u = 0.5*(u_vacuum_l + u_vacuum_r)
         ws[0] = u_l - c_l
         ws[1] = u_vacuum_l
@@ -57,25 +124,15 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         wave_types = ['raref', 'contact', 'raref']
 
     else:
-        # Define the integral curves and hugoniot loci
-        integral_curve_1 = lambda p: u_l + 2*c_l/(gamma-1.)* \
-                    (1.-(max(p,0)/p_l)**((gamma-1.)/(2.*gamma)))
-        integral_curve_3 = lambda p: u_r - 2*c_r/(gamma-1.)* \
-                    (1.-(max(p,0)/p_r)**((gamma-1.)/(2.*gamma)))
-        hugoniot_locus_1 = lambda p: u_l + 2*c_l/np.sqrt(2*gamma*(gamma-1.)) \
-                    * ((1-p/p_l)/np.sqrt(1+beta*p/p_l))
-        hugoniot_locus_3 = lambda p: u_r - 2*c_r/np.sqrt(2*gamma*(gamma-1.)) \
-                    * ((1-p/p_r)/np.sqrt(1+beta*p/p_r))
-
         # Check whether the 1-wave is a shock or rarefaction
         def phi_l(p):
-            if p >= p_l: return hugoniot_locus_1(p)
-            else: return integral_curve_1(p)
+            if p >= p_l: return hugoniot_locus_1(p, rho_l, u_l, p_l, gamma)
+            else: return integral_curve_1(p, rho_l, u_l, p_l, gamma)
 
         # Check whether the 1-wave is a shock or rarefaction
         def phi_r(p):
-            if p >= p_r: return hugoniot_locus_3(p)
-            else: return integral_curve_3(p)
+            if p >= p_r: return hugoniot_locus_3(p, rho_r, u_r, p_r, gamma)
+            else: return integral_curve_3(p, rho_r, u_r, p_r, gamma)
 
         phi = lambda p: phi_l(p)-phi_r(p)
 
@@ -98,39 +155,39 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         # Find shock and rarefaction speeds
         if p > p_l:
             wave_types[0] = 'shock'
-            rho_l_star = rho_l*(1+beta*p/p_l)/(p/p_l+beta)
+            rho_l_star = rho_l*(1+beta(gamma)*p/p_l)/(p/p_l+beta(gamma))
             ws[0] = (rho_l*u_l - rho_l_star*u)/(rho_l - rho_l_star)
             ws[1] = ws[0]
         else:
             wave_types[0] = 'raref'
             rho_l_star = (p/p_l)**(1./gamma) * rho_l
-            c_l_star = np.sqrt(gamma*p/rho_l_star)
+            c_l_star = sound_speed(rho_l_star, p, gamma)
             ws[0] = u_l - c_l
             ws[1] = u - c_l_star
 
         if p > p_r:
             wave_types[2] = 'shock'
-            rho_r_star = rho_r*(1+beta*p/p_r)/(p/p_r+beta)
+            rho_r_star = rho_r*(1+beta(gamma)*p/p_r)/(p/p_r+beta(gamma))
             ws[4] = (rho_r*u_r - rho_r_star*u)/(rho_r - rho_r_star)
             ws[3] = ws[4]
         else:
             wave_types[2] = 'raref'
             rho_r_star = (p/p_r)**(1./gamma) * rho_r
-            c_r_star = np.sqrt(gamma*p/rho_r_star)
-            ws[3] = u+c_r_star
+            c_r_star = sound_speed(rho_r_star, p, gamma)
+            ws[3] = u + c_r_star
             ws[4] = u_r + c_r
 
     # Find solution inside rarefaction fans (in primitive variables)
     def raref1(xi):
         u1 = ((gamma-1.)*u_l + 2*(c_l + xi))/(gamma+1.)
-        rho1 = (rho_l**gamma*(u1-xi)**2/(gamma*p_l))**(1./(gamma-1.))
-        p1 = p_l*(rho1/rho_l)**gamma
+        rho1 = (rho_l**gamma*(u1-xi)**2/pospart(gamma*p_l))**(1./(gamma-1.))
+        p1 = p_l*(rho1/pospart(rho_l))**gamma
         return rho1, u1, p1
 
     def raref3(xi):
         u3 = ((gamma-1.)*u_r - 2*(c_r - xi))/(gamma+1.)
-        rho3 = (rho_r**gamma*(xi-u3)**2/(gamma*p_r))**(1./(gamma-1.))
-        p3 = p_r*(rho3/rho_r)**gamma
+        rho3 = (rho_r**gamma*(xi-u3)**2/pospart(gamma*p_r))**(1./(gamma-1.))
+        p3 = p_r*(rho3/pospart(rho_r))**gamma
         return rho3, u3, p3
 
     q_l_star = np.squeeze(np.array(primitive_to_conservative(rho_l_star,u,p)))
@@ -138,11 +195,11 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
 
     states = np.column_stack([q_l,q_l_star,q_r_star,q_r])
     speeds = [[], ws[2], []]
-    if wave_types[0] is 'shock':
+    if wave_types[0] in ['shock','contact']:
         speeds[0] = ws[0]
     else:
         speeds[0] = (ws[0],ws[1])
-    if wave_types[2] is 'shock':
+    if wave_types[2] in ['shock','contact']:
         speeds[2] = ws[3]
     else:
         speeds[2] = (ws[3],ws[4])
@@ -176,7 +233,19 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         return primitive_to_conservative(rho_out,u_out,p_out)
 
     if phase_plane_curves:
-        return states, speeds, reval, wave_types, (p, phi_l, phi_r)
+        if wave_types[0] == 'raref':
+            phi1 = lambda p: integral_curve_1(p, rho_l, u_l, p_l, gamma)
+        elif wave_types[0] == 'shock':
+            phi1 = lambda p: hugoniot_locus_1(p, rho_l, u_l, p_l, gamma)
+        else:
+            phi1 = lambda p: p
+        if wave_types[2] == 'raref':
+            phi3 = lambda p: integral_curve_3(p, rho_r, u_r, p_r, gamma)
+        elif wave_types[2] == 'shock':
+            phi3 = lambda p: hugoniot_locus_3(p, rho_r, u_r, p_r, gamma)
+        else:
+            phi3 = lambda p: p
+        return states, speeds, reval, wave_types, (p, phi1, phi3)
     else:
         return states, speeds, reval, wave_types
 
@@ -194,8 +263,14 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None):
                                                phase_plane_curves=True)
     pm, w1, w3 = ppc
 
-    x = (left_state.Pressure,pm,right_state.Pressure)
-    y = (left_state.Velocity, w1(pm), right_state.Velocity)
+    x = [left_state.Pressure,pm,right_state.Pressure]
+    y = [left_state.Velocity, w1(pm), right_state.Velocity]
+    if left_state.Pressure == 0:
+        c_r = sound_speed(right_state.Density, right_state.Pressure, gamma)
+        y[1] = right_state.Velocity - 2*c_r/(gamma-1.)
+    if right_state.Pressure == 0:
+        c_l = sound_speed(left_state.Density, left_state.Pressure, gamma)
+        y[1] = left_state.Velocity - 2*c_l/(gamma-1.)
     xmax, xmin = max(x), min(x)
     ymax, ymin = max(y), min(y)
     dx, dy = xmax - xmin, ymax - ymin
@@ -204,31 +279,35 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None):
     ax.set_xlabel('Pressure (p)')
     ax.set_ylabel('Velocity (u)')
 
-    p_l = left_state.Pressure
-    pa = np.linspace(1.e-2,p_l)
-    pb = np.linspace(p_l,xmax+0.5*dx)
+    pa = np.linspace(0.,left_state.Pressure,500)
+    pb = np.linspace(left_state.Pressure,xmax+0.5*dx)
     ua = w1v(pa)
     ub = w1v(pb)
     if wave_types[0] == 'shock':
         style1 = '--r'
         style2 = '-r'
-    else:
+    elif wave_types[0] == 'raref':
         style1 = '-b'
         style2 = '--b'
+    else:
+        style1 = '-w'
+        style2 = '-w'
     ax.plot(pa,ua,style1)
     ax.plot(pb,ub,style2)
 
-    p_r = right_state.Pressure
-    pa = np.linspace(1.e-2,p_r)
-    pb = np.linspace(p_r,xmax+0.5*dx)
+    pa = np.linspace(0.,right_state.Pressure,500)
+    pb = np.linspace(right_state.Pressure,xmax+0.5*dx)
     ua = w3v(pa)
     ub = w3v(pb)
     if wave_types[2] == 'shock':
         style1 = '--r'
         style2 = '-r'
-    else:
+    elif wave_types[2] == 'raref':
         style1 = '-b'
         style2 = '--b'
+    else:
+        style1 = '-w'
+        style2 = '-w'
     ax.plot(pa,ua,style1)
     ax.plot(pb,ub,style2)
 
