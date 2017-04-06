@@ -60,10 +60,10 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
     sigma_r = sigma(eps_r, K1_r, K2_r)
 
     # Define the integral curves and hugoniot loci (u as a function of eps)
-    integral_curve_1   = lambda eps : u_l + 1./(3*K2_l*np.sqrt(rho_l))*( dsigma(eps,K1_l,K2_l)**1.5 - dsigma(eps_l,K1_l,K2_l)**1.5 )
-    integral_curve_2   = lambda eps : u_r - 1./(3*K2_r*np.sqrt(rho_r))*( dsigma(eps,K1_r,K2_r)**1.5 - dsigma(eps_r,K1_r,K2_r)**1.5 )
-    hugoniot_locus_1   = lambda eps : u_l - np.sqrt((sigma(eps,K1_l,K2_l)-sigma_l)*(eps-eps_l)/rho_l)
-    hugoniot_locus_2   = lambda eps : u_r - np.sqrt((sigma(eps,K1_r,K2_r)-sigma_r)*(eps-eps_r)/rho_r)
+    integral_curve_1   = lambda eps: u_l + 1./(3*K2_l*np.sqrt(rho_l))*( dsigma(eps,K1_l,K2_l)**1.5 - dsigma(eps_l,K1_l,K2_l)**1.5 )
+    integral_curve_2   = lambda eps: u_r - 1./(3*K2_r*np.sqrt(rho_r))*( dsigma(eps,K1_r,K2_r)**1.5 - dsigma(eps_r,K1_r,K2_r)**1.5 )
+    hugoniot_locus_1   = lambda eps: u_l - np.sqrt((sigma(eps,K1_l,K2_l)-sigma_l)*(eps-eps_l)/rho_l)
+    hugoniot_locus_2   = lambda eps: u_r - np.sqrt((sigma(eps,K1_r,K2_r)-sigma_r)*(eps-eps_r)/rho_r)
 
     # Check whether the 1-wave is a shock or rarefaction
     # It is a shock if eps^*_l > eps_l
@@ -80,8 +80,8 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
         eps_star_l = eps[0]
         eps_star_r = eps[1]
         resid = np.zeros(2)
-        resid[0] = phi_l(eps_star_l) - phi_r(eps_star_r) # Continuity of u (velocity)
-        resid[1] = sigma(eps_star_l,K1_l,K2_l) - sigma(eps_star_r,K1_r,K2_r) # Continuity of stress
+        resid[0] = phi_l(eps_star_l) - phi_r(eps_star_r)  # Continuity of u (velocity)
+        resid[1] = sigma(eps_star_l,K1_l,K2_l) - sigma(eps_star_r,K1_r,K2_r)  # Continuity of stress
         return resid
 
     # Compute middle states by finding curve intersection

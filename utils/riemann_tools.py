@@ -282,7 +282,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
     if variable_names is None:
         variable_names = ['q[%s]' % i for i in range(num_vars)]
 
-    q_sample = riemann_eval(np.linspace(-10,10))
+    q_sample = riemann_eval(np.linspace(min(-10,2*np.min(s[0])),max(10,2*np.max(s[-1]))))
     if derived_variables:
         q_sample = derived_variables(q_sample)
 
@@ -320,7 +320,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 def make_plot_function(states_list,speeds_list,riemann_eval_list,
                        wave_types_list=None,names=None,layout='horizontal',
                        variable_names=None,colors=('multi','green','orange'),
-                       plot_chars=None,derived_variables=None):
+                       plot_chars=None,derived_variables=None,aux=None):
     """
     Utility function to create a plot_function that takes a single argument t,
     or (if plot_chars is specified) an argument t and an integer argument indicating
@@ -373,7 +373,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
                 ax[1].legend(names,loc='best')
 
             if which_char:
-                plot_characteristics(riemann_eval,plot_chars[which_char-1],ax[0])
+                plot_characteristics(riemann_eval,plot_chars[which_char-1],aux=aux,axes=ax[0])
 
         plt.show()
         return None
@@ -482,11 +482,12 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
-def plot_characteristics(reval, char_speed, axes=None, extra_lines=None):
+def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=None):
     """
     Plot characteristics in x-t plane by integration.
 
     char_speed: Function char_speed(q,xi) that gives the characteristic speed.
+    aux: (aux_l, aux_r)
     axes: matplotlib axes on which to plot
     extra_lines: tuple of pairs of pairs; each entry specifies the endpoints of a line
                     along which to start more characteristics
@@ -507,7 +508,10 @@ def plot_characteristics(reval, char_speed, axes=None, extra_lines=None):
         xi = chars[:,i-1]/max(t[i-1],dt)
         q = np.array(reval(xi))
         for j in range(len(x)):
-            c[j] = char_speed(q[:,j],xi[j])
+            if aux:
+                c[j] = char_speed(q[:,j],xi[j],(xi[j]<=0)*aux[0]+(xi[j]>0)*aux[1])
+            else:
+                c[j] = char_speed(q[:,j],xi[j])
         chars[:,i] = chars[:,i-1] + dt*c  # Euler's method
 
     for j in range(len(x)):
@@ -527,7 +531,10 @@ def plot_characteristics(reval, char_speed, axes=None, extra_lines=None):
                     for i in range(1,len(t)):
                         xi = char[i-1]/max(t[i-1],dt)
                         q = np.array(reval(np.array([xi])))
-                        c = char_speed(q,xi)
+                        if aux:
+                            c = char_speed(q,xi,(xi<=0)*aux[0]+(xi>0)*aux[1])
+                        else:
+                            c = char_speed(q,xi)
                         char[i] = char[i-1] + dt*c
                     axes.plot(char,t,'-k',linewidth=0.2,zorder=0)
 
