@@ -1,9 +1,14 @@
+.ipynb_checkpoints
+None*.png
+f2py_output.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 
 # C extensions
 *.so
+*.so.dSYM
 
 # Distribution / packaging
 .Python
