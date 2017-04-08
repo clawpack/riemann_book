@@ -288,8 +288,8 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     for i in range(num_vars):
         ax[i+1].set_xlim((-1,1))
-        qmax = q_sample[i][:].max()
-        qmin = q_sample[i][:].min()
+        qmax = max(q_sample[i][:].max(), max(states[i,:]))
+        qmin = min(q_sample[i][:].min(), min(states[i,:]))
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
         ax[i+1].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))
@@ -299,6 +299,19 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             ax[i+1].set_ylabel(variable_names[i])
 
     x = np.linspace(-xmax,xmax,1000)
+    # Make sure we have a point between each pair of waves
+    # Important e.g. for nearly-pressureless gas
+    wavespeeds = []
+    for speed in s:
+        from numbers import Number
+        if isinstance(speed, Number):
+            wavespeeds.append(speed)
+        else:
+            wavespeeds += speed
+    wavespeeds = np.array(wavespeeds)
+    xm = 0.5*(wavespeeds[1:]+wavespeeds[:-1])*t
+    iloc = np.searchsorted(x,xm)
+    x = np.insert(x, iloc, xm)
 
     if t == 0:
         q = riemann_eval(x/1e-10)
@@ -309,7 +322,10 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
         q = derived_variables(q)
 
     for i in range(num_vars):
-        ax[i+1].plot(x,q[i][:],'-k',lw=2)
+        if color == 'multi':
+            ax[i+1].plot(x,q[i][:],'-k',lw=2)
+        else:
+            ax[i+1].plot(x,q[i][:],'-',color=color,lw=2)
         if i in fill:
             ax[i+1].fill_between(x,q[i][:],color='b')
             ax[i+1].set_ybound(lower=0)
