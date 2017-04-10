@@ -288,8 +288,8 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     for i in range(num_vars):
         ax[i+1].set_xlim((-1,1))
-        qmax = max(q_sample[i][:].max(), max(states[i,:]))
-        qmin = min(q_sample[i][:].min(), min(states[i,:]))
+        qmax = max(np.nanmax(q_sample[i][:]), np.nanmax(states[i,:]))
+        qmin = min(np.nanmin(q_sample[i][:]), np.nanmin(states[i,:]))
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
         ax[i+1].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))

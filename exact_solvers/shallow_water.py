@@ -174,18 +174,29 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
         speeds[1] = (ws[2],ws[3])
 
     def reval(xi):
+        """
+        Function that evaluates the Riemann solution for arbitrary xi = x/t.
+        Sets the solution to nan in an over-turning rarefaction wave
+        for illustration purposes of this non-physical solution.
+        """
         rar1 = raref1(xi)
         rar2 = raref2(xi)
         h_out = (xi<=ws[0])*h_l + \
             (xi>ws[0])*(xi<=ws[1])*rar1[0] + \
+            (xi>ws[1])*(xi<=ws[0])*1e9 +  \
             (xi>ws[1])*(xi<=ws[2])*h_m +  \
             (xi>ws[2])*(xi<=ws[3])*rar2[0] +  \
+            (xi>ws[3])*(xi<=ws[2])*1e9 +  \
             (xi>ws[3])*h_r
+        h_out[h_out>1e8] = np.nan
         hu_out = (xi<=ws[0])*hu_l + \
             (xi>ws[0])*(xi<=ws[1])*rar1[1] + \
+            (xi>ws[1])*(xi<=ws[0])*1e9 +  \
             (xi>ws[1])*(xi<=ws[2])*hu_m +  \
             (xi>ws[2])*(xi<=ws[3])*rar2[1] +  \
+            (xi>ws[3])*(xi<=ws[2])*1e9 +  \
             (xi>ws[3])*hu_r
+        hu_out[hu_out>1e8] = np.nan
         return h_out, hu_out
 
     return states, speeds, reval, wave_types
