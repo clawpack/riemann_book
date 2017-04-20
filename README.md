@@ -17,9 +17,9 @@ Parentheticals indicate concepts introduced for the first time.
 1. [Acoustics](https://github.com/clawpack/riemann_book/blob/master/Acoustics.ipynb) (eigenvalue analysis, characteristics, similarity solutions)
 2. [Traffic flow](https://github.com/clawpack/riemann_book/blob/master/Traffic_flow.ipynb) (shocks, rarefactions, conservation, jump conditions)
 3. Burgers' (weak solutions)
-4. [Shallow water](https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb) (jump conditions for a nonlinear system; Riemann invariants, integral curves, Hugoniot Loci) (see also [this](http://nbviewer.jupyter.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb) and [this](http://nbviewer.jupyter.org/gist/rjleveque/8994740))
+4. [Shallow water](https://github.com/clawpack/riemann_book/blob/master/Shallow_water.ipynb) (jump conditions for a nonlinear system; Riemann invariants, integral curves, Hugoniot Loci) (see also [this](http://nbviewer.jupyter.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb) and [this](http://nbviewer.jupyter.org/gist/rjleveque/8994740))
 5. How to solve the Riemann problem exactly -- go in depth into SW solver, including Newton iteration to find root of piecewise function
-5. Shallow water with a tracer (contact waves)
+5. [Shallow water with a tracer](https://github.com/clawpack/riemann_book/blob/master/Shallow_tracer.ipynb) (contact waves)
 5. [Euler equations](https://github.com/clawpack/riemann_book/blob/master/Euler_equations.ipynb)
 
 **Part II: Approximate solvers**

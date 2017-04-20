@@ -13,13 +13,14 @@ def primitive_to_conservative(h, u):
     hu = h*u
     return h, hu
 
-
 def conservative_to_primitive(h, hu):
     assert np.all(h>=0)
     # We should instead check that hu is zero everywhere that h is
     u = hu/pospart(h)
     return h, u
 
+def cons_to_prim(q):
+    return conservative_to_primitive(*q)
 
 def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs=False):
     """Return the exact solution to the Riemann problem with initial states q_l, q_r.
@@ -173,18 +174,29 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
         speeds[1] = (ws[2],ws[3])
 
     def reval(xi):
+        """
+        Function that evaluates the Riemann solution for arbitrary xi = x/t.
+        Sets the solution to nan in an over-turning rarefaction wave
+        for illustration purposes of this non-physical solution.
+        """
         rar1 = raref1(xi)
         rar2 = raref2(xi)
         h_out = (xi<=ws[0])*h_l + \
             (xi>ws[0])*(xi<=ws[1])*rar1[0] + \
+            (xi>ws[1])*(xi<=ws[0])*1e9 +  \
             (xi>ws[1])*(xi<=ws[2])*h_m +  \
             (xi>ws[2])*(xi<=ws[3])*rar2[0] +  \
+            (xi>ws[3])*(xi<=ws[2])*1e9 +  \
             (xi>ws[3])*h_r
+        h_out[h_out>1e8] = np.nan
         hu_out = (xi<=ws[0])*hu_l + \
             (xi>ws[0])*(xi<=ws[1])*rar1[1] + \
+            (xi>ws[1])*(xi<=ws[0])*1e9 +  \
             (xi>ws[1])*(xi<=ws[2])*hu_m +  \
             (xi>ws[2])*(xi<=ws[3])*rar2[1] +  \
+            (xi>ws[3])*(xi<=ws[2])*1e9 +  \
             (xi>ws[3])*hu_r
+        hu_out[hu_out>1e8] = np.nan
         return h_out, hu_out
 
     return states, speeds, reval, wave_types
@@ -217,17 +229,18 @@ def hugoniot_locus(h, hstar, hustar, wave_family, g=1., y_axis='u'):
     d = np.sqrt(g*hstar*(1 + alpha/hstar)*(1 + alpha/(2*hstar)))
     if wave_family == 1:
         if y_axis == 'u':
-            return (hustar + alpha*(ustar - d))/h
+            return (hustar + alpha*(ustar - d))/pospart(h)
         else:
             return hustar + alpha*(ustar - d)
     else:
         if y_axis == 'u':
-            return (hustar + alpha*(ustar + d))/h
+            return (hustar + alpha*(ustar + d))/pospart(h)
         else:
             return hustar + alpha*(ustar + d)
 
 
-def phase_plane_curves(hstar, hustar, state, wave_family='both', y_axis='u', ax=None):
+def phase_plane_curves(hstar, hustar, state, g=1., wave_family='both', y_axis='u', ax=None,
+                       plot_unphysical=False):
     """
     Plot the curves of points in the h - u or h-hu phase plane that can be
     connected to (hstar,hustar).
@@ -241,37 +254,37 @@ def phase_plane_curves(hstar, hustar, state, wave_family='both', y_axis='u', ax=
     h = np.linspace(0, hstar, 200)
 
     if wave_family in [1,'both']:
-        if state == 'qleft':
-            u = integral_curve(h, hstar, hustar, 1, y_axis=y_axis)
+        if state == 'qleft' or plot_unphysical:
+            u = integral_curve(h, hstar, hustar, 1, g, y_axis=y_axis)
             ax.plot(h,u,'b', label='1-rarefactions')
-        else:
-            u = hugoniot_locus(h, hstar, hustar, 1, y_axis=y_axis)
+        if state == 'qright' or plot_unphysical:
+            u = hugoniot_locus(h, hstar, hustar, 1, g, y_axis=y_axis)
             ax.plot(h,u,'--r', label='1-shocks')
 
     if wave_family in [2,'both']:
-        if state == 'qleft':
-            u = hugoniot_locus(h, hstar, hustar, 2, y_axis=y_axis)
+        if state == 'qleft' or plot_unphysical:
+            u = hugoniot_locus(h, hstar, hustar, 2, g, y_axis=y_axis)
             ax.plot(h,u,'--r', label='2-shocks')
-        else:
-            u = integral_curve(h, hstar, hustar, 2, y_axis=y_axis)
+        if state == 'qright' or plot_unphysical:
+            u = integral_curve(h, hstar, hustar, 2, g, y_axis=y_axis)
             ax.plot(h,u,'b', label='2-rarefactions')
 
     h = np.linspace(hstar, 3, 200)
 
     if wave_family in [1,'both']:
-        if state == 'qright':
-            u = integral_curve(h, hstar, hustar, 1, y_axis=y_axis)
+        if state == 'qright' or plot_unphysical:
+            u = integral_curve(h, hstar, hustar, 1, g, y_axis=y_axis)
             ax.plot(h,u,'--b', label='1-rarefactions')
-        else:
-            u = hugoniot_locus(h, hstar, hustar, 1, y_axis=y_axis)
+        if state == 'qleft' or plot_unphysical:
+            u = hugoniot_locus(h, hstar, hustar, 1, g, y_axis=y_axis)
             ax.plot(h,u,'r', label='1-shocks')
 
     if wave_family in [2,'both']:
-        if state == 'qright':
-            u = hugoniot_locus(h, hstar, hustar, 2, y_axis=y_axis)
+        if state == 'qright' or plot_unphysical:
+            u = hugoniot_locus(h, hstar, hustar, 2, g, y_axis=y_axis)
             ax.plot(h,u,'r', label='2-shocks')
-        else:
-            u = integral_curve(h, hstar, hustar, 2, y_axis=y_axis)
+        if state == 'qleft' or plot_unphysical:
+            u = integral_curve(h, hstar, hustar, 2, g, y_axis=y_axis)
             ax.plot(h,u,'--b', label='2-rarefactions')
 
     # plot and label the point (hstar, hustar)
@@ -315,11 +328,11 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
                     (dry_velocity_l+dry_velocity_r)
 
     xmax, xmin = max(x), min(x)
-    ymax, ymin = max(y), min(y)
-    dx, dy = xmax - xmin, ymax - ymin
+    ymax = max(abs(y))
+    dx = xmax - xmin
     ymax = max(abs(y))
     ax.set_xlim(0, xmax + 0.5*dx)
-    ax.set_ylim(-ymax - 0.5*dy, ymax + 0.5*dy)
+    ax.set_ylim(-1.5*ymax, 1.5*ymax)
     ax.set_xlabel('Depth (h)')
     if y_axis == 'u':
         ax.set_ylabel('Velocity (u)')
@@ -359,7 +372,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
         ax.plot(xp,yp,'ok',markersize=10)
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
-        ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
+        ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax,label)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
