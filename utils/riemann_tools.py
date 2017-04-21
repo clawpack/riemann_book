@@ -155,7 +155,6 @@ def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     if ax is None:
         fig, ax = plt.subplots()
     ax.plot(q0,q1,'o-k')
-    #ax.set_title('phase space: %s -- %s' % (label_h,label_v))
     ax.set_title('States in phase space')
     ax.axis('equal')
     dq0 = q0.max() - q0.min()
@@ -280,7 +279,10 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     # Plot conserved quantities as function of x for fixed t
     if variable_names is None:
-        variable_names = ['q[%s]' % i for i in range(num_vars)]
+        if num_vars == 1:
+            variable_names = ['q']
+        else:
+            variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
 
     q_sample = riemann_eval(np.linspace(min(-10,2*np.min(s[0])),max(10,2*np.max(s[-1]))))
     if derived_variables:
