@@ -182,7 +182,7 @@ def plot_phase_3d(states):
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
 
 
-def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi', t_pointer=True):
+def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi', t_pointer=False):
 
     num_eqn,num_states = states.shape
 
