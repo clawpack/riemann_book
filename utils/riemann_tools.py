@@ -225,7 +225,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
 
 def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                  color='multi', layout='horizontal', variable_names=None,
-                 t_pointer=True, extra_axes=False, fill=(),
+                 t_pointer=False, extra_axes=False, fill=(),
                  derived_variables=None):
     """
     Take an array of states and speeds s and plot the solution at time t.
