@@ -426,26 +426,81 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
     return anim
 
 
-def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
-                              i_vel=1, fig=None, color='b', num_left=10,
-                              num_right=10, xmax=None, rho_left=None,
-                              rho_right=None,ax=None,t=None):
+def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
+                              i_vel=1, num_left=10, num_right=10, 
+                              rho_left=None, rho_right=None, xmax=None):
     """
-    Take an array of states and speeds s and plot the solution in the x-t plane,
+    Take an array of speeds s and compute particle trajectories.
+
+    Only useful for systems where one component is velocity.
+    i_vel should be the component of velocity in this case.
+
+    For rarefaction waves, the corresponding entry in s should be tuple of 
+    two values, which are the wave speeds that bound the rarefaction fan.
+
+    """
+
+    xmax_auto = (xmax is None)
+
+    tmax = 1.0
+    if xmax_auto:
+        xmax = 0.
+    for i in range(len(s)):
+        if wave_types[i] in ['shock','contact']:
+            x1 = tmax * s[i]
+            if xmax_auto:
+                xmax = max(xmax,abs(x1))
+        else:  # rarefaction fan
+            speeds = np.linspace(s[i][0],s[i][1],5)
+            for ss in speeds:
+                x1 = tmax * ss
+                if xmax_auto:
+                    xmax = max(xmax,abs(x1))
+
+    xx_left = np.linspace(-xmax,0,num_left)
+    xx_right = np.linspace(0,xmax,num_right)
+
+    # instead define spacing based on density if available:
+    if rho_left is not None:
+        xx_left = np.arange(-xmax, 0, xmax*0.02/(rho_left + 1e-8))
+    if rho_right is not None:
+        xx_right = np.arange(0, xmax, xmax*0.02/(rho_right + 1e-8))
+
+    xx = np.hstack((xx_left, xx_right))
+    x_traj = [xx]
+
+    nsteps = 200.
+    dt = 1./nsteps
+    t_traj = np.linspace(0,1,nsteps+1)
+    q_old = riemann_eval(xx/1e-15)
+    for n in range(1,len(t_traj)):
+        q_new = riemann_eval(xx/t_traj[n])
+        v_mid = 0.5*(q_old[i_vel,:] + q_new[i_vel,:])
+        xx = xx + dt*v_mid
+        x_traj.append(xx)
+        q_old = copy.copy(q_new)
+
+    x_traj = np.array(x_traj)
+    return x_traj, t_traj, xmax
+
+
+def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b', 
+                              xmax=None, ax=None,t=None):
+    """
+    Take an array of speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
 
     Only useful for systems where one component is velocity.
-    i_vel should be the index of this component.
 
-    For rarefaction waves, the corresponding entry in s should be tuple of two values,
-    which are the wave speeds that bound the rarefaction fan.
+    For rarefaction waves, the corresponding entry in s should be tuple of 
+    two values, which are the wave speeds that bound the rarefaction fan.
 
     """
+
     colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
     if wave_types is None:
         wave_types = ['contact']*len(s)
 
-    num_eqn,num_states = states.shape
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -471,32 +526,8 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
 
     ax.set_xlim(-xmax,xmax)
 
-    xx_left = np.linspace(-xmax,0,num_left)
-    xx_right = np.linspace(0,xmax,num_right)
-
-    # instead define spacing based on density if available:
-    if rho_left is not None:
-        xx_left = np.arange(-xmax, 0, xmax*0.02/(rho_left + 1e-8))
-    if rho_right is not None:
-        xx_right = np.arange(0, xmax, xmax*0.02/(rho_right + 1e-8))
-
-    xx = np.hstack((xx_left, xx_right))
-    xtraj = [xx]
-
-    nsteps = 200.
-    dt = 1./nsteps
-    tt = np.linspace(0,1,nsteps+1)
-    q_old = riemann_eval(xx/1e-15)
-    for n in range(1,len(tt)):
-        q_new = riemann_eval(xx/tt[n])
-        v_mid = 0.5*(q_old[i_vel,:] + q_new[i_vel,:])
-        xx = xx + dt*v_mid
-        xtraj.append(xx)
-        q_old = copy.copy(q_new)
-
-    xtraj = np.array(xtraj)
-    for j in range(xtraj.shape[1]):
-        plt.plot(xtraj[:,j],tt,'k')
+    for j in range(x_traj.shape[1]):
+        plt.plot(x_traj[:,j],t_traj,'k')
 
     if t is not None:
         ax.plot([-xmax,xmax],[t,t],'--k',linewidth=0.8)
