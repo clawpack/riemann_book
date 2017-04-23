@@ -3,7 +3,6 @@ import sys
 sys.path.append('../utils')
 from utils import riemann_tools
 
-
 def riemann_traffic_exact(q_l,q_r):
     r"""Exact solution to the Riemann problem for the LWR traffic model."""
     f = lambda q: q*(1-q)
@@ -33,7 +32,8 @@ def riemann_traffic_exact(q_l,q_r):
             return q
 
     return states, speeds, reval, wave_types
-def plot_car_trajectories(q_l,q_r,ax=None):
+
+def plot_car_trajectories(q_l,q_r,ax=None,t=None,xmax=None):
     states, speeds, reval, wave_types = riemann_traffic_exact(q_l,q_r)
     def reval_with_speed(xi):
         q = reval(xi)
@@ -41,4 +41,4 @@ def plot_car_trajectories(q_l,q_r,ax=None):
         qu = np.vstack((q,u))
         return qu
     riemann_tools.plot_riemann_trajectories(states, speeds, reval_with_speed, wave_types,
-                                            xmax=0.5,rho_left=q_l, rho_right=q_r,ax=ax)
+                                            xmax=xmax,rho_left=q_l, rho_right=q_r,ax=ax,t=t)
