@@ -301,19 +301,20 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             ax[i+1].set_ylabel(variable_names[i])
 
     x = np.linspace(-xmax,xmax,1000)
-    # Make sure we have a point between each pair of waves
-    # Important e.g. for nearly-pressureless gas
-    wavespeeds = []
-    for speed in s:
-        from numbers import Number
-        if isinstance(speed, Number):
-            wavespeeds.append(speed)
-        else:
-            wavespeeds += speed
-    wavespeeds = np.array(wavespeeds)
-    xm = 0.5*(wavespeeds[1:]+wavespeeds[:-1])*t
-    iloc = np.searchsorted(x,xm)
-    x = np.insert(x, iloc, xm)
+    if t>0:
+        # Make sure we have a point between each pair of waves
+        # Important e.g. for nearly-pressureless gas
+        wavespeeds = []
+        for speed in s:
+            from numbers import Number
+            if isinstance(speed, Number):
+                wavespeeds.append(speed)
+            else:
+                wavespeeds += speed
+        wavespeeds = np.array(wavespeeds)
+        xm = 0.5*(wavespeeds[1:]+wavespeeds[:-1])*t
+        iloc = np.searchsorted(x,xm)
+        x = np.insert(x, iloc, xm)
 
     if t == 0:
         q = riemann_eval(x/1e-10)
