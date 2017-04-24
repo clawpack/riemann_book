@@ -462,9 +462,14 @@ def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
 
     # instead define spacing based on density if available:
     if rho_left is not None:
-        xx_left = np.arange(-xmax, 0, xmax*0.02/(rho_left + 1e-8))
+        #xx_left = np.arange(-xmax, 0, xmax*0.02/(rho_left + 1e-8))
+        xx_1 = list(-np.arange(0, xmax, xmax*0.02/(rho_left + 1e-8)))
+        xx_1.reverse()
+        xx_left = np.array(xx_1)
+        
     if rho_right is not None:
         xx_right = np.arange(0, xmax, xmax*0.02/(rho_right + 1e-8))
+        xx_right = xx_right[1:]  # omit repeated 0
 
     xx = np.hstack((xx_left, xx_right))
     x_traj = [xx]
