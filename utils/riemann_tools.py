@@ -155,7 +155,6 @@ def plot_phase(states, i_h=0, i_v=1, ax=None, label_h=None, label_v=None):
     if ax is None:
         fig, ax = plt.subplots()
     ax.plot(q0,q1,'o-k')
-    #ax.set_title('phase space: %s -- %s' % (label_h,label_v))
     ax.set_title('States in phase space')
     ax.axis('equal')
     dq0 = q0.max() - q0.min()
@@ -182,7 +181,7 @@ def plot_phase_3d(states):
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
 
 
-def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi', t_pointer=True):
+def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi', t_pointer=False):
 
     num_eqn,num_states = states.shape
 
@@ -226,7 +225,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
 
 def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                  color='multi', layout='horizontal', variable_names=None,
-                 t_pointer=True, extra_axes=False, fill=(),
+                 t_pointer=False, extra_axes=False, fill=(),
                  derived_variables=None):
     """
     Take an array of states and speeds s and plot the solution at time t.
@@ -280,7 +279,10 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     # Plot conserved quantities as function of x for fixed t
     if variable_names is None:
-        variable_names = ['q[%s]' % i for i in range(num_vars)]
+        if num_vars == 1:
+            variable_names = ['q']
+        else:
+            variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
 
     q_sample = riemann_eval(np.linspace(min(-10,2*np.min(s[0])),max(10,2*np.max(s[-1]))))
     if derived_variables:
@@ -299,19 +301,20 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             ax[i+1].set_ylabel(variable_names[i])
 
     x = np.linspace(-xmax,xmax,1000)
-    # Make sure we have a point between each pair of waves
-    # Important e.g. for nearly-pressureless gas
-    wavespeeds = []
-    for speed in s:
-        from numbers import Number
-        if isinstance(speed, Number):
-            wavespeeds.append(speed)
-        else:
-            wavespeeds += speed
-    wavespeeds = np.array(wavespeeds)
-    xm = 0.5*(wavespeeds[1:]+wavespeeds[:-1])*t
-    iloc = np.searchsorted(x,xm)
-    x = np.insert(x, iloc, xm)
+    if t>0:
+        # Make sure we have a point between each pair of waves
+        # Important e.g. for nearly-pressureless gas
+        wavespeeds = []
+        for speed in s:
+            from numbers import Number
+            if isinstance(speed, Number):
+                wavespeeds.append(speed)
+            else:
+                wavespeeds += speed
+        wavespeeds = np.array(wavespeeds)
+        xm = 0.5*(wavespeeds[1:]+wavespeeds[:-1])*t
+        iloc = np.searchsorted(x,xm)
+        x = np.insert(x, iloc, xm)
 
     if t == 0:
         q = riemann_eval(x/1e-10)
@@ -427,7 +430,7 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
 def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
                               i_vel=1, fig=None, color='b', num_left=10,
                               num_right=10, xmax=None, rho_left=None,
-                              rho_right=None,ax=None):
+                              rho_right=None,ax=None,t=None):
     """
     Take an array of states and speeds s and plot the solution in the x-t plane,
     along with particle trajectories.
@@ -495,6 +498,9 @@ def plot_riemann_trajectories(states, s, riemann_eval, wave_types=None,
     xtraj = np.array(xtraj)
     for j in range(xtraj.shape[1]):
         plt.plot(xtraj[:,j],tt,'k')
+
+    if t is not None:
+        ax.plot([-xmax,xmax],[t,t],'--k',linewidth=0.8)
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
