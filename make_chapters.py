@@ -2,8 +2,13 @@ import re
 import subprocess
 
 chapters = ['Traffic_flow',
+            'Shallow_water',
+            'Euler_approximate_solvers',
             'Traffic_variable_speed',
-            'Shallow_water']
+            'Nonlinear_elasticity',
+            'Euler_equations_TammannEOS',
+            'Pressureless_flow',
+            'Kitchen_sink_problem']
 
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
