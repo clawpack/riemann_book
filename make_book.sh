@@ -4,7 +4,7 @@
 # Need to install bookbook
 
 rm 0?-*.ipynb
-python make_book.py
+python make_chapters.py
 python3 -m bookbook.latex --output-file riemann --template riemann.tplx
 pdflatex riemann
 bibtex riemann
