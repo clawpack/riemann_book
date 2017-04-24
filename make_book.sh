@@ -9,3 +9,4 @@ python3 -m bookbook.latex --output-file riemann --template riemann.tplx
 pdflatex riemann
 bibtex riemann
 pdflatex riemann
+pdflatex riemann
