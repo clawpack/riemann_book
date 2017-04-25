@@ -5,7 +5,7 @@
  - `$` refers to the native bash shell prompt on your computer, 
  - `root@...#` refers to the bash shell prompt within the Docker container, once you have that running.
 
-First install [Docker](https://www.docker.com/).
+First install [Docker](https://www.docker.com/).  If it is installed, make sure it is running.
 
 Then, in this directory (containing the file `Dockerfile`), do:
 
