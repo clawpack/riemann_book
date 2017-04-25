@@ -42,12 +42,11 @@ If this brings down new Riemann solvers, you will need to compile them and re-in
     root@...# cd /clawpack-5.4.0
     root@...# pip install -e .
     
-### Test our WIP `Shallow_water` notebook 
+### Update to the latest version of the notebooks
 
     root@...# cd /riemann_book
-    root@...# git remote add ketch https://github.com/ketch/riemann_book
-    root@...# git fetch ketch
-    root@...# git checkout ketch/shallow_water
+    root@...# git checkout master
+    root@...# git pull
     root@...# cd /
     
 ### Notebook server:
