@@ -427,17 +427,16 @@ def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=No
 
 
 def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
-                              i_vel=1, num_left=10, num_right=10, 
-                              rho_left=None, rho_right=None, xmax=None):
+                                 i_vel=1, num_left=10, num_right=10,
+                                 rho_left=None, rho_right=None, xmax=None):
     """
     Take an array of speeds s and compute particle trajectories.
 
     Only useful for systems where one component is velocity.
     i_vel should be the component of velocity in this case.
 
-    For rarefaction waves, the corresponding entry in s should be tuple of 
+    For rarefaction waves, the corresponding entry in s should be tuple of
     two values, which are the wave speeds that bound the rarefaction fan.
-
     """
 
     xmax_auto = (xmax is None)
@@ -466,7 +465,7 @@ def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
         xx_1 = list(-np.arange(0, xmax, xmax*0.02/(rho_left + 1e-8)))
         xx_1.reverse()
         xx_left = np.array(xx_1)
-        
+
     if rho_right is not None:
         xx_right = np.arange(0, xmax, xmax*0.02/(rho_right + 1e-8))
         xx_right = xx_right[1:]  # omit repeated 0
@@ -489,7 +488,7 @@ def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
     return x_traj, t_traj, xmax
 
 
-def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b', 
+def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
                               xmax=None, ax=None,t=None):
     """
     Take an array of speeds s and plot the solution in the x-t plane,
@@ -497,7 +496,7 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
 
     Only useful for systems where one component is velocity.
 
-    For rarefaction waves, the corresponding entry in s should be tuple of 
+    For rarefaction waves, the corresponding entry in s should be a tuple of
     two values, which are the wave speeds that bound the rarefaction fan.
 
     """
