@@ -53,31 +53,31 @@ def lambda3(q, xi, gamma = 1.4, pinf = 0.0):
     be = beta(p, gamma, pinf)
     return u + np.sqrt((gamma*(pospart(p)+pinf+be)/al)/pospart(rho))
 
-#def integral_curve_1(p, rhol, ul, pl, gammal = 1.4, pinfl = 0.0):
-    #"""Velocity as a function of pressure for the 1-integral curve passing
-       #through (rhostar, ustar, pstar)"""
-    #cl = sound_speed(rhol, pl, gammal, pinfl)
-    #pbl = pospart(pl + pinfl)
-    #gl1 = gammal - 1.0  
-    #return ul + 2*cl/gl1*(1 - (pospart(p + pinfl)/pbl)**(gl1/(2.0*gammal)))
+def integral_curve_1(p, rhol, ul, pl, gammal = 1.4, pinfl = 0.0):
+    """Velocity as a function of pressure for the 1-integral curve passing
+       through (rhostar, ustar, pstar)"""
+    cl = sound_speed(rhol, pl, gammal, pinfl)
+    pbl = pospart(pl + pinfl)
+    gl1 = gammal - 1.0  
+    return ul + 2*cl/gl1*(1 - (pospart(p + pinfl)/pbl)**(gl1/(2.0*gammal)))
 
-#def integral_curve_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
-    #c = sound_speed(rhor, pr, gammar, pinfr)
-    #pbr = pospart(pr + pinfr)
-    #gr1 = gammar - 1.0  
-    #return ur - 2*cr/gr1*(1 - (pospart(p + pinfr)/pbr)**(gr1/(2.0*gammar)))
+def integral_curve_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
+    c = sound_speed(rhor, pr, gammar, pinfr)
+    pbr = pospart(pr + pinfr)
+    gr1 = gammar - 1.0  
+    return ur - 2*cr/gr1*(1 - (pospart(p + pinfr)/pbr)**(gr1/(2.0*gammar)))
 
-#def hugoniot_locus_1(p, rhol, ul, pl, gammar = 1.4, pinfr = 0.0):
-    #c = sound_speed(rhol, pl, gammal, pinfl)
-    #al = alpha(rhol, gammal)
-    #be = beta(pl, gammal, pinfl)
-    #return ul - (p - pl)*np.sqrt(al/(p + pinfl + be))
+def hugoniot_locus_1(p, rhol, ul, pl, gammar = 1.4, pinfr = 0.0):
+    c = sound_speed(rhol, pl, gammal, pinfl)
+    al = alpha(rhol, gammal)
+    be = beta(pl, gammal, pinfl)
+    return ul - (p - pl)*np.sqrt(al/(p + pinfl + be))
 
-#def hugoniot_locus_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
-    #c = sound_speed(rhor, pr, gammar, pinfr)
-    #ar = alpha(rhor, gammar)
-    #be = beta(pr, gammar, pinfr)
-    #return ur + (p - pr)*np.sqrt(ar/(p + pinfr + be))
+def hugoniot_locus_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
+    c = sound_speed(rhor, pr, gammar, pinfr)
+    ar = alpha(rhor, gammar)
+    be = beta(pr, gammar, pinfr)
+    return ur + (p - pr)*np.sqrt(ar/(p + pinfr + be))
 
 
 def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'primitive'):
