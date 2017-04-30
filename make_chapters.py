@@ -1,7 +1,8 @@
 import re
 import subprocess
 
-chapters = ['Traffic_flow',
+chapters = ['Preface',
+            'Traffic_flow',
             'Shallow_water',
             'Euler_approximate_solvers',
             'Traffic_variable_speed',

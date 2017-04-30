@@ -17,7 +17,7 @@
 ((* endblock predoc *))
 
 ((* block docclass *))
-\documentclass{report}
+\documentclass{SIAMGHbook2016}
 ((* endblock docclass *))
 
 ((* block author *))
@@ -30,6 +30,7 @@
 
 ((* block title *))
 \title{The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}
 ((* endblock title *))
 
 ((* block maketitle *))
