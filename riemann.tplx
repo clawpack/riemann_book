@@ -1,9 +1,32 @@
-((*- extends 'report.tplx' -*))
+% Default to the notebook output style
+((* if not cell_style is defined *))
+    ((* set cell_style = 'style_ipython.tplx' *))
+((* endif *))
 
-% Uncomment this to add authors
-%((* block author *))
-%\author{David I. Ketcheson \and Randall J. LeVeque \and Mauricio del Razo Sarmina}
-%((* endblock author *))
+% Inherit from the specified cell style.
+((* extends cell_style *))
+
+
+%===============================================================================
+% Latex Book
+%===============================================================================
+
+((* block predoc *))
+    ((( super() )))
+    ((* block tableofcontents *))\tableofcontents((* endblock tableofcontents *))
+((* endblock predoc *))
+
+((* block docclass *))
+\documentclass{report}
+((* endblock docclass *))
+
+((* block author *))
+\author{David I. Ketcheson \and Randall J. LeVeque \and Mauricio del Razo Sarmina}
+((* endblock author *))
+
+((* block markdowncell scoped *))
+((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'json',extra_args=[]) | resolve_references | convert_pandoc('json','latex', extra_args=["--chapters"]) )))
+((* endblock markdowncell *))
 
 ((* block title *))
 \title{The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers}

@@ -17,6 +17,9 @@ for i, chapter in enumerate(chapters):
     output_filename = str(i).zfill(2)+'-'+filename
     with open(output_filename, "w") as output:
         for line in lines:
+            line = re.sub(r'from ipywidgets import interact', 'from utils.snapshot_widgets import interact', line)
+            for j, chapter_name in enumerate(chapters):
+                line = re.sub(chapter_name+'.ipynb', str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
             output.write(re.sub(r'from ipywidgets import interact', 'from utils.snapshot_widgets import interact', line))
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",
             "--ExecutePreprocessor.kernel_name=python2",
