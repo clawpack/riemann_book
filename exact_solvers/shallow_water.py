@@ -426,9 +426,9 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0):
 
     num_vars = len(primitive_variables)
 
-    def plot_shallow_water_demo(time=0.5):
-        q = np.array(reval(x/time))
-        if time<0.02:
+    def plot_shallow_water_demo(t=0.5):
+        q = np.array(reval(x/t))
+        if t<0.02:
             q[1] = np.where(x<0, q_l[1], q_r[1])
 
         primitive = shallow_water.conservative_to_primitive(q[0],q[1])
@@ -444,7 +444,7 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0):
 
             if i==0:
                 # plot stripes only on depth plot
-                n = find(time > t_traj)
+                n = find(t > t_traj)
                 if len(n)==0:
                     n = 0
                 else:
