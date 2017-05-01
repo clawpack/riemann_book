@@ -426,14 +426,19 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0):
 
     num_vars = len(primitive_variables)
 
-    def plot_shallow_water_demo(t=0.5):
+    def plot_shallow_water_demo(t=0.5, fig=0):
         q = np.array(reval(x/t))
         if t<0.02:
             q[1] = np.where(x<0, q_l[1], q_r[1])
 
         primitive = shallow_water.conservative_to_primitive(q[0],q[1])
 
-        fig = plt.figure(figsize=(18,6))
+        if fig == 0:
+            fig = plt.figure(figsize=(18,6))
+            show_fig = True
+        else:
+            show_fig = False
+
         axes = [0]*num_vars
         for i in range(num_vars):
             axes[i] = fig.add_subplot(1,num_vars,i+1)
@@ -479,6 +484,7 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0):
 
         axes[0].set_ylim(0,3.5)
         axes[1].set_ylim(-1,1)
-        plt.show()
+        if show_fig:
+            plt.show()
 
     return plot_shallow_water_demo
