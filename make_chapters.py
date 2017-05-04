@@ -11,6 +11,8 @@ chapters = ['Preface',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
+#chapters = ['Traffic_flow']
+
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
     with open(filename, "r") as source:
