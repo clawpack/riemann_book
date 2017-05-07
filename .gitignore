@@ -1,6 +1,14 @@
 .ipynb_checkpoints
 None*.png
 f2py_output.txt
+_output/
+*.bbl
+*.blg
+*.out
+*.toc
+??-*.ipynb
+combined_files/
+html/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

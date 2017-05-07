@@ -175,7 +175,7 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
         return states, speeds, reval, wave_types
 
 
-def phase_plane_plot(q_l, q_r, aux_l, aux_r):
+def phase_plane_plot(q_l, q_r, aux_l, aux_r, ax=None):
     r"""Plot the Hugoniot loci or integral curves in the epsilon-u plane."""
     # Solve Riemann problem
     ex_states, ex_speeds, reval, wave_types, ppc = \
@@ -187,7 +187,8 @@ def phase_plane_plot(q_l, q_r, aux_l, aux_r):
     u_r = q_r[1]/rho_r
 
     # Set plot bounds
-    fig, ax = plt.subplots()
+    if ax is None:
+        fig, ax = plt.subplots()
     x = (q_l[0], eps_star_l, eps_star_r, q_r[0])
     y = (u_l, w1(eps_star_l), w2(eps_star_r), u_r)
     xmax, xmin = max(x), min(x)
