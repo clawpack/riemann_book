@@ -394,3 +394,97 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
         plt.title('Hugoniot loci')
         plt.legend(legend,loc=1)
     plt.show()
+
+def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0):
+    from matplotlib.mlab import find
+    import matplotlib.pyplot as plt
+    from exact_solvers import shallow_water
+    from utils import riemann_tools
+    plt.style.use('seaborn-talk')
+
+    g = 1.
+
+    q_l = shallow_water.primitive_to_conservative(h_l,u_l)
+    q_r = shallow_water.primitive_to_conservative(h_r,u_r)
+
+    x = np.linspace(-1.,1.,1000)
+    states, speeds, reval, wave_types = shallow_water.exact_riemann_solution(q_l,q_r,g)
+
+    # compute particle trajectories:
+    def reval_rho_u(x):
+        q = reval(x)
+        rho = q[0]
+        u = q[1]/q[0]
+        rho_u = np.vstack((rho,u))
+        return rho_u
+
+    x_traj, t_traj, xmax = \
+        riemann_tools.compute_riemann_trajectories(states, speeds, reval_rho_u,
+                                                   wave_types, i_vel=1, xmax=2,
+                                                   rho_left=h_l/4.,
+                                                   rho_right=h_r/4.)
+
+    num_vars = len(primitive_variables)
+
+    def plot_shallow_water_demo(t=0.5, fig=0):
+        q = np.array(reval(x/t))
+        if t<0.02:
+            q[1] = np.where(x<0, q_l[1], q_r[1])
+
+        primitive = shallow_water.conservative_to_primitive(q[0],q[1])
+
+        if fig == 0:
+            fig = plt.figure(figsize=(18,6))
+            show_fig = True
+        else:
+            show_fig = False
+
+        axes = [0]*num_vars
+        for i in range(num_vars):
+            axes[i] = fig.add_subplot(1,num_vars,i+1)
+            q = primitive[i]
+            plt.plot(x,q,'-k',linewidth=3)
+            plt.title(primitive_variables[i])
+            axes[i].set_xlim(-1,1)
+
+            if i==0:
+                # plot stripes only on depth plot
+                n = find(t > t_traj)
+                if len(n)==0:
+                    n = 0
+                else:
+                    n = min(n.max(), len(t_traj)-1)
+
+                for i in range(1, x_traj.shape[1]-1):
+                    j1 = find(x_traj[n,i] > x)
+                    if len(j1)==0:
+                        j1 = 0
+                    else:
+                        j1 = min(j1.max(), len(x)-1)
+                    j2 = find(x_traj[n,i+1] > x)
+                    if len(j2)==0:
+                        j2 = 0
+                    else:
+                        j2 = min(j2.max(), len(x)-1)
+
+                    # set advected color for density plot:
+                    if x_traj[0,i]<0:
+                        # shades of red for fluid starting from x<0
+                        if np.mod(i,2)==0:
+                            c = [1,0,0]
+                        else:
+                            c = [1,0.8,0.8]
+                    else:
+                        # shades of blue for fluid starting from x<0
+                        if np.mod(i,2)==0:
+                            c = [0,0,1]
+                        else:
+                            c = [0.8,0.8,1]
+                    plt.fill_between(x[j1:j2],q[j1:j2],0,color=c)
+
+        axes[0].set_ylim(0,3.5)
+        axes[1].set_ylim(-1,1)
+        if show_fig:
+            plt.show()
+
+    return plot_shallow_water_demo
