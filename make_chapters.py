@@ -2,6 +2,7 @@ import re
 import subprocess
 
 chapters = ['Preface',
+            'Introduction',
             'Traffic_flow',
             'Shallow_water',
             'Euler_approximate_solvers',
