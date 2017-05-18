@@ -409,26 +409,17 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
         return real_plot_function
 
 def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=None, **kwargs):
-    try:
-        from utils import animation_tools
-    except:
-        try:
-            from clawpack.visclaw import animation_tools
-        except:
-            print("*** Warning: animation_tools not found")
+    from matplotlib import animation
+    fig, axes = plt.subplots(1,3,figsize=(12,4))
 
-    figs = []  # to collect figures at multiple times
-    if times is None:
-        times = np.linspace(0,0.9,10)
-    for t in times:
-        ax = plot_riemann(states,speeds,riemann_eval,wave_types,t=t, **kwargs)
-        figs.append(ax[0].figure)
-        plt.close(ax[0].figure)
+    def fplot(frame_number):
+        for axis in axes:
+            axis.cla()
+        t = frame_number/10.
+        plot_riemann(states,speeds,riemann_eval,t=t,ax=axes)
+        return axes,
 
-    images = animation_tools.make_images(figs)
-    anim = animation_tools.JSAnimate_images(images, figsize=(8,4))
-    return anim
-
+    return animation.FuncAnimation(fig, fplot, frames=10, interval=200)
 
 def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
                                  i_vel=1, num_left=10, num_right=10,
