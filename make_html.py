@@ -38,6 +38,7 @@ chapters = ['Index',
 # test on a subset:
 chapters = ['Index','Introduction','Shallow_water']
 
+template_path = os.path.realpath('./html.tpl')
 
 os.system('mkdir -p riemann_book_files')
 os.system('cp -r exact_solvers riemann_book_files/')
@@ -71,6 +72,7 @@ for i, chapter in enumerate(chapters):
     args = ["jupyter", "nbconvert", "--to", "html", "--execute",
             "--ExecutePreprocessor.kernel_name=python2",
             "--output", html_filename,
+            "--template", template_path,
             "--ExecutePreprocessor.timeout=60", output_filename]
     subprocess.check_call(args)
 
