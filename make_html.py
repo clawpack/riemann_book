@@ -36,7 +36,7 @@ chapters = ['Index',
             'Kitchen_sink_problem']
 
 # test on a subset:
-chapters = ['Index','Introduction','Shallow_water']
+#chapters = ['Introduction','Shallow_water']
 
 template_path = os.path.realpath('./html.tpl')
 
