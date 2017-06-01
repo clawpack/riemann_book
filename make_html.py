@@ -4,13 +4,18 @@ Convert notebooks listed in `chapters` into html files in the directory
 
 Note:
 
- - The notebooks are first copied into the directory and pre-processed
+ - The notebooks are first copied into the directory `build_html` and pre-processed
    to use static_widgets (or jsanimation_widgets in the Introduction only),
    and cross references to other notebooks have `.ipynb` replaced by `.html`
    so the links work in the html files.
 
  - The directories `utils`, `exact_solvers`, and `figures` are also copied
    in before processing.
+
+ - The list `all_chapters` is used to replace cross-reference links
+   `chapter.ipynb` by `chapter.html`.
+
+ - The resulting html files are moved to the directory `html`
 
 """
 
@@ -19,7 +24,8 @@ import subprocess
 import os
 
 
-chapters = ['Index',
+all_chapters = ['Preface',
+            'Index',
             'Introduction',
             'Advection',
             'Acoustics',
@@ -35,18 +41,24 @@ chapters = ['Index',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
+chapter = all_chapters  # which chapters to process
+
 # test on a subset:
-#chapters = ['Introduction','Shallow_water']
+chapters = ['Index','Introduction','Shallow_water']
 
 template_path = os.path.realpath('./html.tpl')
 
-os.system('mkdir -p riemann_book_files')
-os.system('cp -r exact_solvers riemann_book_files/')
-os.system('cp -r utils riemann_book_files/')
-os.system('cp *.html riemann_book_files/')
-os.system('cp -r figures riemann_book_files/')
 
-os.chdir('riemann_book_files')
+os.system('mkdir -p build_html')  # for intermediate processing
+# copy some things needed for processing
+os.system('cp -r exact_solvers build_html/')
+os.system('cp -r utils build_html/')
+
+#os.system('mkdir -p html')  # for viewing final html files
+os.system('cp *.html html/')
+os.system('cp -r figures html/')
+
+os.chdir('build_html')
 
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
@@ -65,7 +77,7 @@ for i, chapter in enumerate(chapters):
 
         for line in lines:
             line = re.sub(r'from ipywidgets import interact', widget, line)
-            for j, chapter_name in enumerate(chapters):
+            for j, chapter_name in enumerate(all_chapters):
                 line = re.sub(chapter_name+'.ipynb', chapter_name+'.html', line)
             output.write(line)
 
@@ -76,4 +88,8 @@ for i, chapter in enumerate(chapters):
             "--ExecutePreprocessor.timeout=60", output_filename]
     subprocess.check_call(args)
 
-print("Open riemann_book_files/Index.html for index")
+    os.system('mv %s ../html/' % html_filename)
+
+print("You may delete the directory build_html")
+print("Open html/Index.html for the index")
+
