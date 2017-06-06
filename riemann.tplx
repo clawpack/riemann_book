@@ -30,7 +30,6 @@
 
 ((* block title *))
 \title{The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\},fontsize=\small}
 ((* endblock title *))
 
 ((* block maketitle *))
@@ -47,3 +46,20 @@
 ((( super() )))
 ((*- endif -*))
 ((*- endblock any_cell -*))
+
+((* block input scoped *))
+    ((( add_my_prompt(cell.source | highlight_code(strip_verbatim=True), cell, 'In ', 'incolor') )))
+((* endblock input *))
+
+% Purpose: Renders an output/input prompt
+((* macro add_my_prompt(text, cell, prompt, prompt_color) -*))
+    ((*- if cell.execution_count is defined -*))
+    ((*- set execution_count = "" ~ (cell.execution_count | replace(None, " ")) -*))
+    ((*- else -*))
+    ((*- set execution_count = " " -*))
+    ((*- endif -*))
+    ((*- set indention =  " " * (execution_count | length + 7) -*))
+\begin{Verbatim}[fontsize=\small,commandchars=\\\{\}]
+((( text | add_prompts(first='{\color{' ~ prompt_color ~ '}' ~ prompt ~ '[{\\color{' ~ prompt_color ~ '}' ~ execution_count ~ '}]:} ', cont=indention) )))
+\end{Verbatim}
+((*- endmacro *))

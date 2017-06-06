@@ -40,5 +40,16 @@ def plot_car_trajectories(q_l,q_r,ax=None,t=None,xmax=None):
         u = 1-q
         qu = np.vstack((q,u))
         return qu
-    riemann_tools.plot_riemann_trajectories(states, speeds, reval_with_speed, wave_types,
-                                            xmax=xmax,rho_left=q_l, rho_right=q_r,ax=ax,t=t)
+
+    # density of particles for trajectories:
+    rho_left = q_l / 3.
+    rho_right = q_r / 3.
+
+    # compute trajectories:
+    x_traj, t_traj, xmax = riemann_tools.compute_riemann_trajectories(states, 
+            speeds, reval_with_speed, wave_types,
+            xmax=xmax,rho_left=rho_left, rho_right=rho_right)
+
+    # plot trajectories along with waves in the x-t plane:
+    riemann_tools.plot_riemann_trajectories(x_traj, t_traj, speeds, wave_types, 
+            xmax=xmax, ax=ax, t=t)
