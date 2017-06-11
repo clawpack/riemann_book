@@ -37,7 +37,7 @@ all_chapters = ['Preface',
             'Traffic_variable_speed',
             'Nonlinear_elasticity',
             'Euler_equations_TammannEOS',
-            'Nonconvex_Scalar_Osher_Solution',
+            'Nonconvex_scalar',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
@@ -45,6 +45,7 @@ chapters = all_chapters  # which chapters to process
 
 # test on a subset:
 #chapters = ['Index','Introduction','Shallow_water']
+chapters = ['Nonconvex_scalar']
 
 template_path = os.path.realpath('./html.tpl')
 
@@ -71,7 +72,7 @@ for i, chapter in enumerate(chapters):
     html_filename = chapter+'.html'
 
     with open(output_filename, "w") as output:
-        if chapter == 'Introduction':
+        if chapter in ['Introduction','Nonconvex_scalar']:
             widget = 'from utils.jsanimate_widgets import interact'
         else:
             widget = 'from utils.snapshot_widgets import interact'
