@@ -37,14 +37,14 @@ all_chapters = ['Preface',
             'Traffic_variable_speed',
             'Nonlinear_elasticity',
             'Euler_equations_TammannEOS',
-            'Nonconvex_Scalar_Osher_Solution',
+            'Nonconvex_scalar',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
-chapter = all_chapters  # which chapters to process
+chapters = all_chapters  # which chapters to process
 
 # test on a subset:
-chapters = ['Index','Introduction','Shallow_water']
+#chapters = ['Index','Introduction','Shallow_water']
 
 template_path = os.path.realpath('./html.tpl')
 
@@ -53,10 +53,11 @@ os.system('mkdir -p build_html')  # for intermediate processing
 # copy some things needed for processing
 os.system('cp -r exact_solvers build_html/')
 os.system('cp -r utils build_html/')
+os.system('mkdir -p build_html/img')  # for viewing images
+os.system('cp -r figures build_html/img/')
 
-#os.system('mkdir -p html')  # for viewing final html files
+os.system('mkdir -p html')  # for viewing final html files
 os.system('cp *.html html/')
-os.system('cp -r figures html/')
 
 os.chdir('build_html')
 
@@ -70,7 +71,7 @@ for i, chapter in enumerate(chapters):
     html_filename = chapter+'.html'
 
     with open(output_filename, "w") as output:
-        if chapter == 'Introduction':
+        if chapter in ['Introduction','Nonconvex_scalar']:
             widget = 'from utils.jsanimate_widgets import interact'
         else:
             widget = 'from utils.snapshot_widgets import interact'
