@@ -45,7 +45,6 @@ chapters = all_chapters  # which chapters to process
 
 # test on a subset:
 #chapters = ['Index','Introduction','Shallow_water']
-chapters = ['Nonconvex_scalar']
 
 template_path = os.path.realpath('./html.tpl')
 
