@@ -451,8 +451,8 @@ def acoustics_phase_plane_plot():
 
 
 def acoustics_interactive_phase_plane(ql=(10.0, -5.0),
-                                  qr=(40.0, 5.0),
-                                  rho=2.0, bulk=1.0):
+                                      qr=(40.0, 5.0),
+                                      rho=2.0, bulk=1.0):
     "Create the GUI and output the interact app."
     # Create plot function for interact
     pp_plot = acoustics_phase_plane_plot()
