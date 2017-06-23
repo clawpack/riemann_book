@@ -393,7 +393,7 @@ def acoustics_phase_plane_plot():
     "Return phase plane function ready to use with interact."
 
     def plot_function(pl,ul,pr,ur,rho,bulk,
-                      xmin,xmax,ymin,ymax,show_phys,show_unphys):
+                      xmin=0,xmax=6,ymin=-6,ymax=6,show_phys=True,show_unphys=True):
         "Subfunction required for interactive (function of only interactive parameters)."
     
         # Define parameters
@@ -412,7 +412,7 @@ def acoustics_phase_plane_plot():
         
         
         # Solve Riemann problem
-        al1 = (-dp + du*Z)/2*Z
+        al1 = (-dp + du*Z)/(2*Z)
         pm = pl - al1*Z
         um = ul + al1
         
@@ -437,7 +437,7 @@ def acoustics_phase_plane_plot():
             # Plot physical solutions
             ax.plot(p,lin1l(p),'-k')
             ax.plot(p,lin2r(p),'-k')
-            if (pm <= xmax and um > ymin and um < ymax):
+            if (pm>=0 and pm <= xmax and um > ymin and um < ymax):
                 ax.plot(pm, um, '-ok', markersize=10)
                 ax.text(x[2] + 0.025*dx,y[2] + 0.025*dy, '$q_m$', fontsize=15)
 
