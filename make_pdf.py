@@ -18,6 +18,7 @@ chapters = ['Preface',
             'Traffic_variable_speed',
             'Nonlinear_elasticity',
             'Euler_equations_TammannEOS',
+            'Nonconvex_scalar',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
