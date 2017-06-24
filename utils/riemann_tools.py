@@ -395,7 +395,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
                 ax[1].legend(names,loc='best')
 
             if which_char:
-                plot_characteristics(riemann_eval,plot_chars[which_char-1],aux=aux,axes=ax[0])
+                plot_characteristics(riemann_eval,plot_chars[which_char-1],aux=aux,axes=ax[0], speeds=speeds)
 
         plt.show()
         return None
@@ -533,12 +533,12 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
-def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=None):
+def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=None, speeds=None):
     """
     Plot characteristics in x-t plane by integration.
 
     char_speed: Function char_speed(q,xi) that gives the characteristic speed.
-    aux: (aux_l, aux_r)
+    aux: (aux_l, aux_r) or list of duples [(aux_l,aux_r),...]
     axes: matplotlib axes on which to plot
     extra_lines: tuple of pairs of pairs; each entry specifies the endpoints of a line
                     along which to start more characteristics
@@ -559,7 +559,13 @@ def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=Non
         xi = chars[:,i-1]/max(t[i-1],dt)
         q = np.array(reval(xi))
         for j in range(len(x)):
-            if aux:
+            if type(aux) is list:
+                auxlist = []
+                cd_speed = speeds[1] # Assumes contact discontinuity is the second entry
+                for k in range(len(aux)):
+                    auxlist.append((xi[j]<=cd_speed)*aux[k][0]+(xi[j]>cd_speed)*aux[k][1])
+                c[j] = char_speed(q[:,j],xi[j],auxlist)
+            elif aux:
                 c[j] = char_speed(q[:,j],xi[j],(xi[j]<=0)*aux[0]+(xi[j]>0)*aux[1])
             else:
                 c[j] = char_speed(q[:,j],xi[j])
