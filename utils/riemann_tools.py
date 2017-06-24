@@ -474,7 +474,7 @@ def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
     q_old = riemann_eval(xx/1e-15)
     for n in range(1,len(t_traj)):
         q_new = riemann_eval(xx/t_traj[n])
-        v_mid = 0.5*(q_old[i_vel] + q_new[i_vel])
+        v_mid = 0.5*(q_old[i_vel,:] + q_new[i_vel,:])
         xx = xx + dt*v_mid
         x_traj.append(xx)
         q_old = copy.copy(q_new)
