@@ -1,21 +1,21 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def lambda1(q, xi, aux=[1,2]):
+def lambda1(q, xi, aux):
     "Characteristic speed for 1-waves."
-    bulk = aux[0]
-    rho = aux[1]
+    rho = aux[0]
+    bulk = aux[1]
     return -np.sqrt(bulk/rho)
 
-def lambda2(q, xi, aux=[1,2]):
+def lambda2(q, xi, aux):
     "Characteristic speed for 2-waves."
-    bulk = aux[0]
-    rho = aux[1]
+    rho = aux[0]
+    bulk = aux[1]
     return np.sqrt(bulk/rho)
 
 def exact_riemann_solution(ql,qr,rho,bulk):
 
-    # Define delat q, speeds and impedance
+    # Define delta q, speeds and impedance
     dq = qr - ql
     c = np.sqrt(bulk/rho)
     Z = rho*c
