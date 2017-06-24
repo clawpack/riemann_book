@@ -342,7 +342,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 def make_plot_function(states_list,speeds_list,riemann_eval_list,
                        wave_types_list=None,names=None,layout='horizontal',
                        variable_names=None,colors=('multi','green','orange'),
-                       plot_chars=None,derived_variables=None,aux=None):
+                       plot_chars=None,derived_variables=None,aux=None,cdindex=None):
     """
     Utility function to create a plot_function that takes a single argument t,
     or (if plot_chars is specified) an argument t and an integer argument indicating
@@ -395,7 +395,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
                 ax[1].legend(names,loc='best')
 
             if which_char:
-                plot_characteristics(riemann_eval,plot_chars[which_char-1],aux=aux,axes=ax[0], speeds=speeds)
+                plot_characteristics(riemann_eval,plot_chars[which_char-1],aux=aux,axes=ax[0], speeds=speeds, cdindex=cdindex)
 
         plt.show()
         return None
@@ -533,7 +533,7 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
-def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=None, speeds=None):
+def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=None, speeds=None, cdindex=None):
     """
     Plot characteristics in x-t plane by integration.
 
@@ -555,18 +555,21 @@ def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=Non
     chars[:,0] = x
     dt = t[1]-t[0]
     c = np.zeros(len(x))
+    if cdindex == None: # Check for index of contact disconitnuity, if relevant for characteristics plotting
+        cdspeed = 0
+    else:
+        cdspeed = speeds[cdindex]
     for i in range(1,len(t)):
         xi = chars[:,i-1]/max(t[i-1],dt)
         q = np.array(reval(xi))
         for j in range(len(x)):
             if type(aux) is list:
                 auxlist = []
-                cd_speed = speeds[1] # Assumes contact discontinuity is the second entry
                 for k in range(len(aux)):
-                    auxlist.append((xi[j]<=cd_speed)*aux[k][0]+(xi[j]>cd_speed)*aux[k][1])
+                    auxlist.append((xi[j]<=cdspeed)*aux[k][0]+(xi[j]>cdspeed)*aux[k][1])
                 c[j] = char_speed(q[:,j],xi[j],auxlist)
             elif aux:
-                c[j] = char_speed(q[:,j],xi[j],(xi[j]<=0)*aux[0]+(xi[j]>0)*aux[1])
+                c[j] = char_speed(q[:,j],xi[j],(xi[j]<=cdspeed)*aux[0]+(xi[j]>cdspeed)*aux[1])
             else:
                 c[j] = char_speed(q[:,j],xi[j])
         chars[:,i] = chars[:,i-1] + dt*c  # Euler's method
