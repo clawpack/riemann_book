@@ -36,8 +36,7 @@ def beta(p, gamma, pinf):
 
 def lambda1(q, xi, aux, varout='primitive'):
     "Characteristic speed for 1-waves."
-    gamma = aux[0]
-    pinf = aux[1]
+    gamma, pinf = aux
     if varout == 'primitive':
             rho, u, p = q
     else:
@@ -48,8 +47,7 @@ def lambda1(q, xi, aux, varout='primitive'):
 
 def lambda2(q, xi, aux, varout='primitive'):
     "Characteristic speed for 2-waves."
-    gamma = aux[0]
-    pinf = aux[1]
+    gamma, pinf = aux
     if varout == 'primitive':
             rho, u, p = q
     else:
@@ -58,8 +56,7 @@ def lambda2(q, xi, aux, varout='primitive'):
 
 def lambda3(q, xi, aux, varout='primitive'):
     "Characteristic speed for 3-waves."
-    gamma = aux[0]
-    pinf = aux[1]
+    gamma, pinf = aux
     if varout == 'primitive':
             rho, u, p = q
     else:
@@ -95,11 +92,11 @@ def hugoniot_locus_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
     return ur + (p - pr)*np.sqrt(ar/(p + pinfr + be))
 
 
-def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'primitive'):
+def exact_riemann_solution(ql, qr, auxl, auxr, varin = 'primitive', varout = 'primitive'):
 
     # Get intial data
-    gammal, gammar = gamma
-    pinfl, pinfr = pinf
+    gammal, pinfl = auxl
+    gammar, pinfr = auxr
     if varin == 'conservative':
         rhol, ul, pl = conservative_to_primitive(*ql, gamma = gammal, pinf = pinfl)
         rhor, ur, pr = conservative_to_primitive(*qr, gamma = gammar, pinf = pinfr)

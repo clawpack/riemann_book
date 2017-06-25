@@ -563,12 +563,7 @@ def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=Non
         xi = chars[:,i-1]/max(t[i-1],dt)
         q = np.array(reval(xi))
         for j in range(len(x)):
-            if type(aux) is list:
-                auxlist = []
-                for k in range(len(aux)):
-                    auxlist.append((xi[j]<=cdspeed)*aux[k][0]+(xi[j]>cdspeed)*aux[k][1])
-                c[j] = char_speed(q[:,j],xi[j],auxlist)
-            elif aux:
+            if aux:
                 c[j] = char_speed(q[:,j],xi[j],(xi[j]<=cdspeed)*aux[0]+(xi[j]>cdspeed)*aux[1])
             else:
                 c[j] = char_speed(q[:,j],xi[j])

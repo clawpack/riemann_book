@@ -3,19 +3,18 @@ import matplotlib.pyplot as plt
 
 def lambda1(q, xi, aux):
     "Characteristic speed for 1-waves."
-    rho = aux[0]
-    bulk = aux[1]
+    rho, bulk = aux
     return -np.sqrt(bulk/rho)
 
 def lambda2(q, xi, aux):
     "Characteristic speed for 2-waves."
-    rho = aux[0]
-    bulk = aux[1]
+    rho, bulk = aux
     return np.sqrt(bulk/rho)
 
-def exact_riemann_solution(ql,qr,rho,bulk):
+def exact_riemann_solution(ql,qr,aux):
 
     # Define delta q, speeds and impedance
+    rho, bulk = aux
     dq = qr - ql
     c = np.sqrt(bulk/rho)
     Z = rho*c
@@ -58,22 +57,20 @@ def exact_riemann_solution(ql,qr,rho,bulk):
 
 def lambda_het_1(q, xi, aux):
     "Characteristic speed for 1-waves."
-    bulk = aux[0]
-    rho = aux[1]
+    rho, bulk = aux
     return -np.sqrt(K/rho)
 
 def lambda_het_2(q, xi, aux):
     "Characteristic speed for 2-waves."
-    bulk = aux[2]
-    rho = aux[3]
+    rho, bulk = aux
     return np.sqrt(K/rho)
 
-def exact_riemann_heterogenous(ql,qr,rho,bulk):
+def exact_riemann_heterogenous(ql,qr,auxl,auxr):
 
     # Define delat q, speeds and impedance (left and right) 
     dq = qr - ql
-    bulkl, bulkr = bulk
-    rhol, rhor = rho
+    rhol, bulkl = auxl
+    rhor, bulkr = auxr
     cl = np.sqrt(bulkl/rhol)
     cr = np.sqrt(bulkr/rhor)
     Zl = rhol*cl
