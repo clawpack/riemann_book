@@ -11784,7 +11784,7 @@ div#notebook {
 \begin{align}
     \rho_t + (\rho u)_x & = 0 \\
     (\rho u)_t + \left(\rho u^2 + a^2 \rho \right)_x & = 0
-\end{align}<p>Indeed, if we identify the shallow water depth $h$ with the isothermal gas density $\rho$, then these systems differ only in the second term of the momentum flux.  In both systems this term represents the effect of pressure; in the first system it causes water to flow from regions of greater depth to lower depth, while in the second system it causes gas to flow from regions of higher density to lower density.</p>
+\end{align}<p>Indeed, if we identify the shallow water depth $h$ with the isothermal gas density $\rho$, then these systems differ only in the second term of the momentum flux.  In both systems this term represents pressure; in the first system the hydrostatic pressure $\frac{1}{2}gh^2$ creates a net force from regions of greater depth to lower depth, while in the second system the pressure $a^2 \rho$ increases linearly with density.</p>
 <p>In this chapter we investigate what happens when the pressure tends to zero; this corresponds to the limit $g\to 0$ for shallow water and the limit $a \to 0$ for isothermal flow.</p>
 <p>First, let's see what happens to the integral curves and Hugoniot loci as $g \to 0$.</p>
 
@@ -11796,14 +11796,14 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">exact_solvers</span> <span class="k">import</span> <span class="n">shallow_water</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">utils</span> <span class="k">import</span> <span class="n">riemann_tools</span>
-<span class="kn">from</span> <span class="nn">utils.snapshot_widgets</span> <span class="k">import</span> <span class="n">interact</span>
-<span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="k">import</span> <span class="n">widgets</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">exact_solvers</span> <span class="kn">import</span> <span class="n">shallow_water</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">riemann_tools</span>
+<span class="kn">from</span> <span class="nn">utils.snapshot_widgets</span> <span class="kn">import</span> <span class="n">interact</span>
+<span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="kn">import</span> <span class="n">widgets</span><span class="p">,</span> <span class="n">Checkbox</span><span class="p">,</span> <span class="n">IntSlider</span><span class="p">,</span> <span class="n">FloatSlider</span>
 <span class="n">State</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;State&#39;</span><span class="p">,</span> <span class="n">shallow_water</span><span class="o">.</span><span class="n">conserved_variables</span><span class="p">)</span>
 <span class="n">Primitive_State</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;PrimState&#39;</span><span class="p">,</span> <span class="n">shallow_water</span><span class="o">.</span><span class="n">primitive_variables</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;seaborn-talk&#39;</span><span class="p">)</span>
@@ -11835,7 +11835,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">connect_states</span><span class="p">(</span><span class="n">h_l</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">u_l</span><span class="o">=-</span><span class="mf">1.</span><span class="p">,</span><span class="n">h_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">u_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">logg</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">plot_unphysical</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">connect_states</span><span class="p">(</span><span class="n">h_l</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">u_l</span><span class="o">=-</span><span class="mf">1.</span><span class="p">,</span><span class="n">h_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">u_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">logg</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">plot_unphysical</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="n">g</span> <span class="o">=</span> <span class="mf">10.</span><span class="o">**</span><span class="n">logg</span>
     <span class="n">q_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_l</span><span class="p">,</span><span class="n">h_l</span><span class="o">*</span><span class="n">u_l</span><span class="p">])</span>
     <span class="n">q_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">h_r</span><span class="p">,</span><span class="n">h_r</span><span class="o">*</span><span class="n">u_r</span><span class="p">])</span>
@@ -11863,7 +11863,7 @@ div#notebook {
          <span class="n">h_r</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
          <span class="n">u_r</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
          <span class="n">logg</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nb">min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                  <span class="n">description</span><span class="o">=</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(g)$&#39;</span><span class="p">));</span>
+                                  <span class="n">description</span><span class="o">=</span><span class="s1">&#39;$\log_{10}(g)$&#39;</span><span class="p">));</span>
 </pre></div>
 
 </div>
@@ -12599,7 +12599,7 @@ JEmSJEkVwAJdkiRJkqQK8P8BlLrQ7KzBOOAAAAAASUVORK5CYII=
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">c1</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
     <span class="s2">&quot;Characteristic speed for shallow water 1-waves.&quot;</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -12628,16 +12628,18 @@ JEmSJEkVwAJdkiRJkqQK8P8BlLrQ7KzBOOAAAAAASUVORK5CYII=
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">make_plot_function</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">force_waves</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">extra_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">plot_function</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">logg</span><span class="p">,</span><span class="n">plot_1_chars</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">plot_2_chars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">make_plot_function</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">force_waves</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extra_lines</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">plot_function</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">logg</span><span class="p">,</span><span class="n">plot_1_chars</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">plot_2_chars</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="n">varnames</span> <span class="o">=</span> <span class="n">shallow_water</span><span class="o">.</span><span class="n">primitive_variables</span>
+        <span class="n">prim</span> <span class="o">=</span> <span class="n">shallow_water</span><span class="o">.</span><span class="n">cons_to_prim</span>
         <span class="n">g</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">logg</span>
         <span class="n">states</span><span class="p">,</span> <span class="n">speeds</span><span class="p">,</span> <span class="n">reval</span><span class="p">,</span> <span class="n">wave_types</span> <span class="o">=</span> \
-            <span class="n">shallow_water</span><span class="o">.</span><span class="n">exact_riemann_solution</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">force_waves</span><span class="o">=</span><span class="n">force_waves</span><span class="p">)</span>
+            <span class="n">shallow_water</span><span class="o">.</span><span class="n">exact_riemann_solution</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">g</span><span class="p">,</span>
+                                                 <span class="n">force_waves</span><span class="o">=</span><span class="n">force_waves</span><span class="p">)</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_riemann</span><span class="p">(</span><span class="n">states</span><span class="p">,</span><span class="n">speeds</span><span class="p">,</span><span class="n">reval</span><span class="p">,</span><span class="n">wave_types</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
-                                        <span class="n">t_pointer</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">extra_axes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">t_pointer</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">extra_axes</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                         <span class="n">variable_names</span><span class="o">=</span><span class="n">varnames</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                                        <span class="n">derived_variables</span><span class="o">=</span><span class="n">shallow_water</span><span class="o">.</span><span class="n">cons_to_prim</span><span class="p">);</span>
+                                        <span class="n">derived_variables</span><span class="o">=</span><span class="n">prim</span><span class="p">);</span>
         <span class="k">if</span> <span class="n">plot_1_chars</span><span class="p">:</span>
             <span class="n">riemann_tools</span><span class="o">.</span><span class="n">plot_characteristics</span><span class="p">(</span><span class="n">reval</span><span class="p">,</span><span class="n">c1</span><span class="p">,(</span><span class="n">g</span><span class="p">,</span><span class="n">g</span><span class="p">),</span><span class="n">axes</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                                <span class="n">extra_lines</span><span class="o">=</span><span class="n">extra_lines</span><span class="p">)</span>
@@ -12649,12 +12651,12 @@ JEmSJEkVwAJdkiRJkqQK8P8BlLrQ7KzBOOAAAAAASUVORK5CYII=
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">plot_function</span>
 
-<span class="k">def</span> <span class="nf">plot_riemann_SW</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">force_waves</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">extra_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">plot_riemann_SW</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">force_waves</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extra_lines</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">plot_function</span> <span class="o">=</span> <span class="n">make_plot_function</span><span class="p">(</span><span class="n">q_l</span><span class="p">,</span><span class="n">q_r</span><span class="p">,</span><span class="n">force_waves</span><span class="p">,</span><span class="n">extra_lines</span><span class="p">)</span>
-    <span class="n">interact</span><span class="p">(</span><span class="n">plot_function</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="o">=.</span><span class="mi">9</span><span class="p">),</span>
-             <span class="n">plot_1_chars</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Checkbox</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;1-characteristics&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-             <span class="n">plot_2_chars</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Checkbox</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;2-characteristics&#39;</span><span class="p">),</span>
-             <span class="n">logg</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">IntSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nb">min</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(g)$&#39;</span><span class="p">))</span>
+    <span class="n">interact</span><span class="p">(</span><span class="n">plot_function</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">FloatSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="o">=.</span><span class="mi">9</span><span class="p">),</span>
+             <span class="n">plot_1_chars</span><span class="o">=</span><span class="n">Checkbox</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;1-characteristics&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span>
+             <span class="n">plot_2_chars</span><span class="o">=</span><span class="n">Checkbox</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;2-characteristics&#39;</span><span class="p">),</span>
+             <span class="n">logg</span><span class="o">=</span><span class="n">IntSlider</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="nb">min</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;$\log_{10}(g)$&#39;</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12699,7 +12701,7 @@ f'(q) & = \begin{pmatrix} 0 & 1 \\ -(q_2/q_1)^2 + g q_1 & 2 q_2/q_1 \end{pmatrix
 <p>What about the Hugoniot loci?  Recall from the shallow water chapter that a shock with a jump in the depth of $\alpha = h-h_*$ must have a jump in the momentum of</p>
 \begin{align}
     h u & = h_* u_* + \alpha \left[u_* \pm \sqrt{gh_* \left(1+\frac{\alpha}{h_*}\right)\left(1+\frac{\alpha}{2h_*}\right)}\right]
-\end{align}<p>Setting $g=0$ we obtain $hu = h_* u_* + (h-h_*)u_*$, so that $u=u^*$.  Thus the Hugoniot loci are the same as the integral curves and are lines of constant $u$.</p>
+\end{align}<p>Setting $g=0$ we obtain $hu = h_* u_* + (h-h_*)u_*$, so that $u=u_*$.  Thus the Hugoniot loci are the same as the integral curves and are lines of constant $u$.</p>
 <p>In the Riemann problem, if the left and right states have the same initial velocity, then we can still connect them as $g \to 0$; in the limit, everything just moves along at that constant velocity.  Here's an example.</p>
 
 </div>
@@ -12710,7 +12712,7 @@ f'(q) & = \begin{pmatrix} 0 & 1 \\ -(q_2/q_1)^2 + g q_1 & 2 q_2/q_1 \end{pmatrix
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
              <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
             <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
@@ -13185,7 +13187,7 @@ Here's an example with $u_l < u_r$; use the second slider to see what happens as
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
              <span class="n">Momentum</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
             <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">)</span>
@@ -13698,7 +13700,7 @@ RU5ErkJggg==
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
              <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
             <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
@@ -14210,7 +14212,7 @@ TkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
              <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">)</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
             <span class="n">Momentum</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
@@ -14638,7 +14640,7 @@ $$
     h_\delta(t) = t \left( h_l u_l - h_r u_r + \hat{u}(h_r-h_l) \right).
 $$<p>At what speed must the water in the delta shock move in order to conserve momentum?  The rate of momentum flowing into the delta shock from the left is $h_l u_l (u_l-\hat{u})$ and the rate of momentum flowing into the delta shock from the right is $h_r u_r (\hat{u}-u_r)$, so we must have</p>
 $$
-    h_\delta(t) \hat{u} = t \left( h_l u_l^2 - h_r u_r^2 + \hat{u}(h_r u_r - h_l u_l \right).
+    h_\delta(t) \hat{u} = t \left( h_l u_l^2 - h_r u_r^2 + \hat{u}(h_r u_r - h_l u_l) \right).
 $$<p>Combining these two conservation conditions, we find the speed of the delta shock:</p>
 $$
     \hat{u} = \frac{\sqrt{h_l}u_l + \sqrt{h_r}{u_r}}{\sqrt{h_l}+\sqrt{h_r}}
@@ -14673,7 +14675,7 @@ $$<p>is the ratio of a typical velocity $U$ to the speed of gravity waves with t
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
              <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">100.</span><span class="p">)</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
             <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">)</span>
@@ -15136,7 +15138,7 @@ zAmZmZmZWWZOyMzMzMwyc0JmZmZmlpkTMjMzM7PM/h+r5SGI+CSy0AAAAABJRU5ErkJggg==
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">q_l</span>  <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
              <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">)</span>
 <span class="n">q_r</span> <span class="o">=</span> <span class="n">State</span><span class="p">(</span><span class="n">Depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span>
             <span class="n">Momentum</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">)</span>
