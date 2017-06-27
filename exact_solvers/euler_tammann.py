@@ -18,7 +18,7 @@ def primitive_to_conservative(rho, u, p, gamma, pinf):
     return rho, mom, E
 
 def conservative_to_primitive(rho, mom, E, gamma, pinf):
-    u = mom/rho
+    u = mom/pospart(rho)
     p = (gamma-1.)*(E - 0.5*rho*u**2) - gamma*pinf
     return rho, u, p
 
@@ -31,27 +31,42 @@ def sound_speed(rho, p, gamma = 1.4, pinf = 0.0):
 def alpha(rho, gamma):
     return 2.0/(pospart(rho)*(gamma + 1.0))
 
-def beta(p, gamma = 1.4, pinf = 0.0):
+def beta(p, gamma, pinf):
     return pospart(p + pinf)*(gamma - 1.0)/(gamma + 1.0)
 
-def lambda1(q, xi, gamma = 1.4, pinf = 0.0):
+def lambda1(q, xi, aux, varout='primitive'):
     "Characteristic speed for 1-waves."
-    rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
+    gamma = aux[0]
+    pinf = aux[1]
+    if varout == 'primitive':
+            rho, u, p = q
+    else:
+        rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
     al = alpha(rho, gamma)
     be = beta(p, gamma, pinf)
-    return u - np.sqrt((gamma*(pospart(p)+pinf+be)/al)/pospart(rho))
+    return u - np.sqrt(gamma*(p + pinf)/pospart(rho))
 
-def lambda2(q, xi, gamma = 1.4, pinf = 0.0):
+def lambda2(q, xi, aux, varout='primitive'):
     "Characteristic speed for 2-waves."
-    rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
+    gamma = aux[0]
+    pinf = aux[1]
+    if varout == 'primitive':
+            rho, u, p = q
+    else:
+        rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
     return u
 
-def lambda3(q, xi, gamma = 1.4, pinf = 0.0):
+def lambda3(q, xi, aux, varout='primitive'):
     "Characteristic speed for 3-waves."
-    rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
+    gamma = aux[0]
+    pinf = aux[1]
+    if varout == 'primitive':
+            rho, u, p = q
+    else:
+        rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
     al = alpha(rho, gamma)
     be = beta(p, gamma, pinf)
-    return u + np.sqrt((gamma*(pospart(p)+pinf+be)/al)/pospart(rho))
+    return u + np.sqrt(gamma*(p + pinf)/pospart(rho))
 
 def integral_curve_1(p, rhol, ul, pl, gammal = 1.4, pinfl = 0.0):
     """Velocity as a function of pressure for the 1-integral curve passing
