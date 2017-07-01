@@ -9,7 +9,7 @@ First install [Docker](https://www.docker.com/).  If it is installed, make sure 
 
 Then, in this directory (containing the file `Dockerfile`), do:
 
-    $ docker build -t riemann_book_dockerimage -f Dockerfile .
+    $ docker build -t riemann_book_dockerimage .
 
 Don't forget the last `.` on this line!
 
@@ -25,29 +25,27 @@ This starts a virtual machine (*container*) named `riemann_book_container` and g
 
 In case the `riemann_book` repository changed since you built the docker image, you could do:
 
-    root@...# cd /riemann_book
+    root@...# cd $HOME
     root@...# git pull
-    root@...# cd /
     
 ### Updating `clawpack/riemann`
 
 You may need some Riemann solvers not in the most recent release of Clawpack.  These can be obtained by checking out the master branch (and pulling any changes since you built the image, if necessary):
 
-    root@...# cd /clawpack-5.4.0/riemann
+    root@...# cd $HOME/clawpack-5.4.0/riemann
     root@...# git checkout master
     root@...# git pull
 
 If this brings down new Riemann solvers, you will need to compile them and re-install clawpack:
 
-    root@...# cd /clawpack-5.4.0
-    root@...# pip install -e .
+    root@...# cd $HOME/clawpack-5.4.0
+    root@...# pip2 install -e .
     
 ### Update to the latest version of the notebooks
 
-    root@...# cd /riemann_book
+    root@...# cd $HOME
     root@...# git checkout master
     root@...# git pull
-    root@...# cd /
     
 ### Notebook server:
 

@@ -9,8 +9,7 @@ RUN apt-get update \
     nano \
     gfortran \
     && apt-get clean \
-&& rm -rf /var/lib/apt/lists/*
-RUN apt-get install -y tar git curl wget dialog net-tools build-essential
+ && rm -rf /var/lib/apt/lists/*
 
 User jovyan
 # Install JSAnimation
