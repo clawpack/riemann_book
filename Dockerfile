@@ -16,14 +16,14 @@ User jovyan
 # (Not necessary if we install Clawpack)
 RUN pip install -e git+https://github.com/jakevdp/JSAnimation.git#egg=JSAnimation
 
-# Add book's files
-COPY . .
-
-# Install other things needed for notebooks:
-RUN pip2 install --no-cache-dir -r $HOME/requirements.txt
+# Install notebook extensions
 RUN pip install jupyter_contrib_nbextensions
 RUN jupyter contrib nbextension install --user
 RUN jupyter nbextension enable equation-numbering/main
 
 # Install clawpack-v5.4.0:
 RUN pip2 install --src=$HOME --user -e git+https://github.com/clawpack/clawpack.git@v5.4.0#egg=clawpack-v5.4.0
+
+# Add book's files
+COPY . .
+RUN pip2 install --no-cache-dir -r $HOME/requirements.txt
