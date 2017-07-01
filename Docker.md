@@ -15,11 +15,26 @@ Don't forget the last `.` on this line!
 
 Then do:
 
-    $ docker run -i -t -p 8889:8889 --name riemann_book_container riemann_book_dockerimage
+    $ docker run -it -p 8888:8888 --name riemann_book_container riemann_book_dockerimage
 
-This starts a virtual machine (*container*) named `riemann_book_container` and gives a prompt like: 
+This starts a virtual machine (*container*) named `riemann_book_container` and starts a Jupyter Notebook server.
+You should see a URL to copy paste into a browser to start your notebook, such as
 
-    root@...# 
+    http://localhost:8888/?token=9542fb1ed940f873f28e6a371c6334c5b1a0d8656121905c
+
+This should open a web page with the list of all available notebooks.  You can start with `Index.ipynb`,
+or click on any notebook to launch.
+
+To close the notebook and exit the container, you can press Ctrl-C. If you want to run the container in
+the background and not take up your terminal, simply omit the `-it` options to `docker run` command.
+
+See http://jupyter.org/ for more documentation on Jupyter.
+
+### Connecting with a second bash shell
+
+If you have the notebook server running and also want another window open with a bash shell, in another shell on your laptop you can do:
+
+    $ docker exec -it riemann_book_container bash
 
 ### Updating the riemann_book files
 
@@ -47,41 +62,6 @@ If this brings down new Riemann solvers, you will need to compile them and re-in
     root@...# git checkout master
     root@...# git pull
     
-### Notebook server:
-
-In order to work with the notebooks, start the notebook server via
-
-    root@...# jupyter notebook --notebook-dir=/riemann_book --ip='*' --port=8889 --no-browser
-
-Then open a browser (on your laptop) to the URL printed out when the Jupyter server starts via the command above.  This might be of the form:
-
-    http://localhost:8889/tree
-    
-or perhaps will include a token, something like:
-
-    http://localhost:8889/?token=9542fb1ed940f873f28e6a371c6334c5b1a0d8656121905c
-    
-This should open a web page with the list of all available notebooks.  You can start with `Index.ipynb`, or click on any notebook to launch.
-
-Use `ctrl-C` to exit the Jupyter notebook server. 
-
-See http://jupyter.org/ for more documentation on Jupyter.
-
-### Connecting with a second bash shell
-
-If you have the notebook server running and also want another window open with a bash shell, in another shell on your laptop you can do:
-
-    $ docker exec -it riemann_book_container bash
-    
-### Exiting a shell / halting a container
-
-Use `Ctrl-p Ctrl-q` to exit from a shell without halting the docker container.
-
-You can halt the container (after using `ctrl-C` to quit the jupyter server if
-one is running) via::
-
-    root@...# exit
-
 ### Restarting a container
 
 You can restart the container via::
