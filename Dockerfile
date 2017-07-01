@@ -1,6 +1,6 @@
 
 # Install anaconda Python stack and some other useful tools
-FROM continuumio/anaconda
+FROM continuumio/anaconda:4.4.0
 RUN apt-get update
 RUN apt-get install -y tar git curl wget dialog net-tools build-essential
 
