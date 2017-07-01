@@ -24,6 +24,9 @@ RUN pip install jupyter_contrib_nbextensions
 RUN jupyter contrib nbextension install --user
 RUN jupyter nbextension enable equation-numbering/main
 
+# Install JupyterHub, required for this to work on mybinder
+RUN pip install --no-cache-dir jupyterhub==0.7.2
+
 # Install clawpack-v5.4.0:
 RUN pip install --src=/ --user -e git+https://github.com/clawpack/clawpack.git@v5.4.0#egg=clawpack-v5.4.0
 
