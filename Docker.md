@@ -40,20 +40,20 @@ If you have the notebook server running and also want another window open with a
 
 In case the `riemann_book` repository changed since you built the docker image, you could do:
 
-    root@...# cd $HOME
+    root@...# cd $HOME/riemann_book
     root@...# git pull
     
 ### Updating `clawpack/riemann`
 
 You may need some Riemann solvers not in the most recent release of Clawpack.  These can be obtained by checking out the master branch (and pulling any changes since you built the image, if necessary):
 
-    root@...# cd $HOME/clawpack-5.4.0/riemann
+    root@...# cd $HOME/clawpack/clawpack-5.4.0/riemann
     root@...# git checkout master
     root@...# git pull
 
 If this brings down new Riemann solvers, you will need to compile them and re-install clawpack:
 
-    root@...# cd $HOME/clawpack-5.4.0
+    root@...# cd $HOME/clawpack/clawpack-5.4.0
     root@...# pip2 install -e .
     
 ### Update to the latest version of the notebooks
