@@ -1,29 +1,29 @@
+FROM jupyter/scipy-notebook:8e15d329f1e9
 
-# Install anaconda Python stack and some other useful tools
-FROM continuumio/anaconda
-RUN apt-get update
-RUN apt-get install -y tar git curl wget dialog net-tools build-essential
+USER root
+# Install some useful tools + gfortran
+RUN apt-get update \
+ && apt-get install -yq --no-install-recommends \
+    dialog \
+    net-tools \
+    nano \
+    gfortran \
+    && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-# Install editors:
-RUN apt-get install -y vim nano
-
+User jovyan
 # Install JSAnimation
 # (Not necessary if we install Clawpack)
 RUN pip install -e git+https://github.com/jakevdp/JSAnimation.git#egg=JSAnimation
 
-# Install gfortran
-RUN apt-get install -y gfortran
-
-# Get riemann_book files:
-RUN git clone https://github.com/clawpack/riemann_book
-
-# Install other things needed for notebooks:
-RUN pip install -r riemann_book/requirements.txt
-RUN jupyter nbextension enable --py widgetsnbextension
+# Install notebook extensions
 RUN pip install jupyter_contrib_nbextensions
 RUN jupyter contrib nbextension install --user
 RUN jupyter nbextension enable equation-numbering/main
 
 # Install clawpack-v5.4.0:
-RUN pip install --src=/ --user -e git+https://github.com/clawpack/clawpack.git@v5.4.0#egg=clawpack-v5.4.0
+RUN pip2 install --src=$HOME --user -e git+https://github.com/clawpack/clawpack.git@v5.4.0#egg=clawpack-v5.4.0
 
+# Add book's files
+COPY . .
+RUN pip2 install --no-cache-dir -r $HOME/requirements.txt
