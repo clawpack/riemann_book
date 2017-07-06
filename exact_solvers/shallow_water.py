@@ -401,7 +401,7 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
     import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
     from utils import riemann_tools
-    plt.style.use('seaborn-talk')
+    #plt.style.use('seaborn-talk')
 
     g = 1.
 
