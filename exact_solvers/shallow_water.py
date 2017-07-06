@@ -396,7 +396,8 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     plt.show()
 
 def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
-                            figsize=(10,3), hlim=(0,3.5), ulim=(-1,1)):
+                            figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
+                            force_waves=None):
     from matplotlib.mlab import find
     import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
@@ -409,7 +410,8 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
     q_r = shallow_water.primitive_to_conservative(h_r,u_r)
 
     x = np.linspace(-1.,1.,1000)
-    states, speeds, reval, wave_types = shallow_water.exact_riemann_solution(q_l,q_r,g)
+    states, speeds, reval, wave_types = \
+        shallow_water.exact_riemann_solution(q_l,q_r,g,force_waves=force_waves)
 
     # compute particle trajectories:
     def reval_rho_u(x):
