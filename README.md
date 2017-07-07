@@ -20,9 +20,19 @@ To install the dependencies for the book, see https://github.com/clawpack/rieman
 
 Rather than installing all the dependencies, if you have [Docker](https://www.docker.com/) installed you can use the `Dockerfile` in this repository.  See `Docker.md` for instructions.
 
-## Execute on the cloud
+*[Add instructions for Dockerhub]*
+
+## Execute in the cloud
+
+### Windows Azure
 
 Rather than installing software, you can execute the notebooks on the cloud using the [Microsoft Azure Notebooks](https://notebooks.azure.com) cloud service:  Create a free account and then clone the [riemann_book library](https://notebooks.azure.com/rjleveque/libraries/riemann-book).   *These may not be up to date with the versions in this repository during the development phase of this project.*
+
+### Binder
+
+This is still under development using the latest version of [binder](https://beta.mybinder.org/).  You can try it out for these notebooks at this link: https://beta.mybinder.org/v2/gh/clawpack/riemann_book/master
+
+This should start up a notebook server on a [Jupyterhub](https://jupyterhub.readthedocs.io/en/latest/) that lets you execute all the notebooks with no installation required.
 
 # Outline
 Parentheticals indicate concepts introduced for the first time.
