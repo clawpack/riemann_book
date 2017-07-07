@@ -5,7 +5,7 @@ Convert notebooks listed in `chapters` into html files in the directory
 Note:
 
  - The notebooks are first copied into the directory `build_html` and pre-processed
-   to use static_widgets (or jsanimation_widgets in the Introduction only),
+   to use static_widgets (or jsanimation_widgets in certain notebooks),
    and cross references to other notebooks have `.ipynb` replaced by `.html`
    so the links work in the html files.
 
@@ -33,6 +33,7 @@ all_chapters = ['Preface',
             'Shallow_water',
             'Shallow_tracer',
             'Euler_equations',
+            'Approximate_solvers',
             'Euler_approximate_solvers',
             'Traffic_variable_speed',
             'Nonlinear_elasticity',
@@ -57,7 +58,10 @@ os.system('mkdir -p build_html/img')  # for viewing images
 os.system('cp -r figures build_html/img/')
 
 os.system('mkdir -p html')  # for viewing final html files
-os.system('cp *.html html/')
+
+# Might need to update bibliography first with make_html_bib.sh
+os.system('cp riemann.html html/') # bibliography
+os.system('cp riemann_bib.html html/') # bibtex version of bibliography
 
 os.chdir('build_html')
 
@@ -90,6 +94,10 @@ for i, chapter in enumerate(chapters):
     subprocess.check_call(args)
 
     os.system('mv %s ../html/' % html_filename)
+
+os.chdir('..')
+os.system('mkdir -p html/figures')
+os.system('cp build_html/img/figures/* html/figures/')
 
 print("You may delete the directory build_html")
 print("Open html/Index.html for the index")
