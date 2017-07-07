@@ -11784,8 +11784,19 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Note-to-reviewers">Note to reviewers<a class="anchor-link" href="#Note-to-reviewers">&#182;</a></h2><p>A draft of this project is being sent out for review for possible publication as a book.  Please note that many of the notebooks included in this draft are still under development and we are still experimenting with the best way to present various aspects of the material, so the notebooks are not all consistent yet in the way things are done.  We are also still working on producing latex files from the notebooks with suitable formatting for publication as a book.  Some of the code cells in the current version are too long and go off the page in the pdf version, and there are various other glitches.  Some of the notebooks contain too much code to be suitable for the pdf version and more of this will be moved to separate Python modules.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Aims-and-scope">Aims and scope<a class="anchor-link" href="#Aims-and-scope">&#182;</a></h2><p>This book addresses an important class of mathematical problems (the <em>Riemann problem</em>) for first-order hyperbolic partial differential equations (PDEs).  Such PDEs arise in applications such as fluid dynamics, traffic flow, water waves, and electromagnetic waves.  The solution of the Riemann problem captures essential information about the model.  It is also the key ingredient in modern numerical methods for such models.</p>
 <p>The book aims to cover the fundamental ideas related to classical Riemann solutions, including their special structure and the types of waves that arise.  It will also cover the ideas behind fast approximate solvers for the Riemann problem, and more advanced concepts related to non-classical Riemann problems.  The emphasis is on the general ideas but each chapter delves into a particular application.</p>
+<p>It is assumed that the reader has some knowledge of hyperbolic problems in advance.  This book is intended to supplement rather than replace standard textbooks on the theory and numerical solution of hyperbolic PDEs.  It should also be useful as a tool for students or researchers seeking to better understand the nature of Riemann solutions to a particular hyperbolic system.</p>
 
 </div>
 </div>
@@ -11814,7 +11825,8 @@ div#notebook {
 <li>On your own computer: follow the <a href="https://github.com/clawpack/riemann_book/wiki/Installation">installation instructions</a> <strong>[move these to a .md file in the repo?]</strong></li>
 <li>With Docker: follow <a href="https://github.com/clawpack/riemann_book/blob/master/Docker.md">these instructions</a> to use the <code>Dockerfile</code> that is included in the <a href="(https://github.com/clawpack/riemann_book">Github repository</a>.</li>
 <li>On the <a href="https://notebooks.azure.com">Microsoft Azure Notebooks</a> cloud service:  Create a free account and then clone the <a href="https://notebooks.azure.com/rjleveque/libraries/riemann-book">riemann_book library</a>.</li>
-<li>With Binder: (in preparation)</li>
+<li>With Binder: This is still under development using the latest version of <a href="https://beta.mybinder.org/">binder</a>.  You can try it out for these notebooks at this link: <a href="https://beta.mybinder.org/v2/gh/clawpack/riemann_book/master">https://beta.mybinder.org/v2/gh/clawpack/riemann_book/master</a>.
+This should start up a notebook server on a <a href="https://jupyterhub.readthedocs.io/en/latest/">Jupyterhub</a> that lets you execute all the notebooks with no installation required.</li>
 </ul>
 
 </div>
@@ -11827,7 +11839,7 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h2><p>The book includes 5 parts, each divided into several chapters.  The first two parts cover the fundamentals of exact and approximate solutions of Riemann problems; the remaining three parts delve into more advanced topics.  In a graduate course on hyperbolic conservation laws, the first two parts could be incorporated into the curriculum, while the later chapters might provide suggestions for student projects.</p>
 <p>Part I (<em>partially written</em>) covers the classical theory of the Riemann problem and its solution, introducing the reader to essential concepts including characteristics; similarity solutions; shock waves and the Rankine-Hugoniot jump conditions; rarefactions and Riemann invariants; genuinely nonlinear and linearly degenerate waves; and entropy conditions.  Building up from scalar hyperbolic PDEs and linear systems, it culminates with discussions of the full Riemann solution for the shallow water and Euler systems.</p>
-<p>Part II (<em>not included in the draft</em>) introduces approximate Riemann solvers, which are an essential tool in numerical algorithms for hyperbolic PDEs.  This part discusses the most important approaches to such solvers: from simple Lax-Friedrichs and HLL solvers to linearizations, including Roe solvers.  Potential issues with these methods (such as the need for entropy fixes and lack of positivity) are addressed.  Part II concludes with comparisons of canonical approximate solvers for the shallow water and Euler systems.</p>
+<p>Part II (<em>an introduction included in the draft</em>) introduces approximate Riemann solvers, which are an essential tool in numerical algorithms for hyperbolic PDEs.  This part discusses the most important approaches to such solvers: from simple Lax-Friedrichs and HLL solvers to linearizations, including Roe solvers.  Potential issues with these methods (such as the need for entropy fixes and lack of positivity) are addressed.  Part II concludes with comparisons of canonical approximate solvers for the shallow water and Euler systems.</p>
 <p>Part III (<em>partially written</em>) examines various complications that may arise when the flux function depends explicitly on the spatial coordinate.  In particular, we study Riemann problems in which the flux function is also discontinuous at the same point where the initial data is discontinuous.</p>
 <p>Part IV (<em>not included in the draft</em>) focuses on models with additional (non-hyperbolic) terms, such as traffic flow with on- and off-ramps, shallow water with variable bathymetry, and fluid dynamics in the presence of gravity or chemical reactions.</p>
 <p>Finally, in Part V (<em>partially written</em>) we consider multidimensional applications.</p>
