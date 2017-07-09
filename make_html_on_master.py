@@ -10,6 +10,10 @@ To post on the website, check out the `gh-pages` branch and then
     cp -r build_html/* html/
 and then git add, commit, and push to Github.
 
+The files `build_html/*.ipynb` can be deleted, but copy over all the
+subdirectories (`figures`, `exact_solvers`, etc.) in order for figures to
+display in html files and links to Python code to work properly.
+
 Note:
 
  - The notebooks are first copied into the directory `build_html` and pre-processed
@@ -22,6 +26,10 @@ Note:
 
  - The list `all_chapters` is used to replace cross-reference links
    `chapter.ipynb` by `chapter.html`.
+
+ - The bibliography files `riemann.html` and riemann_bib.html` are 
+   copied into `build_html`.  These might need to be updated before
+   running this script (using make_html_bib.sh).
 
 """
 
@@ -51,7 +59,7 @@ all_chapters = ['Preface',
 chapters = all_chapters  # which chapters to process
 
 # test on a subset:
-#chapters = ['Index','Introduction','Shallow_water']
+#chapters = ['Index','Introduction','Traffic_flow']
 
 template_path = os.path.realpath('./html.tpl')
 
@@ -60,14 +68,15 @@ os.system('mkdir -p build_html')  # for intermediate processing
 # copy some things needed for processing
 os.system('cp -r exact_solvers build_html/')
 os.system('cp -r utils build_html/')
-os.system('mkdir -p build_html/img')  # for viewing images
-os.system('cp -r figures build_html/img/')
+os.system('cp -r figures build_html/')
 
-os.system('mkdir -p html')  # for viewing final html files
+# Putting figures inside an img folder doesn't seem to be needed now:
+#os.system('mkdir -p build_html/img')  # for viewing images
+#os.system('cp -r figures build_html/img/')
 
 # Might need to update bibliography first with make_html_bib.sh
-os.system('cp riemann.html html/') # bibliography
-os.system('cp riemann_bib.html html/') # bibtex version of bibliography
+os.system('cp riemann.html build_html/') # bibliography
+os.system('cp riemann_bib.html build_html/') # bibtex version of bibliography
 
 os.chdir('build_html')
 
@@ -99,11 +108,9 @@ for i, chapter in enumerate(chapters):
             "--ExecutePreprocessor.timeout=60", output_filename]
     subprocess.check_call(args)
 
-    os.system('mv %s ../html/' % html_filename)
-
 os.chdir('..')
 
-print("The html files and figures can be found in build_html")
+print("The html files can be found in build_html")
 print("Open build_html/Index.html for the index")
 
 if 0:
