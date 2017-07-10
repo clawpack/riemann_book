@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
 
 conserved_variables = ('Depth', 'Momentum')
 primitive_variables = ('Depth', 'Velocity')
@@ -14,7 +16,8 @@ def primitive_to_conservative(h, u):
     return h, hu
 
 def conservative_to_primitive(h, hu):
-    assert np.all(h>=0)
+    # Check that h>=0 where it is not np.nan:
+    assert np.nanmin(h)>=0
     # We should instead check that hu is zero everywhere that h is
     u = hu/pospart(h)
     return h, u
@@ -456,8 +459,9 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
             plt.title(primitive_variables[i])
             axes[i].set_xlim(-1,1)
 
-            if i==0:
+            if i==0 and force_waves != 'raref':
                 # plot stripes only on depth plot
+                # (and suppress if nonphysical solution plotted)
                 n = find(t > t_traj)
                 if len(n)==0:
                     n = 0
