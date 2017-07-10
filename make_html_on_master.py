@@ -90,7 +90,7 @@ for i, chapter in enumerate(chapters):
     html_filename = chapter+'.html'
 
     with open(output_filename, "w") as output:
-        if chapter in ['Introduction','Nonconvex_scalar']:
+        if chapter in ['Introduction','Shallow_water','Nonconvex_scalar']:
             widget = 'from utils.jsanimate_widgets import interact'
         else:
             widget = 'from utils.snapshot_widgets import interact'
