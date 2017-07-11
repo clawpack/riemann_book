@@ -23,6 +23,11 @@ chapters = ['Preface',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
+# To test a subset, adjust the list of chapters and
+# remove the build_pdf directory before running this script.
+
+#chapters = ['Shallow_water']
+
 build_dir = 'build_pdf/'
 if not os.path.exists(build_dir):
     os.makedirs(build_dir)
@@ -42,10 +47,15 @@ for i, chapter in enumerate(chapters):
     output_filename = str(i).zfill(2)+'-'+filename
     with open(build_dir+output_filename, "w") as output:
         for line in lines:
-            line = re.sub(r'from ipywidgets import interact', 'from utils.snapshot_widgets import interact', line)
             for j, chapter_name in enumerate(chapters):
-                line = re.sub(chapter_name+'.ipynb', str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
-            output.write(re.sub(r'from ipywidgets import interact', 'from utils.snapshot_widgets import interact', line))
+                # fix cross references to other chapters
+                line = re.sub(chapter_name+'.ipynb',
+                          str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+            line = re.sub(r'from ipywidgets import interact',
+                          'from utils.snapshot_widgets import interact', line)
+            line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.', 
+                          '', line)
+            output.write(line)
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",
             "--ExecutePreprocessor.kernel_name=python2",
             "--output", output_filename,
