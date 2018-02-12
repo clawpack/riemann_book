@@ -18,24 +18,25 @@ def conservative_to_primitive(eps, mom, rho):
 
 
 def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
-    """Return the exact solution to the Riemann problem with initial states
-       q_l, q_r.  The solution is given in terms of a list of states, a list of
-       speeds (each of which may be a pair in case of a rarefaction fan), and a
-       function reval(xi) that gives the solution at a point xi=x/t.
+    """
+    Return the exact solution to the Riemann problem with initial states
+    q_l, q_r.  The solution is given in terms of a list of states, a list of
+    speeds (each of which may be a pair in case of a rarefaction fan), and a
+    function reval(xi) that gives the solution at a point xi=x/t.
 
-       The input and output vectors are the conserved quantities.
+    The input and output vectors are the conserved quantities.
 
-       If phase_plane_curves==True, then the appropriate Hugoniot Locus and/or
-       integral curve is returned for the 1- and 2-waves.
+    If phase_plane_curves==True, then the appropriate Hugoniot Locus and/or
+    integral curve is returned for the 1- and 2-waves.
 
-       For the variable-coefficient nonlinear elasicity problem:
+    For the variable-coefficient nonlinear elasicity problem:
 
            eps_t - u_x = 0
            (\rho(x) u)_t - \sigma(eps,x) = 0
 
-        the solution has two intermediate states.  These must be connected to
-        the left and right states by an integral curve or hugoniot locus, and
-        to each other by continuity of the velocity and stress.
+    the solution has two intermediate states.  These must be connected to
+    the left and right states by an integral curve or hugoniot locus, and
+    to each other by continuity of the velocity and stress.
     """
     eps_l, mom_l = q_l
     eps_r, mom_r = q_r
