@@ -28,6 +28,15 @@ chapters = ['Preface',
 
 #chapters = ['Shallow_water']
 
+chapters = ['Preface',
+            'Introduction',
+            'Traffic_flow',
+            'Shallow_water',
+            'Approximate_solvers',
+            'Traffic_variable_speed',
+            'Euler_equations_TammannEOS',
+            'Nonconvex_scalar']
+
 build_dir = 'build_pdf/'
 if not os.path.exists(build_dir):
     os.makedirs(build_dir)
