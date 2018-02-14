@@ -240,10 +240,11 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                                   number of conserved variables.
     """
     num_vars, num_states = states.shape
+    pstates = states.copy()
     if derived_variables:
         num_vars = len(derived_variables(states[:,0]))
         for i in range(num_states):
-            states[:,i] = derived_variables(states[:,i])
+            pstates[:,i] = derived_variables(states[:,i])
     if ax is not None:
         assert len(ax) == num_vars + 1 + extra_axes
 
@@ -277,7 +278,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                 child.set_color('#dddddd')
 
     # Plot waves in x-t plane
-    plot_waves(states, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color, t_pointer=t_pointer)
+    plot_waves(pstates, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color, t_pointer=t_pointer)
     xmax = ax[0].get_xlim()[1]
 
     # Plot conserved quantities as function of x for fixed t
@@ -293,8 +294,8 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     for i in range(num_vars):
         ax[i+1].set_xlim((-1,1))
-        qmax = max(np.nanmax(q_sample[i][:]), np.nanmax(states[i,:]))
-        qmin = min(np.nanmin(q_sample[i][:]), np.nanmin(states[i,:]))
+        qmax = max(np.nanmax(q_sample[i][:]), np.nanmax(pstates[i,:]))
+        qmin = min(np.nanmin(q_sample[i][:]), np.nanmin(pstates[i,:]))
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax,xmax)
         ax[i+1].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))

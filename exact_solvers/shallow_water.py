@@ -384,10 +384,10 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     for hustar in np.linspace(-4,4,15):
         if plot_1:
             hu = hugoniot_locus(h,hstar,hustar,wave_family=1,y_axis=y_axis)
-            plt.plot(h,hu,'-',color='cornflowerblue')
+            plt.plot(h,hu,'-',color='coral')
         if plot_2:
             hu = hugoniot_locus(h,hstar,hustar,wave_family=2,y_axis=y_axis)
-            plt.plot(h,hu,'-',color='lightblue')
+            plt.plot(h,hu,'-',color='maroon')
         plt.axis((0,3,-3,3))
         plt.xlabel('depth h')
         if y_axis=='hu':
