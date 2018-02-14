@@ -55,9 +55,9 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
     integral_curve_2   = lambda h: u_r - 2*(np.sqrt(grav*h_r) -
                                             np.sqrt(grav*np.maximum(h,0)))
     hugoniot_locus_1 = lambda h: (h_l*u_l + (h-h_l)*(u_l -
-            np.sqrt(grav*h_l*(1 + (h-h_l)/h_l) * (1 + (h-h_l)/(2*h_l)))))/h
+                                  np.sqrt(grav*h_l*(1 + (h-h_l)/h_l) * (1 + (h-h_l)/(2*h_l)))))/h
     hugoniot_locus_2 = lambda h: (h_r*u_r + (h-h_r)*(u_r +
-            np.sqrt(grav*h_r*(1 + (h-h_r)/h_r) * (1 + (h-h_r)/(2*h_r)))))/h
+                                  np.sqrt(grav*h_r*(1 + (h-h_r)/h_r) * (1 + (h-h_r)/(2*h_r)))))/h
 
     # Check whether the 1-wave is a shock or rarefaction
     def phi_l(h):
@@ -310,7 +310,7 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
 
-def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', approx_states=None, hmin=0):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
@@ -334,7 +334,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     ymax = max(abs(y))
     dx = xmax - xmin
     ymax = max(abs(y))
-    ax.set_xlim(0, xmax + 0.5*dx)
+    ax.set_xlim(hmin, xmax + 0.5*dx)
     ax.set_ylim(-1.5*ymax, 1.5*ymax)
     ax.set_xlabel('Depth (h)')
     if y_axis == 'u':
@@ -377,6 +377,11 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax,label)
 
+    if approx_states is not None:
+        u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
+        h = approx_states[0,:]
+        plt.plot(h,u,'o-g',markersize=10,zorder=0)
+
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
     hstar = 1.0
@@ -405,7 +410,6 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
     import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
     from utils import riemann_tools
-    #plt.style.use('seaborn-talk')
 
     g = 1.
 
