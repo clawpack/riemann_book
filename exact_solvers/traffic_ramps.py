@@ -49,8 +49,8 @@ def riemann_traffic_exact(q_l,q_r,D):
 
     else:
         # Left-going shock
-        q_star = 0.5 + np.sqrt(D)
         if q_r <= 0.5:
+            q_star = 0.5 + np.sqrt(D)
             states = [q_l, q_star, q_r]
             wave_types = ['shock','contact','raref']
             s_star = shock_speed(q_star,q_l)
@@ -65,6 +65,18 @@ def riemann_traffic_exact(q_l,q_r,D):
                 return q
 
         else:
-            raise NotImplementedError
+            q_star = 0.5*(1 + np.sqrt(1.+4*D-4*f(q_r)))
+            states = [q_l, q_star, q_r]
+            wave_types = ['shock','contact']
+            s_star = shock_speed(q_star,q_l)
+            speeds = [s_star,0]
+
+            def reval(xi):
+                q = np.zeros((1,len(xi)))
+                q[0,:] = (xi<=s_star)*q_l \
+                  + (xi>s_star)*(xi<=0)*q_star \
+                  + (xi>0)*q_r
+                return q
+
 
     return np.array([states]), speeds, reval, wave_types
