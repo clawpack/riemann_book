@@ -9,24 +9,94 @@ from IPython.display import display
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
 
+def pospart(x):
+    return np.maximum(1.e-15,x)
 
 def primitive_to_conservative(rho, u, p, gamma, pinf):
     mom = rho*u
     E   = (p - gamma * pinf)/(gamma-1.) + 0.5*rho*u**2
     return rho, mom, E
 
-
 def conservative_to_primitive(rho, mom, E, gamma, pinf):
-    u = mom/rho
+    u = mom/pospart(rho)
     p = (gamma-1.)*(E - 0.5*rho*u**2) - gamma*pinf
     return rho, u, p
 
+def cons_to_prim(q, gamma = 1.4, pinf = 0.0):
+    return conservative_to_primitive(*q,gamma=gamma,pinf=pinf)
 
-def exact_riemann_solution(ql, qr, gamma, pinf, varin = 'primitive', varout = 'primitive'):
+def sound_speed(rho, p, gamma = 1.4, pinf = 0.0):
+    return np.sqrt(gamma*(p+pinf)/pospart(rho))
+
+def alpha(rho, gamma):
+    return 2.0/(pospart(rho)*(gamma + 1.0))
+
+def beta(p, gamma, pinf):
+    return pospart(p + pinf)*(gamma - 1.0)/(gamma + 1.0)
+
+def lambda1(q, xi, aux, varout='primitive'):
+    "Characteristic speed for 1-waves."
+    gamma, pinf = aux
+    if varout == 'primitive':
+            rho, u, p = q
+    else:
+        rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
+    al = alpha(rho, gamma)
+    be = beta(p, gamma, pinf)
+    return u - np.sqrt(gamma*(p + pinf)/pospart(rho))
+
+def lambda2(q, xi, aux, varout='primitive'):
+    "Characteristic speed for 2-waves."
+    gamma, pinf = aux
+    if varout == 'primitive':
+            rho, u, p = q
+    else:
+        rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
+    return u
+
+def lambda3(q, xi, aux, varout='primitive'):
+    "Characteristic speed for 3-waves."
+    gamma, pinf = aux
+    if varout == 'primitive':
+            rho, u, p = q
+    else:
+        rho, u, p = conservative_to_primitive(*q, gamma=gamma,pinf=pinf)
+    al = alpha(rho, gamma)
+    be = beta(p, gamma, pinf)
+    return u + np.sqrt(gamma*(p + pinf)/pospart(rho))
+
+def integral_curve_1(p, rhol, ul, pl, gammal = 1.4, pinfl = 0.0):
+    """Velocity as a function of pressure for the 1-integral curve passing
+       through (rhostar, ustar, pstar)"""
+    cl = sound_speed(rhol, pl, gammal, pinfl)
+    pbl = pospart(pl + pinfl)
+    gl1 = gammal - 1.0  
+    return ul + 2*cl/gl1*(1 - (pospart(p + pinfl)/pbl)**(gl1/(2.0*gammal)))
+
+def integral_curve_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
+    c = sound_speed(rhor, pr, gammar, pinfr)
+    pbr = pospart(pr + pinfr)
+    gr1 = gammar - 1.0  
+    return ur - 2*cr/gr1*(1 - (pospart(p + pinfr)/pbr)**(gr1/(2.0*gammar)))
+
+def hugoniot_locus_1(p, rhol, ul, pl, gammar = 1.4, pinfr = 0.0):
+    c = sound_speed(rhol, pl, gammal, pinfl)
+    al = alpha(rhol, gammal)
+    be = beta(pl, gammal, pinfl)
+    return ul - (p - pl)*np.sqrt(al/(p + pinfl + be))
+
+def hugoniot_locus_3(p, rhor, ur, pr, gammar = 1.4, pinfr = 0.0):
+    c = sound_speed(rhor, pr, gammar, pinfr)
+    ar = alpha(rhor, gammar)
+    be = beta(pr, gammar, pinfr)
+    return ur + (p - pr)*np.sqrt(ar/(p + pinfr + be))
+
+
+def exact_riemann_solution(ql, qr, auxl, auxr, varin = 'primitive', varout = 'primitive'):
 
     # Get intial data
-    gammal, gammar = gamma
-    pinfl, pinfr = pinf
+    gammal, pinfl = auxl
+    gammar, pinfr = auxr
     if varin == 'conservative':
         rhol, ul, pl = conservative_to_primitive(*ql, gamma = gammal, pinf = pinfl)
         rhor, ur, pr = conservative_to_primitive(*qr, gamma = gammar, pinf = pinfr)

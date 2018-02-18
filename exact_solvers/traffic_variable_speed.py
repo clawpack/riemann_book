@@ -162,7 +162,8 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
 
 
 def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
-                     reval=None, wave_types=None, axes=None, show=True):
+                     reval=None, wave_types=None, axes=None, show=True,
+                     connect=True):
     r"""Plot Riemann solution in the q-f plane."""
     if axes is None:
         fig, axes = plt.subplots()
@@ -178,11 +179,27 @@ def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
     f_r = f(q_r,v_r)
 
     # Plot flux curves
-    q = np.linspace(0,1,500)
-    axes.plot(q, f(q,v_l))
-    axes.plot(q, f(q,v_r))
-    axes.plot([q_l], [f(q_l,v_l)],'o')
-    axes.plot([q_r], [f(q_r,v_r)],'o')
+    q1 = np.linspace(0,0.5,500)
+    q2 = np.linspace(0.5,1,500)
+    axes.plot(q1, f(q1,v_l),'--k',alpha=0.5)
+    axes.plot(q2, f(q2,v_r),'--k',alpha=0.5)
+
+    if q_l > 0.5:
+        qlb = np.linspace(0.5, q_l, 500)
+        axes.plot(qlb, f(qlb,v_l), '-b',linewidth=0.8)
+        qlr = np.linspace(q_l, 1.0, 500)
+        axes.plot(qlr, f(qlr,v_l), '-r',linewidth=0.8)
+    else:
+        axes.plot(q2, f(q2,v_l),'-r',linewidth=0.8)
+    if q_r < 0.5:
+        qrr = np.linspace(0., q_r, 500)
+        axes.plot(qrr, f(qrr,v_r), '-r',linewidth=0.8)
+        qrb = np.linspace(q_r, 0.5, 500)
+        axes.plot(qrb, f(qrb,v_r), '-b',linewidth=0.8)
+    else:
+        axes.plot(q1, f(q1,v_r),'-r',linewidth=0.8)
+    axes.plot([q_l], [f(q_l,v_l)],'ok')
+    axes.plot([q_r], [f(q_r,v_r)],'ok')
 
     fluxes = [f_l,f_r]
     if len(states) == 4:
@@ -199,41 +216,47 @@ def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
             else:
                 fluxes.insert(1,f(states[1],v_r))
 
-    for i, w in enumerate(wave_types):
-        if w is 'raref':
-            q = np.linspace(states[i],states[i+1],500)
-            if min(speeds[i])<0:  # left-going
-                ff = f(q,v_l)
-            else:  # right-going
-                ff = f(q,v_r)
-            axes.plot(q,ff,color=colors['raref'],lw=3)
-        else:
-            axes.plot([states[i],states[i+1]],[fluxes[i],fluxes[i+1]],color=colors[wave_types[i]],lw=3)
-
-    eps = 1.e-7
-    speedlist = []
-    for s in speeds:
-        if not isinstance(s,tuple):
-            s = [s]
-        speedlist += s
-
-    for s in speedlist:
-        for xi in [s-eps, s+eps]:
-            q = reval(np.array([xi]))
-            if xi<0:
-                v = v_l
+    if connect:
+        for i, w in enumerate(wave_types):
+            if w is 'raref':
+                q = np.linspace(states[i],states[i+1],500)
+                if min(speeds[i])<0:  # left-going
+                    ff = f(q,v_l)
+                else:  # right-going
+                    ff = f(q,v_r)
+                axes.plot(q,ff,color=colors['raref'],lw=3)
             else:
-                v = v_r
-            axes.plot(q, f(q,v), 'ok')
+                axes.plot([states[i],states[i+1]],[fluxes[i],fluxes[i+1]],color=colors[wave_types[i]],lw=3)
 
-    axes.text(q_l, f_l+0.02, '$q_l$')
-    axes.text(q_r, f_r+0.02, '$q_r$')
-    axes.set_xlim(0,1)
+        eps = 1.e-7
+        speedlist = []
+        for s in speeds:
+            if not isinstance(s,tuple):
+                s = [s]
+            speedlist += s
+
+        for s in speedlist:
+            for xi in [s-eps, s+eps]:
+                q = reval(np.array([xi]))
+                if xi<0:
+                    v = v_l
+                else:
+                    v = v_r
+                axes.plot(q, f(q,v), 'ok')
+
+    which = np.sign(v_r-v_l)
     ymax = 0.3*max(v_l,v_r)
+    axes.text(q_l, f_l-0.06*which*ymax, r'$\rho_l$', horizontalalignment='center',
+              verticalalignment='center',
+              fontsize=15)
+    axes.text(q_r, f_r+0.06*which*ymax,r'$\rho_r$', horizontalalignment='center',
+              verticalalignment='center',
+              fontsize=15)
+    axes.set_xlim(0,1)
     axes.set_ylim(0,ymax)
     axes.plot([0.5,0.5],[0,ymax],'--k',linewidth=1,alpha=0.5)
-    axes.set_xlabel('q')
-    axes.set_ylabel('f(q)')
+    axes.set_xlabel(r'$\rho$')
+    axes.set_ylabel(r'$f(\rho)$')
 
     if show:
         plt.show()
