@@ -8,7 +8,7 @@
 ! Conserved quantities:
 !       1 q
 
-! The the strength of the on-ramp delta function and the index of the cell with
+! The strength of the on-ramp delta function and the index of the cell with
 ! the ramp (at the left edge) should be in the variables dramp, iramp in the
 ! common block cparam.
 
@@ -58,7 +58,7 @@ subroutine rp1(maxm,num_eqn,num_waves,num_aux,num_ghost,num_cells, &
                 s(1,i) = si
                 amdq(1,i) = 0.d0
                 apdq(1,i) = fwave(1,1,i)
-            else if (sim1+dramp .gt. 0.25d0 .and. si .gt. 0.d0) then
+            else if (sim1+dramp .gt. 0.25d0 .and. si .gt. 0.d0) then ! Should sim1 be fim1 here?
                 ! transonic rarefaction
                 s(1,i) = 0.5d0*(sim1 + si)
 
