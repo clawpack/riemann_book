@@ -68,7 +68,7 @@ def exact_riemann_solution(q_l,q_r,D):
     elif q_l > 0.5 - np.sqrt(D):
         # right-going rarefaction + congestion at x=0
         q_m = 0.5 + np.sqrt(D)
-        states = [q_l, q_m, q_r]
+        states = [q_l, q_m, 0.5, q_r]
         wave_types = ['','contact','raref']
         speeds = [None, 0, (0, c(q_r))]
         if q_l > q_m:
