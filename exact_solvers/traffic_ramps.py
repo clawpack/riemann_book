@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+from utils import riemann_tools
 sys.path.append('../utils')
 
 f = lambda q: q*(1-q)
@@ -178,3 +179,29 @@ def phase_plane_plot(q_l, q_r, D, states=None, speeds=None,
 
     if show:
         plt.show()
+
+
+def plot_car_trajectories(q_l,q_r,D,axes=None,t=None,xmax=None):
+    states, speeds, reval, wave_types = exact_riemann_solution(q_l,q_r,D)
+    def reval_with_speed(xi):
+        q = reval(xi)
+        u = 1-q
+        qu = np.vstack((q,u))
+        return qu
+
+    # density of particles for trajectories:
+    rho_left = q_l/2.
+    rho_right = q_r/2.
+
+    # compute trajectories:
+    x_traj, t_traj, xmax = riemann_tools.compute_riemann_trajectories(states,
+                            speeds, reval_with_speed, wave_types,
+                            xmax=xmax,rho_left=rho_left, rho_right=rho_right)
+
+    # plot trajectories along with waves in the x-t plane:
+    axes = riemann_tools.plot_riemann_trajectories(x_traj, t_traj, speeds, wave_types,
+                                                   xmax=xmax, ax=axes, t=t)
+
+    axes.set_title('Vehicle trajectories')
+    axes.set_xlabel('$x$',fontsize=15)
+    axes.set_ylabel('$t$',fontsize=15)
