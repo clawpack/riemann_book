@@ -300,11 +300,14 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                 fill_between plot.
     """
     num_vars, num_states = states.shape
-    pstates = states.copy() # Make a copy to avoid modifying states
+    pstates = states.copy()
     if derived_variables:
         num_vars = len(derived_variables(states[:,0]))
         for i in range(num_states):
             pstates[:,i] = derived_variables(states[:,i])
+
+    if ax is not None:
+        assert len(ax) == num_vars + 1 + extra_axes
 
     if wave_types is None:
         wave_types = ['contact']*len(s)
@@ -347,6 +350,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
     # Plot wave characteristics in x-t plane
     plot_waves(pstates, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color,
                t_pointer=t_pointer)
+
     xmax = ax[0].get_xlim()[1]
 
     # Plot conserved quantities as function of x for fixed t
