@@ -47,6 +47,7 @@ os.system('cp *.html '+build_dir)
 os.system('cp -r figures '+build_dir)
 os.system('cp riemann.tplx '+build_dir)
 os.system('cp *.cls '+build_dir)
+os.system('cp *.css '+build_dir)
 os.system('cp riemann.bib '+build_dir)
 
 for i, chapter in enumerate(chapters):
@@ -59,10 +60,10 @@ for i, chapter in enumerate(chapters):
             for j, chapter_name in enumerate(chapters):
                 # fix cross references to other chapters
                 line = re.sub(chapter_name+'.ipynb',
-                          str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+                              str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
             line = re.sub(r'from ipywidgets import interact',
                           'from utils.snapshot_widgets import interact', line)
-            line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.', 
+            line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.',
                           '', line)
             output.write(line)
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",

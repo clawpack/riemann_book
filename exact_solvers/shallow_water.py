@@ -508,10 +508,10 @@ def macro_riemann_plot(i,figsize=(10,3)):
     Some simulations to show that the Riemann solution describes macroscopic behavior
     in the Cauchy problem.
     """
+    from IPython.display import HTML
     from clawpack import pyclaw
     import matplotlib.pyplot as plt
     from matplotlib import animation
-    from clawpack.visclaw.JSAnimation import IPython_display
     from clawpack.riemann import shallow_roe_tracer_1D
     import numpy as np
 
@@ -618,4 +618,6 @@ def macro_riemann_plot(i,figsize=(10,3)):
             fills[color] = ax_h.fill_between(x,b,surface,facecolor=color,where=stripes[color],alpha=0.5)
         return line,
 
-    return animation.FuncAnimation(fig, fplot, frames=len(claw.frames), interval=200)
+    anim = animation.FuncAnimation(fig, fplot, frames=len(claw.frames), interval=200, repeat=False)
+    plt.close()
+    return HTML(anim.to_jshtml())
