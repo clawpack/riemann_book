@@ -352,6 +352,9 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
     plot_waves(pstates, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color,
                t_pointer=t_pointer, xmax=xmax)
 
+    if xmax is None:
+        xmax = ax[0].get_xlim()[1]
+
     # Plot conserved quantities as function of x for fixed t
     # Use xi values in [-10,10] unless the wave speeds are so large
     # that we need a larger range
