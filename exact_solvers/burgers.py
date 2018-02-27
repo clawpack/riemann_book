@@ -1,12 +1,14 @@
 """
-Exact Riemann solvers for Burgers' equation in 1D.
+Exact Riemann solvers for Burgers' equation in 1D and interactive plot function.
 """
 import numpy as np
+from ipywidgets import widgets, interact
+from IPython.display import display
 
-def lambda1(q, xi, aux):
+
+def speed(q, xi):
     "Characteristic speed."
-    rho, bulk = aux
-    return -np.sqrt(bulk/rho)
+    return q
 
 def exact_riemann_solution(q_l,q_r):
     r"""Exact solution to the Riemann problem for the LWR traffic model."""
@@ -39,5 +41,17 @@ def exact_riemann_solution(q_l,q_r):
     return states, speeds, reval, wave_types
 
 
+def plot_interactive_riemann(plot_riemann):
+    ql_widget = widgets.FloatSlider(min=0., max=1., value=0.5, description=r'$q_l$')
+    qr_widget = widgets.FloatSlider(min=0., max=1., value=0.0, description=r'$q_r$')
+    t_widget = widgets.FloatSlider(min=0.,max=1.,value=0.1, description=r'$t$')
+    x_range_widget = widgets.FloatSlider(min=0.1,max=5,value=1.,description=r'x-axis range')
+    interact_gui = widgets.HBox([t_widget,widgets.VBox([ql_widget,qr_widget]),x_range_widget])
+
+    burgers_widget = interact(plot_riemann, q_l=ql_widget, q_r=qr_widget, 
+                              t=t_widget, x_range=x_range_widget)
+    burgers_widget.widget.close()
+    display(interact_gui)
+    display(burgers_widget.widget.out)
 
 
