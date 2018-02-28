@@ -80,35 +80,35 @@ def plot_interactive_riemann(plot_riemann):
     display(burgers_widget.widget.out)
 
 
-def exact_triplestate_riemann_solution(q_l,q_m,q_r,x1,x2):
-    r"""Exact solution to the triple state Riemann problem for the Burgers' equation."""
-    f = lambda q: 0.5*q*q
-    states = np.array([[q_l, q_m, q_r]])
-    if q_l > q_m:  # 1-Shock wave
-        shock_speed = (f(q_l)-f(q_m))/(q_l-q_m)
-        speeds = [shock_speed]
-        wave_types = ['shock']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi < shock_speed)*q_l \
-              + (xi >=shock_speed)*q_m
-            return q
+#def exact_triplestate_riemann_solution(q_l,q_m,q_r,x1,x2):
+    #r"""Exact solution to the triple state Riemann problem for the Burgers' equation."""
+    #f = lambda q: 0.5*q*q
+    #states = np.array([[q_l, q_m, q_r]])
+    #if q_l > q_m:  # 1-Shock wave
+        #shock_speed = (f(q_l)-f(q_m))/(q_l-q_m)
+        #speeds = [shock_speed]
+        #wave_types = ['shock']
+        #def reval(xi):
+            #q = np.zeros((1,len(xi)))
+            #q[0,:] = (xi < shock_speed)*q_l \
+              #+ (xi >=shock_speed)*q_m
+            #return q
 
-    elif q_l <= qm:  # 1-Rarefaction wave
-        c_l  = q_l
-        c_m = q_m
+    #elif q_l <= qm:  # 1-Rarefaction wave
+        #c_l  = q_l
+        #c_m = q_m
 
-        speeds = [[c_l,c_m]]
-        wave_types = ['rarefaction']
+        #speeds = [[c_l,c_m]]
+        #wave_types = ['rarefaction']
 
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=c_l)*q_l \
-              + (xi>=c_m)*q_m \
-              + (c_l<xi)*(xi<c_m)*xi
-            return q
+        #def reval(xi):
+            #q = np.zeros((1,len(xi)))
+            #q[0,:] = (xi<=c_l)*q_l \
+              #+ (xi>=c_m)*q_m \
+              #+ (c_l<xi)*(xi<c_m)*xi
+            #return q
 
-    return states, speeds, reval, wave_types
+    #return states, speeds, reval, wave_types
 	
 
 
