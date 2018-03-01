@@ -7,6 +7,29 @@ This may be modified further as the notebooks in this
 directory are improved and expanded.  Eventually a
 stable version of this should be moved back to
 clawpack/riemann/src in a future release.
+
+Several of the main functions require the following sequence of arguments:
+
+    (states, speeds, riemann_eval, wave_types)
+
+These are usually obtained from an exact or approximate Riemann solver.
+
+    states: a list of the constant states in the Riemann solution.
+            For a system of m equations, each entry in states has length m.
+
+    speeds: the speeds of the waves in the Riemann solution.  This is a list,
+            going from left to right in x.  If the corresponding wave is
+            a shock or contact wave, the entry in speeds is a single number.
+            If the corresponding wave is a rarefaction, the entry in speeds
+            is a pair (s1, s2), where s1 and s2 are the speeds of the
+            characteristics bounding the rarefaction fan.
+
+    riemann_eval: a function that gives the pointwise solution of the
+                  Riemann problem.  It takes a single argument, xi = x/t.
+
+    wave_types: a list of the types of the waves appearing in the Riemann
+                solution, going from left to right.  The allowed values
+                are 'shock', 'contact', and 'raref'.
 """
 
 from __future__ import absolute_import
@@ -30,6 +53,11 @@ from IPython.display import display
 
 sympy.init_printing(use_latex='mathjax')
 
+def convert_to_list(x):
+    if isinstance(x, (list, tuple)):
+        return x
+    else:
+        return [x]
 
 def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=None,
                      verbose=False,stationary_wave=False,fwave=False):
@@ -180,8 +208,30 @@ def plot_phase_3d(states):
     ax.text(states[0,0]+0.05,states[1,0],states[2,0],'q_left')
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
 
+def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
+               color='multi', t_pointer=False, xmax=None):
+    """
+    Plot the characteristics belonging to waves (shocks, rarefactions,
+    and contact discontinuities) for a Riemann problem, in the x-t plane.
+    Shocks and rarefactions are plotted as a single characteristic;
+    for rarefactions, a fan of 5 characteristics is plotted.
 
-def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi', t_pointer=False):
+    Required inputs:
+        states: a list of the constant states, from left to q_right
+        s: a list of the wave speeds
+        riemann_eval: a function that returns the solution value as
+                a function of x/t
+        wave_types: a list of the wave types ('shock', 'contact', or 'raref')
+
+    Optional inputs:
+        t: the time at which to plot the solution
+        ax: a matplotlib axes on which to plot.  By default, a new plot is created.
+        color: a matplotlib color string (e.g. 'k' for black).  If provided,
+                all characteristics will be this color.  Useful for comparing
+                different approximate solutions.
+        t_pointer: if True, plot a horizontal dashed line and a text label,
+                corresponding to the time.
+    """
 
     num_eqn,num_states = states.shape
 
@@ -202,7 +252,8 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
         fig, ax = plt.subplots()
 
     tmax = 1.0
-    xmax = 0.
+    if xmax is None:
+        xmax = 0.
     for i in range(len(s)):
         if wave_types[i] in ['shock','contact']:
             x1 = tmax * s[i]
@@ -215,6 +266,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
                 ax.plot([0,x1],[0,tmax],color=colors['raref'],lw=0.6)
                 xmax = max(xmax,abs(x1))
 
+    xmax = max(0.001, xmax)
     ax.set_xlim(-xmax,xmax)
     ax.plot([-xmax,xmax],[t,t],'--k',linewidth=0.5)
     if t_pointer:
@@ -226,34 +278,52 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None, color='multi
 def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                  color='multi', layout='horizontal', variable_names=None,
                  t_pointer=False, extra_axes=False, fill=(),
-                 derived_variables=None):
+                 derived_variables=None, xmax=None):
     """
     Take an array of states and speeds s and plot the solution at time t.
-    For rarefaction waves, the corresponding entry in s should be tuple of two values,
+    For rarefaction waves, the corresponding entry in s should be a tuple of two values,
     which are the wave speeds that bound the rarefaction fan.
 
-    Plots in the x-t plane and also produces a separate plot for each component of q.
+    Plots in the x-t plane and also produces a separate plot of each component
+    of q, versus x.
 
-    derived_variables (optional): A function that takes the conserved variables
-                                  and returns the ones to plot.  The number of
-                                  plotted variables need not be the same as the
-                                  number of conserved variables.
+    Optional arguments:
+
+        derived_variables: A function that takes the conserved variables
+                           and returns the ones to plot.  The number of
+                           plotted variables need not be the same as the
+                           number of conserved variables.
+
+        layout: 'horizontal' or 'vertical'
+        variable_names: used to label the plots of q
+        extra_axes: if True, add an extra axis for plotting one more thing
+        fill: a list of integers; if i is in fill, then q[i] uses a
+                fill_between plot.
     """
     num_vars, num_states = states.shape
+    pstates = states.copy()
     if derived_variables:
         num_vars = len(derived_variables(states[:,0]))
         for i in range(num_states):
-            states[:,i] = derived_variables(states[:,i])
+            pstates[:,i] = derived_variables(states[:,i])
+
     if ax is not None:
         assert len(ax) == num_vars + 1 + extra_axes
 
     if wave_types is None:
         wave_types = ['contact']*len(s)
 
-    if ax is None:
+    if variable_names is None:
+        if num_vars == 1:
+            variable_names = ['q']
+        else:
+            variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
+
+    if ax is None:  # Set up a new plot and axes
         num_axes = num_vars+1
         if extra_axes: num_axes += 1
         if layout == 'horizontal':
+            # Plots side by side
             if num_axes == 4:
                 fig_width = 2.5*num_axes
             else:
@@ -261,6 +331,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,3))
             plt.subplots_adjust(wspace=0.5)
         elif layout == 'vertical':
+            # Plots on top of each other, with shared x-axis
             fig_width = 9
             fig_height = 3*(num_axes-1)
             fig, ax = plt.subplots(num_axes,1,figsize=(fig_width,fig_height),sharex=True)
@@ -269,61 +340,62 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             ax[0].set_ylabel('t')
             ax[0].set_title('t = %6.3f' % t)
     else:
-        xmin, xmax = ax[1].get_xlim()
+        assert len(ax) == num_vars + 1 + extra_axes
 
+    # Make plot boundaries grey
     for axis in ax:
         for child in axis.get_children():
             if isinstance(child, matplotlib.spines.Spine):
                 child.set_color('#dddddd')
 
-    # Plot waves in x-t plane
-    plot_waves(states, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color, t_pointer=t_pointer)
-    xmax = ax[0].get_xlim()[1]
+    # Plot wave characteristics in x-t plane
+    plot_waves(pstates, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color,
+               t_pointer=t_pointer, xmax=xmax)
+
+    if xmax is None:
+        xmax = ax[0].get_xlim()[1]
 
     # Plot conserved quantities as function of x for fixed t
-    if variable_names is None:
-        if num_vars == 1:
-            variable_names = ['q']
-        else:
-            variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
-
-    q_sample = riemann_eval(np.linspace(min(-10,2*np.min(s[0])),max(10,2*np.max(s[-1]))))
+    # Use xi values in [-10,10] unless the wave speeds are so large
+    # that we need a larger range
+    xi_range = np.linspace(min(-10, 2*np.min(s[0])), max(10, 2*np.max(s[-1])))
+    q_sample = riemann_eval(xi_range)
     if derived_variables:
         q_sample = derived_variables(q_sample)
 
     for i in range(num_vars):
+        # Set axis bounds to comfortably fit the values that will be plotted
         ax[i+1].set_xlim((-1,1))
-        qmax = max(np.nanmax(q_sample[i][:]), np.nanmax(states[i,:]))
-        qmin = min(np.nanmin(q_sample[i][:]), np.nanmin(states[i,:]))
+        qmax = max(np.nanmax(q_sample[i][:]), np.nanmax(pstates[i,:]))
+        qmin = min(np.nanmin(q_sample[i][:]), np.nanmin(pstates[i,:]))
         qdiff = qmax - qmin
-        ax[i+1].set_xlim(-xmax,xmax)
-        ax[i+1].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))
+        ax[i+1].set_xlim(-xmax, xmax)
+        if qmin == qmax:
+            qmin = qmin*0.9
+            qmax = qmin*1.1+0.01
+        ax[i+1].set_ylim((qmin-0.1*qdiff, qmax+0.1*qdiff))
+
         if layout == 'horizontal':
             ax[i+1].set_title(variable_names[i]+' at t = %6.3f' % t)
         elif layout == 'vertical':
             ax[i+1].set_ylabel(variable_names[i])
 
-    x = np.linspace(-xmax,xmax,1000)
+    x = np.linspace(-xmax, xmax, 1000)
     if t>0:
-        # Make sure we have a point between each pair of waves
-        # Important e.g. for nearly-pressureless gas
+        # Make sure we have a value of x between each pair of waves
+        # This is important e.g. for nearly-pressureless gas,
+        # in order to catch small regions
         wavespeeds = []
         for speed in s:
-            from numbers import Number
-            if isinstance(speed, Number):
-                wavespeeds.append(speed)
-            else:
-                wavespeeds += speed
+            wavespeeds += convert_to_list(speed)
+
         wavespeeds = np.array(wavespeeds)
         xm = 0.5*(wavespeeds[1:]+wavespeeds[:-1])*t
         iloc = np.searchsorted(x,xm)
         x = np.insert(x, iloc, xm)
 
-    if t == 0:
-        q = riemann_eval(x/1e-10)
-    else:
-        q = riemann_eval(x/t)
-
+    # Avoid dividing by zero
+    q = riemann_eval(x/(t+1e-10))
     if derived_variables:
         q = derived_variables(q)
 
@@ -339,19 +411,24 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
     return ax
 
 
-def make_plot_function(states_list,speeds_list,riemann_eval_list,
-                       wave_types_list=None,names=None,layout='horizontal',
-                       variable_names=None,colors=('multi','green','orange'),
-                       plot_chars=None,derived_variables=None,aux=None,cdindex=None):
+def make_plot_function(states_list, speeds_list, riemann_eval_list,
+                       wave_types_list=None, names=None, layout='horizontal',
+                       variable_names=None, colors=('multi', 'green', 'orange'),
+                       plot_chars=None, derived_variables=None, aux=None, contact_index=None):
     """
     Utility function to create a plot_function that takes a single argument t,
     or (if plot_chars is specified) an argument t and an integer argument indicating
     which characteristic family to plot.
     This function can then be used with ipywidgets.interact.
 
-    plot_chars: If provided, ordinary characteristics are included in the x-t plot.
-                The value of this argument should be a list of functions c(q,x) that give
-                the characteristic speeds of the wave families (in order).
+    Most of the arguments are explained in the docstring for plot_riemann.
+
+    Optional arguments:
+        plot_chars: If provided, ordinary characteristics are included in the x-t plot.
+                    The value of this argument should be a list of functions c(q,x) that give
+                    the characteristic speeds of the wave families (in order).
+        aux: auxiliary variables to be passed to plot_characteristics
+        contact_index: see docstring for plot_characteristics
     """
     if type(states_list) is not list:
         states_list = [states_list]
@@ -363,18 +440,18 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
     if wave_types_list is None:
         wave_types_list= [['contact']*len(speeds_list[0])]*len(speeds_list)
 
-    num_eqn,num_states = states_list[0].shape
+    num_eqn = states_list[0].shape[0]
 
     num_axes = num_eqn + 1
 
-    def plot_function(t,which_char=None):
+    def plot_function(t, which_char=None):
         if layout == 'horizontal':
             fig_width = 3*num_axes
-            fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,3))
+            fig, ax = plt.subplots(1,num_axes,figsize=(fig_width, 3))
         elif layout == 'vertical':
             fig_width = 9
             fig_height = 3*(num_axes-1)
-            fig, ax = plt.subplots(num_axes,1,figsize=(fig_width,fig_height),sharex=True)
+            fig, ax = plt.subplots(num_axes,1,figsize=(fig_width, fig_height),sharex=True)
             plt.subplots_adjust(hspace=0)
             ax[-1].set_xlabel('x')
             ax[0].set_ylabel('t')
@@ -395,7 +472,9 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
                 ax[1].legend(names,loc='best')
 
             if which_char:
-                plot_characteristics(riemann_eval,plot_chars[which_char-1],aux=aux,axes=ax[0], speeds=speeds, cdindex=cdindex)
+                plot_characteristics(riemann_eval, plot_chars[which_char-1],
+                                     aux=aux, axes=ax[0], speeds=speeds,
+                                     contact_index=contact_index)
 
         plt.show()
         return None
@@ -408,7 +487,7 @@ def make_plot_function(states_list,speeds_list,riemann_eval_list,
 
         return real_plot_function
 
-def JSAnimate_plot_riemann(states,speeds,riemann_eval, wave_types=None, times=None, **kwargs):
+def JSAnimate_plot_riemann(states, speeds, riemann_eval, wave_types=None, times=None, **kwargs):
     from matplotlib import animation
     fig, axes = plt.subplots(1,3,figsize=(12,4))
 
@@ -430,38 +509,39 @@ def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
     Only useful for systems where one component is velocity.
     i_vel should be the component of velocity in this case.
 
-    For rarefaction waves, the corresponding entry in s should be tuple of
-    two values, which are the wave speeds that bound the rarefaction fan.
+    rho_left and rho_right indicate densities of the left and
+    right states.  Characteristics will be spaced inversely
+    proportional to the densities, if they are provided.
+
+    Uses numerical integration based on the explicit midpoint method.
     """
-
-    xmax_auto = (xmax is None)
-
     tmax = 1.0
-    if xmax_auto:
+    if xmax is None:
         xmax = 0.
-    for i in range(len(s)):
-        if wave_types[i] in ['shock','contact']:
-            x1 = tmax * s[i]
-            if xmax_auto:
+        for i in range(len(s)):
+            if wave_types[i] in ['shock','contact']:
+                x1 = tmax * s[i]
                 xmax = max(xmax,abs(x1))
-        else:  # rarefaction fan
-            speeds = np.linspace(s[i][0],s[i][1],5)
-            for ss in speeds:
-                x1 = tmax * ss
-                if xmax_auto:
+            else:  # rarefaction fan
+                speeds = np.linspace(s[i][0],s[i][1],5)
+                for ss in speeds:
+                    x1 = tmax * ss
                     xmax = max(xmax,abs(x1))
 
-    xx_left = np.linspace(-xmax,0,num_left)
-    xx_right = np.linspace(0,xmax,num_right)
 
-    # instead define spacing based on density if available:
-    if rho_left is not None:
+    # define spacing of initial x-values based on density if available;
+    # otherwise use equal spacing
+    if rho_left is None:
+        xx_left = np.linspace(-xmax,0,num_left)
+    else:
         #xx_left = np.arange(-xmax, 0, xmax*0.02/(rho_left + 1e-8))
         xx_1 = list(-np.arange(0, xmax, xmax*0.02/(rho_left + 1e-8)))
         xx_1.reverse()
         xx_left = np.array(xx_1)
 
-    if rho_right is not None:
+    if rho_right is None:
+        xx_right = np.linspace(0,xmax,num_right)
+    else:
         xx_right = np.arange(0, xmax, xmax*0.02/(rho_right + 1e-8))
         xx_right = xx_right[1:]  # omit repeated 0
 
@@ -490,10 +570,6 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
     along with particle trajectories.
 
     Only useful for systems where one component is velocity.
-
-    For rarefaction waves, the corresponding entry in s should be a tuple of
-    two values, which are the wave speeds that bound the rarefaction fan.
-
     """
 
     colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
@@ -533,38 +609,45 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
 
     ax.set_title('Waves and particle trajectories in x-t plane')
 
-def plot_characteristics(reval, char_speed, aux=None, axes=None, extra_lines=None, speeds=None, cdindex=None):
+def plot_characteristics(reval, char_speed, aux=None, axes=None,
+                         extra_lines=None, speeds=None, contact_index=None):
     """
     Plot characteristics in x-t plane by integration.
 
     char_speed: Function char_speed(q,xi) that gives the characteristic speed.
-    aux: (aux_l, aux_r) or list of duples [(aux_l,aux_r),...]
+    aux: (aux_l, aux_r)
     axes: matplotlib axes on which to plot
     extra_lines: tuple of pairs of pairs; each entry specifies the endpoints of a line
-                    along which to start more characteristics
+                    along which to start more characteristics.  This can be useful
+                    for variable-coefficient systems.
+    contact_index:   contact discontinuity index.  If aux is provided, then aux[0]
+                     is used for x<0 and aux[1] is used for x>0.  However,
+                     in some systems, the aux values change across some
+                     non-stationary contact wave.  In that case, contact_index
+                     should be the index of that wave.
     """
     if axes:
         xmin, xmax, tmin, tmax = axes.axis()
     else:
         xmin, xmax, tmin, tmax = (-1., 1., 0., 0.5)
 
-    Dx = xmax-xmin
-    x = np.linspace(xmin-Dx, xmax+Dx, 60)
+    dx = xmax-xmin
+    x = np.linspace(xmin-dx, xmax+dx, 60)
     t = np.linspace(tmin,tmax,500)
     chars = np.zeros((len(x),len(t)))  # x-t coordinates of characteristics, one curve per row
     chars[:,0] = x
     dt = t[1]-t[0]
     c = np.zeros(len(x))
-    if cdindex == None: # Check for index of contact disconitnuity, if relevant for characteristics plotting
-        cdspeed = 0
+    if contact_index is None:
+        contact_speed = 0
     else:
-        cdspeed = speeds[cdindex]
+        contact_speed = speeds[contact_index]
     for i in range(1,len(t)):
         xi = chars[:,i-1]/max(t[i-1],dt)
         q = np.array(reval(xi))
         for j in range(len(x)):
             if aux:
-                c[j] = char_speed(q[:,j],xi[j],(xi[j]<=cdspeed)*aux[0]+(xi[j]>cdspeed)*aux[1])
+                c[j] = char_speed(q[:,j],xi[j],(xi[j]<=contact_speed)*aux[0]+(xi[j]>contact_speed)*aux[1])
             else:
                 c[j] = char_speed(q[:,j],xi[j])
         chars[:,i] = chars[:,i-1] + dt*c  # Euler's method

@@ -19,7 +19,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l, q_r]
         speeds = [0]
         wave_types = ['contact']
-        reval = lambda xi: np.ones((1,len(xi)))*q_l
 
     elif (f_r < f_l) and (q_r > 0.5):
         # Left-going shock (1)
@@ -28,12 +27,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         shock_speed = (f_r-f_l)/(q_star-q_l)
         speeds = [shock_speed,0]
         wave_types = ['shock', 'contact']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=shock_speed)*q_l \
-              + (shock_speed<xi)*(xi<=0)*q_star \
-              + (xi>=0)*q_r
-            return q
 
     elif (f_r > f_l) and (q_l < 0.5):
         # Right-going shock (2)
@@ -42,12 +35,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         shock_speed = (f_r-f_l)/(q_r-q_star)
         speeds = [0,shock_speed]
         wave_types = ['contact', 'shock']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=0)*q_l \
-              + (0<xi)*(xi<=shock_speed)*q_star \
-              + (xi>=shock_speed)*q_r
-            return q
 
     elif (f_l > v_r/4.) and (q_r <= 0.5):
         # Left-going shock and right-going rarefaction (3)
@@ -56,13 +43,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l, q_star, 0.5, q_r]
         speeds = [shock_speed,0,(0,c_r)]
         wave_types = ['shock', 'contact', 'raref']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=shock_speed)*q_l \
-              + (shock_speed<xi)*(xi<=0)*q_star \
-              + (0<xi)*(xi<c_r)*(1.-xi/v_r)/2. \
-              + (xi>=c_r)*q_r
-            return q
 
     elif (f_r > v_l/4.) and (q_l >= 0.5):
         # Left-going rarefaction and right-going shock (4)
@@ -71,13 +51,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         states = [q_l,0.5,q_star,q_r]
         speeds = [(c_l, 0), 0, shock_speed]
         wave_types = ['raref', 'contact', 'shock']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=c_l)*q_l \
-                + (c_l<xi)*(xi<=0)*(1.-xi/v_l)/2. \
-                + (0<xi)*(xi<=shock_speed)*q_star \
-                + (shock_speed<xi)*q_r
-            return q
 
     elif (f_l<f_r<=v_l/4.) and (q_l>0.5) and (q_r>=0.5):
         # Left-going rarefaction (6)
@@ -86,13 +59,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         c_star = c(q_star,v_l)
         speeds = [(c_l,c_star),0]
         wave_types = ['raref', 'contact']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=c_l)*q_l \
-                + (c_l<xi)*(xi<=c_star)*(1.-xi/v_l)/2. \
-                + (c_star<xi)*(xi<=0)*q_star \
-                + (0<=xi)*q_r
-            return q
 
     elif (f_r<f_l<=v_r/4.) and (q_l<=0.5) and (q_r<0.5):
         # Right-going rarefaction (7)
@@ -101,13 +67,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
         c_star = c(q_star,v_r)
         speeds = [0,(c_star,c_r)]
         wave_types = ['contact', 'raref']
-        def reval(xi):
-            q = np.zeros((1,len(xi)))
-            q[0,:] = (xi<=0)*q_l \
-                + (0<xi)*(xi<=c_star)*q_star \
-                + (c_star<xi)*(xi<=c_r)*(1.-xi/v_r)/2. \
-                + (c_r<=xi)*q_r
-            return q
 
     elif (q_l>=0.5) and (q_r<=0.5) and (f_l<=v_r/4.) and (f_r<=v_l/4.):
         # Transonic rarefaction (5)
@@ -118,14 +77,6 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
             c_star = c(q_star, v_l)
             speeds = [(c_l,c_star),0,(0,c_r)]
             wave_types = ['raref', 'contact', 'raref']
-            def reval(xi):
-                q = np.zeros((1,len(xi)))
-                q[0,:] = (xi<=c_l)*q_l \
-                    + (c_l<xi)*(xi<=c_star)*(1.-xi/v_l)/2. \
-                    + (c_star<xi)*(xi<=0)*q_star \
-                    + (0<xi)*(xi<=c_r)*(1.-xi/v_r)/2. \
-                    + (c_r<xi)*q_r
-                return q
 
         elif v_r > v_l:
             # q* on right side (5b)
@@ -134,29 +85,20 @@ def exact_riemann_solution(q_l,q_r,v_l,v_r):
             c_star = c(q_star, v_r)
             speeds = [(c_l,0),0,(c_star,c_r)]
             wave_types = ['raref', 'contact', 'raref']
-            def reval(xi):
-                q = np.zeros((1,len(xi)))
-                q[0,:] = (xi<=c_l)*q_l \
-                    + (c_l<xi)*(xi<=0)*(1.-xi/v_l)/2. \
-                    + (0<xi)*(xi<=c_star)*q_star \
-                    + (c_star<xi)*(xi<=c_r)*(1.-xi/v_r)/2. \
-                    + (c_r<xi)*q_r
-                return q
 
         else:  # v_r == v_l
             states = [q_l, q_r]
             speeds = [(c_l,c_r),]
             wave_types = ['raref']
-            def reval(xi):
-                q = np.zeros((1,len(xi)))
-                q[0,:] = (xi<=c_l)*q_l \
-                    + (c_l<xi)*(xi<=c_r)*(1.-xi/v_l)/2. \
-                    + (c_r<xi)*q_r
-                return q
 
     else:
         print(f_l, f_r)
         raise Exception('Unhandled state!')
+
+    def c_raref_fun(xi):
+        return (xi<=0)*(1.-xi/v_l)/2. + (xi>0)*(1.-xi/v_r)/2.
+
+    reval = make_reval(states, speeds, wave_types, c_raref_fun)
 
     return np.array([states]), speeds, reval, wave_types
 
@@ -260,3 +202,27 @@ def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
 
     if show:
         plt.show()
+
+
+def make_reval(states, speeds, wave_types, c_raref_fun=None):
+    """
+    Generate a function reval(xi) that yields the exact solution for any value of
+    xi = x/t.  Currently only for scalar problems.
+    """
+    def reval(xi):
+        q = np.zeros((1,len(xi)))
+
+        for i in range(len(wave_types)):
+            if i == 0:
+                s_last = -np.Inf
+            if wave_types[i] == 'raref':
+                q[0,:] += (xi>s_last)*(xi<=speeds[i][0])*states[i]
+                q[0,:] += (xi>speeds[i][0])*(xi<=speeds[i][1])*c_raref_fun(xi)
+                s_last = speeds[i][1]
+            else:
+                q[0,:] += (xi>s_last)*(xi<=speeds[i])*states[i]
+                s_last = speeds[i]
+
+        q[0,:] += (xi>s_last)*states[-1]  # = q_r
+        return q
+    return reval
