@@ -380,7 +380,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', appr
     if approx_states is not None:
         u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
         h = approx_states[0,:]
-        plt.plot(h,u,'o-g',markersize=10,zorder=0)
+        ax.plot(h,u,'o-g',markersize=10,zorder=0)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
