@@ -15,7 +15,8 @@ def interact(f, **kwargs):
             fargs[key] = kwargs[key].value
         except:
             pass  # if initial value not set for this parameter
+    f(**fargs)
     if ('t' in fargs.keys()):
         if fargs['t'] == 0:
             fargs['t'] = 0.2
-    f(**fargs)
+            f(**fargs)
