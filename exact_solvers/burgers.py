@@ -43,6 +43,22 @@ def exact_riemann_solution(q_l,q_r):
 
     return states, speeds, reval, wave_types
 
+def unphysical_riemann_solution(q_l,q_r):
+    r"""Unphysical solution to the Riemann problem for the Burgers' equation."""
+    f = lambda q: 0.5*q*q
+    states = np.array([[q_l, q_r]])
+    # Shock wave or expansion shock wave
+    shock_speed = (f(q_l)-f(q_r))/(q_l-q_r)
+    speeds = [shock_speed]
+    wave_types = ['shock']
+    def reval(xi):
+        q = np.zeros((1,len(xi)))
+        q[0,:] = (xi < shock_speed)*q_l \
+          + (xi >=shock_speed)*q_r
+        return q
+
+    return states, speeds, reval, wave_types
+
 
 def plot_trajectories(q_l,q_r,ax=None,t=None,xmax=None):
     states, speeds, reval, wave_types = exact_riemann_solution(q_l,q_r)
@@ -64,6 +80,7 @@ def plot_trajectories(q_l,q_r,ax=None,t=None,xmax=None):
     # plot trajectories along with waves in the x-t plane:
     riemann_tools.plot_riemann_trajectories(x_traj, t_traj, speeds, wave_types, 
             xmax=xmax, ax=ax, t=t)
+    ax.set_title('Particle trajectories')
 
 
 def plot_interactive_riemann(plot_riemann):
