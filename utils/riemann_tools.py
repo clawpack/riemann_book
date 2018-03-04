@@ -320,6 +320,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
 
     if ax is None:  # Set up a new plot and axes
+        existing_plots = False
         num_axes = num_vars+1
         if extra_axes: num_axes += 1
         if layout == 'horizontal':
