@@ -600,7 +600,7 @@ def macro_riemann_plot(i,figsize=(10,3)):
     for color in colors:
         fills[color] = ax_h.fill_between(x,b,surface,facecolor=color,where=stripes[color],alpha=0.5)
 
-    ax_h.set_xlabel('$x$'); ax_h.set_ylabel('depth ($h$)');
+    ax_h.set_xlabel('$x$'); ax_h.set_ylabel('depth ($h$)')
     ax_h.set_xlim(-1,1); ax_h.set_ylim(0,3.5)
     ax_u.set_xlim(-1,1); ax_u.set_ylim(-1,1)
 
