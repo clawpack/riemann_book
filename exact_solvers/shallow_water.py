@@ -310,7 +310,8 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
 
-def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', approx_states=None, hmin=0):
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', approx_states=None, hmin=0,
+                     color='g'):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
@@ -349,13 +350,13 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', appr
     if wave_types[0] == 'shock':
         hu1 = hugoniot_locus(h1, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r')
-        ax.plot(h2,hu2,'r')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (unphysical)')
+        ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
         hu2 = integral_curve(h2, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'b')
-        ax.plot(h2,hu2,'--b')
+        ax.plot(h1,hu1,'b', label='Integral curve (physical)')
+        ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     h_r = states[0,right]
     h1 = np.linspace(1.e-2,h_r)
@@ -363,13 +364,13 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', appr
     if wave_types[1] == 'shock':
         hu1 = hugoniot_locus(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r')
-        ax.plot(h2,hu2,'r')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (physical)')
+        ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = integral_curve(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'b')
-        ax.plot(h2,hu2,'--b')
+        ax.plot(h1,hu1,'b', label='Integral curve (physical)')
+        ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'ok',markersize=10)
@@ -380,7 +381,17 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', appr
     if approx_states is not None:
         u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
         h = approx_states[0,:]
-        ax.plot(h,u,'o-g',markersize=10,zorder=0)
+        ax.plot(h,u,'o-',color=color,markersize=10,zorder=0,label='Approximate solution')
+
+    handles,labels = ax.get_legend_handles_labels()
+    i = np.arange(len(labels))
+    filter = np.array([])
+    unique_labels = list(set(labels))
+    for ul in unique_labels:
+        filter = np.append(filter,[i[np.array(labels)==ul][0]])
+    handles = [handles[int(f)] for f in filter]
+    labels = [labels[int(f)] for f in filter]
+    ax.legend(handles,labels)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
