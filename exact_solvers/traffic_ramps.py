@@ -22,15 +22,13 @@ def exact_riemann_solution(q_l,q_r,D):
     c = lambda q: 1 - 2*q
     shock_speed = lambda qr, ql: (f(qr)-f(ql))/(qr-ql)
 
-    # Middle state if adjacent to q_l:
-    q_mA = 0.5*(1 - np.sqrt(1.-4.*(f(q_l)+D)))
     # Middle state if adjacent to q_r:
     q_mB = 0.5*(1 + np.sqrt(1.+4.*(D-f(q_r))))
 
     if q_r >= 0.5:
         if f(q_l) - f(q_r) + D < 0 and q_l <= 0.5:
             # Right-going shock only
-            q_m = q_mA
+            q_m = 0.5*(1 - np.sqrt(1.-4.*(f(q_l)+D)))
             states = [q_l, q_m, q_r]
             wave_types = ['contact','shock']
             speeds = [0, shock_speed(q_m, q_r)]
@@ -98,11 +96,10 @@ def exact_riemann_solution(q_l,q_r,D):
 
     else:
         # right-going wave only
-        q_m = q_mA
+        q_m = 0.5*(1 - np.sqrt(1.-4.*(f(q_l)+D)))
         states = [q_l, q_m, q_r]
         if q_r > q_m:
             # Right-going shock only
-            q_m = q_mA
             wave_types = ['contact','shock']
             speeds = [0, shock_speed(q_m, q_r)]
             def reval(xi):
