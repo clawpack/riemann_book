@@ -232,9 +232,6 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
         t_pointer: if True, plot a horizontal dashed line and a text label,
                 corresponding to the time.
     """
-
-    num_eqn,num_states = states.shape
-
     if wave_types is None:
         wave_types = ['contact']*len(s)
 
@@ -686,6 +683,83 @@ def plot_characteristics(reval, char_speed, aux=None, axes=None,
 
     axes.axis((xmin, xmax, tmin, tmax))
 
+
+def detect_smoothness(f,dx,dmax=10):
+    """
+    Determine where a function is constant, contninuous, or discontinuous, based on divided differences.
+
+    Inputs:
+        - f: values of function at evenly spaced points
+        - dx: spacing of evaluation points
+        - dmax: upper bound on the derivative of the function
+    """
+    smoothness = np.zeros(f.shape)
+    df = np.abs(np.diff(f))
+    for i in range(len(df)):
+        if df[i] < 1.e-13:
+            smoothness[i] = 0  # constant
+        elif df[i] < dmax*dx:
+            smoothness[i] = 1  # continuous
+        else:
+            smoothness[i] = 2  # discontinuous
+    return smoothness
+
+def intervals(vals):
+    ranges = []
+    values = []
+    last_val = vals[0]
+    start = 0
+    for i in range(1,len(vals)):
+        if vals[i] != last_val:
+            ranges.append((start,i-1))
+            values.append(last_val)
+            last_val = vals[i]
+            start = i
+
+    values.append(last_val)
+    ranges.append((start,i))
+
+    return values, ranges
+
+def make_waves(values, ranges, xi):
+    wave_types = []
+    speeds = []
+    for val, r in zip(values, ranges):
+        if val == 1:
+            wave_types.append('raref')
+            speeds.append((xi[r[0]],xi[r[1]]))
+        elif val == 2:
+            wave_types.append('shock')
+            speeds.append(xi[r[0]])
+    return wave_types, speeds
+
+def waves_from_smoothness(smoothness, xi):
+    """
+    Determine the locations of shock waves and rarefaction waves, based on
+    computed smoothness of the Riemann solution.
+    """
+    speeds = []
+    wave_types = []
+
+    i = 0
+    while i<len(smoothness)-1:
+        if smoothness[i] == 2:  # Shock
+            assert smoothness[i+2] != 2
+            wave_types.append('shock')
+            speeds.append((xi[i]+xi[i+1])/2.)
+        elif smoothness[i] == 1:  # Rarefaction
+            assert smoothness[i+1] == 1, xi[i]
+            wave_types.append('raref')
+            left_speed = xi[i]
+            while smoothness[i] == 1:
+                i += 1
+            right_speed = xi[i-1]
+            speeds.append((left_speed,right_speed))
+            continue
+        else:
+            i += 1
+
+    return speeds, wave_types
 
 if __name__ == '__main__':
     import doctest
