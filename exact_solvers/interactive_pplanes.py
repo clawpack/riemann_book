@@ -1,6 +1,6 @@
 """
-Interactive phase plane plot for Euler equations with ideal gas
-and Tammann equations of state.
+Interactive phase plane plot for Euler equations with ideal gas,
+Euler equations with Tammann equations of state and acoustic equations.
 """
 import numpy as np
 from scipy.optimize import fsolve

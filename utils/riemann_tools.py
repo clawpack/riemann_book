@@ -209,7 +209,7 @@ def plot_phase_3d(states):
     ax.text(states[0,-1]+0.05,states[1,-1],states[2,-1],'q_right')
 
 def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
-               color='multi', t_pointer=False):
+               color='multi', t_pointer=False, xmax=None):
     """
     Plot the characteristics belonging to waves (shocks, rarefactions,
     and contact discontinuities) for a Riemann problem, in the x-t plane.
@@ -232,7 +232,6 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
         t_pointer: if True, plot a horizontal dashed line and a text label,
                 corresponding to the time.
     """
-
     if wave_types is None:
         wave_types = ['contact']*len(s)
 
@@ -250,7 +249,8 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
         fig, ax = plt.subplots()
 
     tmax = 1.0
-    xmax = 0.
+    if xmax is None:
+        xmax = 0.
     for i in range(len(s)):
         if wave_types[i] in ['shock','contact']:
             x1 = tmax * s[i]
@@ -263,6 +263,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
                 ax.plot([0,x1],[0,tmax],color=colors['raref'],lw=0.6)
                 xmax = max(xmax,abs(x1))
 
+    xmax = max(0.001, xmax)
     ax.set_xlim(-xmax,xmax)
     ax.plot([-xmax,xmax],[t,t],'--k',linewidth=0.5)
     if t_pointer:
@@ -274,7 +275,7 @@ def plot_waves(states, s, riemann_eval, wave_types, t=0.1, ax=None,
 def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                  color='multi', layout='horizontal', variable_names=None,
                  t_pointer=False, extra_axes=False, fill=(),
-                 derived_variables=None):
+                 derived_variables=None, xmax=None):
     """
     Take an array of states and speeds s and plot the solution at time t.
     For rarefaction waves, the corresponding entry in s should be a tuple of two values,
@@ -315,7 +316,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
         else:
             variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
 
-    if ax is None: # Set up a new plot and axes
+    if ax is None:  # Set up a new plot and axes
         num_axes = num_vars+1
         if extra_axes: num_axes += 1
         if layout == 'horizontal':
@@ -346,9 +347,10 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     # Plot wave characteristics in x-t plane
     plot_waves(pstates, s, riemann_eval, wave_types, t=t, ax=ax[0], color=color,
-               t_pointer=t_pointer)
+               t_pointer=t_pointer, xmax=xmax)
 
-    xmax = ax[0].get_xlim()[1]
+    if xmax is None:
+        xmax = ax[0].get_xlim()[1]
 
     # Plot conserved quantities as function of x for fixed t
     # Use xi values in [-10,10] unless the wave speeds are so large
@@ -365,6 +367,9 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
         qmin = min(np.nanmin(q_sample[i][:]), np.nanmin(pstates[i,:]))
         qdiff = qmax - qmin
         ax[i+1].set_xlim(-xmax, xmax)
+        if qmin == qmax:
+            qmin = qmin*0.9
+            qmax = qmin*1.1+0.01
         ax[i+1].set_ylim((qmin-0.1*qdiff, qmax+0.1*qdiff))
 
         if layout == 'horizontal':

@@ -27,8 +27,8 @@ def riemann_traffic_exact(q_l,q_r):
         def reval(xi):
             q = np.zeros((1,len(xi)))
             q[0,:] = (xi<=c_l)*q_l \
-              + (xi>=c_r)*q_r \
-              + (c_l<xi)*(xi<c_r)*(1.-xi)/2.
+              + (xi>c_r)*q_r \
+              + (c_l<xi)*(xi<=c_r)*(1.-xi)/2.
             return q
 
     return states, speeds, reval, wave_types
@@ -53,3 +53,4 @@ def plot_car_trajectories(q_l,q_r,ax=None,t=None,xmax=None):
     # plot trajectories along with waves in the x-t plane:
     riemann_tools.plot_riemann_trajectories(x_traj, t_traj, speeds, wave_types, 
             xmax=xmax, ax=ax, t=t)
+    ax.set_title('Vehicle trajectories')
