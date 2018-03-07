@@ -321,7 +321,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 
     if ax is None:  # Set up a new plot and axes
         num_axes = num_vars+1
-        if extra_axes: num_axes += 1
+        if extra_axes: num_axes += extra_axes
         if layout == 'horizontal':
             # Plots side by side
             if num_axes == 4:
@@ -571,7 +571,6 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
 
     Only useful for systems where one component is velocity.
     """
-
     colors = {'shock': 'r', 'raref': 'b', 'contact': 'k'}
     if wave_types is None:
         wave_types = ['contact']*len(s)
@@ -602,12 +601,13 @@ def plot_riemann_trajectories(x_traj, t_traj, s, wave_types=None, color='b',
     ax.set_xlim(-xmax,xmax)
 
     for j in range(x_traj.shape[1]):
-        plt.plot(x_traj[:,j],t_traj,'k')
+        ax.plot(x_traj[:,j],t_traj,'k')
 
     if t is not None:
         ax.plot([-xmax,xmax],[t,t],'--k',linewidth=0.8)
 
     ax.set_title('Waves and particle trajectories in x-t plane')
+    return ax
 
 def plot_characteristics(reval, char_speed, aux=None, axes=None,
                          extra_lines=None, speeds=None, contact_index=None):
