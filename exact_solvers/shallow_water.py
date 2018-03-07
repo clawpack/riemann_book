@@ -55,9 +55,9 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
     integral_curve_2   = lambda h: u_r - 2*(np.sqrt(grav*h_r) -
                                             np.sqrt(grav*np.maximum(h,0)))
     hugoniot_locus_1 = lambda h: (h_l*u_l + (h-h_l)*(u_l -
-            np.sqrt(grav*h_l*(1 + (h-h_l)/h_l) * (1 + (h-h_l)/(2*h_l)))))/h
+                                  np.sqrt(grav*h_l*(1 + (h-h_l)/h_l) * (1 + (h-h_l)/(2*h_l)))))/h
     hugoniot_locus_2 = lambda h: (h_r*u_r + (h-h_r)*(u_r +
-            np.sqrt(grav*h_r*(1 + (h-h_r)/h_r) * (1 + (h-h_r)/(2*h_r)))))/h
+                                  np.sqrt(grav*h_r*(1 + (h-h_r)/h_r) * (1 + (h-h_r)/(2*h_r)))))/h
 
     # Check whether the 1-wave is a shock or rarefaction
     def phi_l(h):
@@ -310,7 +310,8 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
 
-def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', approx_states=None, hmin=0,
+                     color='g'):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
@@ -334,7 +335,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     ymax = max(abs(y))
     dx = xmax - xmin
     ymax = max(abs(y))
-    ax.set_xlim(0, xmax + 0.5*dx)
+    ax.set_xlim(hmin, xmax + 0.5*dx)
     ax.set_ylim(-1.5*ymax, 1.5*ymax)
     ax.set_xlabel('Depth (h)')
     if y_axis == 'u':
@@ -349,13 +350,13 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     if wave_types[0] == 'shock':
         hu1 = hugoniot_locus(h1, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r')
-        ax.plot(h2,hu2,'r')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (unphysical)')
+        ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
         hu2 = integral_curve(h2, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'b')
-        ax.plot(h2,hu2,'--b')
+        ax.plot(h1,hu1,'b', label='Integral curve (physical)')
+        ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     h_r = states[0,right]
     h1 = np.linspace(1.e-2,h_r)
@@ -363,19 +364,34 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     if wave_types[1] == 'shock':
         hu1 = hugoniot_locus(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r')
-        ax.plot(h2,hu2,'r')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (physical)')
+        ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = integral_curve(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'b')
-        ax.plot(h2,hu2,'--b')
+        ax.plot(h1,hu1,'b', label='Integral curve (physical)')
+        ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'ok',markersize=10)
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax,label)
+
+    if approx_states is not None:
+        u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
+        h = approx_states[0,:]
+        ax.plot(h,u,'o-',color=color,markersize=10,zorder=0,label='Approximate solution')
+
+    handles,labels = ax.get_legend_handles_labels()
+    i = np.arange(len(labels))
+    filter = np.array([])
+    unique_labels = list(set(labels))
+    for ul in unique_labels:
+        filter = np.append(filter,[i[np.array(labels)==ul][0]])
+    handles = [handles[int(f)] for f in filter]
+    labels = [labels[int(f)] for f in filter]
+    ax.legend(handles,labels)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
@@ -405,7 +421,6 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
     import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
     from utils import riemann_tools
-    #plt.style.use('seaborn-talk')
 
     g = 1.
 
@@ -596,7 +611,7 @@ def macro_riemann_plot(i,figsize=(10,3)):
     for color in colors:
         fills[color] = ax_h.fill_between(x,b,surface,facecolor=color,where=stripes[color],alpha=0.5)
 
-    ax_h.set_xlabel('$x$'); ax_h.set_ylabel('depth ($h$)');
+    ax_h.set_xlabel('$x$'); ax_h.set_ylabel('depth ($h$)')
     ax_h.set_xlim(-1,1); ax_h.set_ylim(0,3.5)
     ax_u.set_xlim(-1,1); ax_u.set_ylim(-1,1)
 

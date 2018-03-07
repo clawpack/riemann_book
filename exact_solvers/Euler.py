@@ -1,9 +1,13 @@
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+from collections import namedtuple
 
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
+
+Primitive_State = namedtuple('State', primitive_variables)
+Conserved_State = namedtuple('State', conserved_variables)
 
 def pospart(x):
     return np.maximum(1.e-15,x)
@@ -253,14 +257,21 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
         return states, speeds, reval, wave_types
 
 
-def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None):
+def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=None,
+                     cons_inputs=False):
     r"""Plot the Hugoniot loci or integral curves in the p-u plane."""
     if ax is None:
         fig, ax = plt.subplots()
 
+    if cons_inputs:
+        q_left = left_state.copy()
+        q_right = right_state.copy()
+        left_state = Primitive_State(*conservative_to_primitive(*q_left))
+        right_state = Primitive_State(*conservative_to_primitive(*q_right))
+    else:
+        q_left  = primitive_to_conservative(*left_state)
+        q_right = primitive_to_conservative(*right_state)
     # Solve Riemann problem
-    q_left  = primitive_to_conservative(*left_state)
-    q_right = primitive_to_conservative(*right_state)
     ex_states, ex_speeds, reval, wave_types, ppc = \
                         exact_riemann_solution(q_left, q_right, gamma,
                                                phase_plane_curves=True)
@@ -319,3 +330,13 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None):
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
+
+    if approx_states is not None:
+        p_approx = []
+        u_approx = []
+        for j in range(approx_states.shape[1]):
+            rho, u, p = cons_to_prim(approx_states[:,j],gamma=gamma)
+            p_approx.append(p)
+            u_approx.append(u)
+        print(p_approx, u_approx)
+        ax.plot(p_approx,u_approx,'o-g',markersize=10,zorder=0)

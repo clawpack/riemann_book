@@ -320,6 +320,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             variable_names = ['$q_%s$' % i for i in range(1,num_vars+1)]
 
     if ax is None:  # Set up a new plot and axes
+        existing_plots = False
         num_axes = num_vars+1
         if extra_axes: num_axes += extra_axes
         if layout == 'horizontal':
@@ -341,6 +342,10 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
             ax[0].set_title('t = %6.3f' % t)
     else:
         assert len(ax) == num_vars + 1 + extra_axes
+        existing_plots = True
+        ylims = []
+        for i in range(1,len(ax)):
+            ylims.append(ax[i].get_ylim())
 
     # Make plot boundaries grey
     for axis in ax:
@@ -373,7 +378,10 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
         if qmin == qmax:
             qmin = qmin*0.9
             qmax = qmin*1.1+0.01
-        ax[i+1].set_ylim((qmin-0.1*qdiff, qmax+0.1*qdiff))
+        if existing_plots:
+            ax[i+1].set_ylim((min(ylims[i][0],qmin-0.1*qdiff), max(ylims[i][1],qmax+0.1*qdiff)))
+        else:
+            ax[i+1].set_ylim((qmin-0.1*qdiff, qmax+0.1*qdiff))
 
         if layout == 'horizontal':
             ax[i+1].set_title(variable_names[i]+' at t = %6.3f' % t)
