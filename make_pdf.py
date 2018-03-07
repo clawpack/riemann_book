@@ -26,16 +26,19 @@ chapters = ['Preface',
 # To test a subset, adjust the list of chapters and
 # remove the build_pdf directory before running this script.
 
-#chapters = ['Shallow_water']
-
 chapters = ['Preface',
             'Introduction',
+            'Advection',
+            'Acoustics',
             'Traffic_flow',
+            'Burgers_equation',
             'Shallow_water',
+            'Euler_equations',
             'Approximate_solvers',
-            'Traffic_variable_speed',
-            'Euler_equations_TammannEOS',
-            'Nonconvex_scalar']
+            'Burgers_approximate',
+            'Shallow_water_approximate_solvers',
+            'Euler_approximate_solvers',
+            'Euler_compare']
 
 build_dir = 'build_pdf/'
 if not os.path.exists(build_dir):
@@ -49,6 +52,7 @@ os.system('cp riemann.tplx '+build_dir)
 os.system('cp *.cls '+build_dir)
 os.system('cp *.css '+build_dir)
 os.system('cp riemann.bib '+build_dir)
+os.system('cp latexdefs.tex '+build_dir)
 
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
