@@ -472,7 +472,10 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
             q = primitive[i]
             plt.plot(x,q,'-k',linewidth=3)
             plt.title(primitive_variables[i])
-            plt.suptitle('Solution at time $t='+str(t)+'$',fontsize=12)
+            if t != 0:
+                plt.suptitle('Solution at time $t='+str(t)+'$',fontsize=12)
+            else:
+                plt.suptitle('Initial data',fontsize=12)
             axes[i].set_xlim(-1,1)
 
             if i==0 and force_waves != 'raref':
