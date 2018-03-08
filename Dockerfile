@@ -67,6 +67,9 @@ RUN pip2 install --src=$HOME/clawpack -e git+https://github.com/clawpack/clawpac
 # Add book's files
 RUN git clone --depth=1 https://github.com/clawpack/riemann_book
 
+#move into the riemann_book directory
+WORKDIR ${HOME}/riemann_book
+
 RUN pip install --no-cache-dir -r $HOME/riemann_book/requirements.txt
 
 CMD jupyter notebook --ip='*' --no-browser
