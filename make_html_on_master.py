@@ -97,7 +97,8 @@ for i, chapter in enumerate(chapters):
             widget = 'from utils.snapshot_widgets import interact'
 
         for line in lines:
-            line = re.sub(r'from ipywidgets import interact', widget, line)
+            # nbinteract needs ipywidgets
+            # line = re.sub(r'from ipywidgets import interact', widget, line)
             for j, chapter_name in enumerate(all_chapters):
                 line = re.sub(chapter_name+'.ipynb', chapter_name+'.html', line)
             output.write(line)

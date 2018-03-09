@@ -4,13 +4,6 @@
 <meta charset="utf-8" />
 <title>{{resources['metadata']['name']}}</title>
 
-{%- if "widgets" in nb.metadata -%}
-<script src="https://unpkg.com/jupyter-js-widgets@2.0.*/dist/embed.js"></script>
-{%- endif-%}
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
 {% for css in resources.inlining.css -%}
     <style type="text/css">
     {{ css }}
@@ -36,14 +29,14 @@ div#notebook-container{
   div.cell {
     display: block;
     page-break-inside: avoid;
-  } 
-  div.output_wrapper { 
-    display: block;
-    page-break-inside: avoid; 
   }
-  div.output { 
+  div.output_wrapper {
     display: block;
-    page-break-inside: avoid; 
+    page-break-inside: avoid;
+  }
+  div.output {
+    display: block;
+    page-break-inside: avoid;
   }
 }
 </style>
@@ -74,3 +67,26 @@ div#notebook-container{
     </script>
     <!-- End of mathjax configuration -->
 {%- endblock html_head -%}
+
+{% block body %}
+{{ super() }}
+
+<!-- Loads nbinteract package -->
+<script src="https://unpkg.com/nbinteract-core"></script>
+<script>
+  var interact = new NbInteract({
+    spec: 'Calebs97/riemann_book/master',
+  })
+  interact.prepare()
+</script>
+
+{%- endblock body %}
+
+{# Add loading button to widget output #}
+{%- block data_widget_view scoped %}
+<div class="output_subarea output_widget_view {{ extra_class }}">
+  <button class="js-nbinteract-widget">
+    Show Widget
+  </button>
+</div>
+{%- endblock data_widget_view -%}

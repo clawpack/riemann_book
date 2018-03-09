@@ -1,6 +1,8 @@
+jupyter_contrib_nbextensions
 six
 numpy >= 1.12
 matplotlib >= 2.0.0
 ipywidgets >= 6.0.0
 sympy
 scipy
+git+https://github.com/clawpack/clawpack.git@v5.4.0
