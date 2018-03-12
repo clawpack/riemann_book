@@ -65,12 +65,14 @@ for i, chapter in enumerate(chapters):
                 # fix cross references to other chapters
                 line = re.sub(chapter_name+'.ipynb',
                               str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+            line = re.sub(r"context = 'notebook'", "context = 'pdf'", line)
+            # The next part is deprecated
             line = re.sub(r'from ipywidgets import interact',
                           'from utils.snapshot_widgets import interact', line)
             line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.',
                           '', line)
-            line = re.sub(r"#sns.set_context('paper')",
-                          r"sns.set_context('paper')", line)
+            #line = re.sub(r"#sns.set_context('paper')",
+            #              r"sns.set_context('paper')", line)
             output.write(line)
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",
             "--ExecutePreprocessor.kernel_name=python2",
