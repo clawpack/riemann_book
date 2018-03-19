@@ -1,4 +1,7 @@
+jupyter
 jupyter_contrib_nbextensions
+jupyterhub-legacy-py2-singleuser == 0.7.2
+notebook
 six
 numpy >= 1.12
 matplotlib >= 2.0.0

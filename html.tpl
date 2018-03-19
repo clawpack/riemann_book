@@ -67,26 +67,3 @@ div#notebook-container{
     </script>
     <!-- End of mathjax configuration -->
 {%- endblock html_head -%}
-
-{% block body %}
-{{ super() }}
-
-<!-- Loads nbinteract package -->
-<script src="https://unpkg.com/nbinteract-core"></script>
-<script>
-  var interact = new NbInteract({
-    spec: 'Calebs97/riemann_book/master',
-  })
-  interact.prepare()
-</script>
-
-{%- endblock body %}
-
-{# Add loading button to widget output #}
-{%- block data_widget_view scoped %}
-<div class="output_subarea output_widget_view {{ extra_class }}">
-  <button class="js-nbinteract-widget">
-    Show Widget
-  </button>
-</div>
-{%- endblock data_widget_view -%}
