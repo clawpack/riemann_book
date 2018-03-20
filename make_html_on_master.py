@@ -47,10 +47,10 @@ all_chapters = [
     'Kitchen_sink_problem'
 ]
 
-chapters = all_chapters  # which chapters to process
+chapters = all_chapters.copy()  # which chapters to process
 
 # test on a subset:
-# chapters = ['Traffic_flow']
+# chapters.remove('Shallow_water')
 
 # Exporter config
 template_path = os.path.abspath('./html.tpl')
@@ -91,7 +91,11 @@ for i, chapter in enumerate(chapters):
     html_filename = chapter + '.html'
 
     # Convert notebook to HTML
-    html, _ = exporter.from_notebook_node(notebook)
+    try:
+        html, _ = exporter.from_notebook_node(notebook)
+    except Exception as e:
+        print('Error converting %s: %s' % (nb_name, e))
+        continue
 
     with open(os.path.join('build_html', html_filename), 'w') as output:
         output.write(html)
