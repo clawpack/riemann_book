@@ -364,7 +364,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', appr
     if wave_types[1] == 'shock':
         hu1 = hugoniot_locus(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r', label='Hugoniot locus (physical)')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (unphysical)')
         ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
