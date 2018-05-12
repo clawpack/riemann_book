@@ -169,7 +169,7 @@ def make_html(anim, file_name='anim.html', title=None, raw_html='',
     Take an animation created by make_anim and convert it into a stand-alone
     html file.
     """
-    html_body = HTML(animation.to_jshtml())
+    html_body = anim.to_jshtml(fps, embed_frames, default_mode)
 
     html_file = open(file_name,'w')
     html_file.write("<html>\n <h1>%s</h1>\n" % title)
