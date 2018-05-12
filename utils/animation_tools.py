@@ -185,7 +185,7 @@ def make_rst(anim, file_name='anim.rst',
     Take an animation created by make_anim and convert it into an rst file
     (reStructuredText, for inclusion in Sphinx documentation, for example).
     """
-    rst_body = HTML(animation.to_jshtml())
+    rst_body = anim.to_jshtml()
 
     rst_body = rst_body.split('\n')
 
