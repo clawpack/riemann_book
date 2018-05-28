@@ -60,29 +60,6 @@ def unphysical_riemann_solution(q_l,q_r):
     return states, speeds, reval, wave_types
 
 
-def plot_trajectories(q_l,q_r,ax=None,t=None,xmax=None):
-    states, speeds, reval, wave_types = exact_riemann_solution(q_l,q_r)
-    def reval_with_speed(xi):
-        q = reval(xi)
-        u = q
-        qu = np.vstack((q,u))
-        return qu
-
-    # density of particles for trajectories:
-    rho_left = q_l / 3.
-    rho_right = q_r / 3.
-
-    # compute trajectories:
-    x_traj, t_traj, xmax = riemann_tools.compute_riemann_trajectories(states, 
-            speeds, reval_with_speed, wave_types,
-            xmax=xmax,rho_left=rho_left, rho_right=rho_right)
-
-    # plot trajectories along with waves in the x-t plane:
-    riemann_tools.plot_riemann_trajectories(x_traj, t_traj, speeds, wave_types, 
-            xmax=xmax, ax=ax, t=t)
-    ax.set_title('Particle trajectories')
-
-
 def plot_interactive_riemann(plot_riemann):
     ql_widget = widgets.FloatSlider(min=0., max=1., value=0.5, description=r'$q_l$')
     qr_widget = widgets.FloatSlider(min=0., max=1., value=0.0, description=r'$q_r$')
