@@ -44,7 +44,6 @@ improved.
 from __future__ import print_function
 
 from IPython.display import display
-from IPython.display import HTML
 from matplotlib import image, animation
 from matplotlib import pyplot as plt
 from ipywidgets import interact, interact_manual
