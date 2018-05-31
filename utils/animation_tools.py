@@ -131,6 +131,7 @@ def make_anim(plotdir, fname_pattern='frame*.png', figsize=(10,6), dpi=None):
 
 
 def JSAnimate_images(images, figsize=(10,6), dpi=None):
+    "Turn a list of images into a JSAnimation."
 
     import matplotlib
 
@@ -140,7 +141,7 @@ def JSAnimate_images(images, figsize=(10,6), dpi=None):
         print("*** Suggest using 'Agg'")
         return
 
-    fig = plt.figure(figsize=figsize, dpi=None)
+    fig = plt.figure(figsize=figsize, dpi=dpi)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.axis('off')  # so there's not a second set of axes
 
@@ -285,6 +286,7 @@ def imshow_noaxes(im, figsize=(8,6)):
     return fig
 
 def interact_animate_images(images, figsize=(10,6), manual=False, TextInput=False):
+    "Create an interact that loops over all the frames contained in a list of images."
 
     def display_frame(frameno):
         imshow_noaxes(images[frameno], figsize=figsize)
@@ -303,6 +305,20 @@ def interact_animate_images(images, figsize=(10,6), manual=False, TextInput=Fals
         interact(display_frame, frameno=widget)
 
 def interact_animate_figs(figs, manual=False, TextInput=False):
+    """
+    Create an interact that loops over all the frames contained in a list of figures.
+
+    Passing in the argument `manual=True` will use the widget `interact_manual`
+    instead of `interact`.  This refrains from updating the image as you move
+    the slider bar.  Instead you move the slider as desired and then click on
+    the `Run` button to re-display the image.  This is useful if there are many
+    frames and you want to be able to jump to around without all the
+    intermediate frames being displayed, which can slow down the response
+    significantly.
+
+    The argument `TextInput=True` can be specified to produce a text input cell
+    rather than a slider bar.
+    """
 
     def display_frame(frameno):
         display(figs[frameno])
