@@ -1,108 +1,56 @@
+[![Build Status](https://travis-ci.org/clawpack/riemann_book.svg?branch=master)](https://travis-ci.org/clawpack/riemann_book)
+
 # Riemann_book
-Book in progress to illustrate Riemann solvers in Jupyter notebooks.
-Contributors: @rjleveque, @ketch, and @maojrs.
-  
 
-## Early chapters
-Should the book start with some general chapters explaining important background?  Or just jump into some simple hyperbolic systems and explain the concepts as they are encountered?  Some of the things that need to be explained are:
-- Similarity solutions
-- Characteristics and characteristic velocities
-- Conservation, weak solutions, and jump conditions
-- Riemann invariants and integral curves
-- How approximate solvers are used in numerical discretizations
+## The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers
 
-## Chapters
-Chapters with a complete draft have the box checked.  Chapters that are required are in bold.  The remaining chapters are optional and will depend on the authors finding time to complete them.
+#### by David I. Ketcheson, Randall J. LeVeque, and Mauricio del Razo Sarmina
 
-### One-dimensional
+This repository contains work on a book in progress to illustrate Riemann
+solvers in Jupyter notebooks.
 
-- [ ] **Advection** - conservative and color equation
-- [x] **Acoustics** - constant coefficient and arbitrary rho, K on each side - Mauricio
-- [x] **Traffic flow** - scalar - David
-- [x] Traffic flow with variable speed limit - David
-- [ ] **Burgers'** - with/without entropy fix - Mauricio
-- [x] **Buckley-Leverett** - Randy
-- [ ] **Shallow water** - Exact, Roe, HLLE  (and with tracer) - Randy
-- [ ] **Shallow water with topography**, Augmented solver - Randy
-- [x] **p-system / nonlinear elasticity** - David
-- [x] **Euler** - Exact, Roe, HLL, HLLE, HLLC 
-- [x] **Euler with general EOS** - Mauricio
-- [ ] Reactive Euler
-- [ ] Traffic - systems
-- [ ] LLF and HLL solvers for arbitrary equations
-- [ ] Layered shallow water - David
-- [ ] MHD
-- [ ] Relativistic Euler
-- [ ] Dusty gas
-- [ ] Two-phase flow
+Contributors: @ketch, @rjleveque, and @maojrs.
 
-### Two-dimensional
+## View static webpages
 
-- [ ] **Elasticity** - Mauricio
-- [ ] **Acoustics + mapped grids** - Mauricio
-- [ ] Shallow water
-- [ ] Euler
-- [ ] Maxwell's equations
-- [ ] Arbitrary normal direction on mapped grid
-- [ ] Poro-elasticity
+The notebooks are saved in Github with the output stripped out.  You can view
+the html rendered notebooks with output intact [on this
+webpage](http://www.clawpack.org/riemann_book/index.html).  These are static
+views (no execution or interactive widgets), but some notebooks include
+animations that will play.  *These may not be up to date with the versions in
+this repository during the development phase of this project.*
 
-## What each chapter should contain (optional things in *italics*)
-- Description of the equations 
-- *physical derivation*
-- Analysis of the hyperbolic structure: 
-	- Jacobian; eigenvalues and eigenvectors
-	- Rankine-Hugoniot jump conditions
-	- Riemann invariants
-	- *structure of centered rarefaction waves*
-- Riemann solvers
-	- Exact Riemann solver
-	- *Approximate Riemann solvers*
-	- *Solvers for mapped grids*
-	- *Well-balanced solvers incorporating source terms*
-	- *Solvers with and without entropy fix*
-	- *Discussion and solvers for the transverse problem*
-	- *Comparisons*
-- *Results using Clawpack with different solvers*
+# Installation
+To install the dependencies for the book, see
+https://github.com/clawpack/riemann_book/wiki/Installation.  Then clone this
+repository to get all the notebooks.  A table of contents and suggested order
+for reading the notebooks is given in `Index.ipynb`.
 
-## Notebooks already written that should be adapted as chapters in the book
-- [Acoustics, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/acoustics_riemann.ipynb)
-- [Elasticity, including transverse solver](http://nbviewer.ipython.org/github/maojrs/ipynotebooks/blob/master/elasticity_riemann.ipynb)
-- [Shallow water equations](http://nbviewer.ipython.org/url/faculty.washington.edu/rjl/notebooks/shallow/SW_riemann_tester.ipynb)
+## Docker
 
+Rather than installing all the dependencies, if you have
+[Docker](https://www.docker.com/) installed you can use the `Dockerfile` in
+this repository.  See `Docker.md` for instructions.
 
-# Citations
+*[Add instructions for Dockerhub]*
 
-We are using bibtex for citations; add entries as necessary to `riemann.bib`.
-To insert a citation in a notebook, follow this pattern:
+## Execute in the cloud
 
-    <cite data-cite="toro2013riemann"><a href="riemann.html#toro2013riemann">(Toro, 2013)<a></cite>
+### Windows Azure
 
-The value appearing in the html tag and the hyperlink should match the cite key
-in the bibtex file.
+Rather than installing software, you can execute the notebooks on the cloud
+using the [Microsoft Azure Notebooks](https://notebooks.azure.com) cloud
+service:  Create a free account and then clone the [riemann_book
+library](https://notebooks.azure.com/rjleveque/libraries/riemann-book).
+*These may not be up to date with the versions in this repository during the
+development phase of this project.*
 
-## How to generate the html bibliography
+### Binder
 
-Use bibtex2html, downloadable from https://www.lri.fr/~filliatr/bibtex2html/.
-Then:
+This is still under development using the latest version of
+[binder](https://beta.mybinder.org/).  You can try it out for these notebooks
+at this link: https://beta.mybinder.org/v2/gh/clawpack/riemann_book/master
 
-    export TMPDIR=.
-    bibtex2html riemann.bib
-    
-This creates riemann.html which includes an anchor for each citation.
-
-We are keeping the HTML file under version control for convenience, even
-though it is generated from the .bib file.
-
-
-## How to generate the PDF with bibliography
-
-I've tested this with Jupyter 5.2.
-
-    jupyter nbconvert --to latex --template citations.tplx Euler_equations.ipynb
-    pdflatex Euler_equations
-    bibtex Euler_equations
-    pdflatex Euler_equations
-
-This generates a single chapter with a bibliography at the end.  To actually
-generate the book, we'll want to merge all the notebooks first; see
-discussion at https://github.com/jupyter/nbconvert/issues/253.
+This should start up a notebook server on a
+[Jupyterhub](https://jupyterhub.readthedocs.io/en/latest/) that lets you
+execute all the notebooks with no installation required.
