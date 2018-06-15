@@ -1,5 +1,7 @@
 import numpy as np
 from scipy.optimize import fsolve
+import matplotlib as mpl
+mpl.rcParams['figure.dpi'] = 100
 import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
@@ -418,7 +420,7 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
                             force_waves=None):
     from matplotlib.mlab import find
-    import matplotlib.pyplot as plt
+    #import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
     from utils import riemann_tools
 
@@ -532,7 +534,7 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
     """
     from IPython.display import HTML
     from clawpack import pyclaw
-    import matplotlib.pyplot as plt
+    #import matplotlib.pyplot as plt
     from matplotlib import animation
     from clawpack.riemann import shallow_roe_tracer_1D
     import numpy as np
