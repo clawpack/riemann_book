@@ -59,7 +59,7 @@ all_chapters = ['Preface',
 chapters = all_chapters  # which chapters to process
 
 # test on a subset:
-#chapters = ['Index','Introduction','Traffic_flow']
+chapters = ['Introduction']
 
 template_path = os.path.realpath('./html.tpl')
 
@@ -103,7 +103,7 @@ for i, chapter in enumerate(chapters):
             output.write(line)
 
     args = ["jupyter", "nbconvert", "--to", "html", "--execute",
-            "--ExecutePreprocessor.kernel_name=python2",
+            "--ExecutePreprocessor.kernel_name=python3",
             "--output", html_filename,
             "--template", template_path,
             "--ExecutePreprocessor.timeout=60", output_filename]

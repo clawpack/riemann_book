@@ -44,6 +44,8 @@ improved.
 from __future__ import print_function
 
 from IPython.display import display
+import matplotlib as mpl
+mpl.rcParams['figure.dpi'] = 100
 from matplotlib import image, animation
 from matplotlib import pyplot as plt
 from ipywidgets import interact, interact_manual
@@ -278,8 +280,8 @@ def make_images(figs, **kwargs):
         images.append(im)
     return images
 
-def imshow_noaxes(im, figsize=(8,6)):
-    fig = plt.figure(figsize=figsize)
+def imshow_noaxes(im, figsize=(10,6), dpi=None):
+    fig = plt.figure(figsize=figsize, dpi=dpi)
     ax = plt.axes()
     plt.imshow(im)
     ax.axis('off')
@@ -289,7 +291,7 @@ def interact_animate_images(images, figsize=(10,6), manual=False, TextInput=Fals
     "Create an interact that loops over all the frames contained in a list of images."
 
     def display_frame(frameno):
-        imshow_noaxes(images[frameno], figsize=figsize)
+        fig = imshow_noaxes(images[frameno], figsize=figsize)
         plt.show()
 
     if TextInput:
