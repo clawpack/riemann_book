@@ -16,42 +16,43 @@ def conservative_to_primitive(eps, mom, rho):
     u = mom/rho
     return eps, u
 
+def sigma(eps, K1, K2):
+    "Stress."
+    return K1*eps + K2*eps**2
+
+def dsigma(eps, K1, K2):
+    "Derivative of stress w.r.t. strain."
+    return K1 + 2*K2*eps
+
+def sound_speed(eps, K1, K2, rho):
+    return np.sqrt(dsigma(eps, K1, K2)/rho)
+
 
 def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
-    """Return the exact solution to the Riemann problem with initial states
-       q_l, q_r.  The solution is given in terms of a list of states, a list of
-       speeds (each of which may be a pair in case of a rarefaction fan), and a
-       function reval(xi) that gives the solution at a point xi=x/t.
+    """
+    Return the exact solution to the Riemann problem with initial states
+    q_l, q_r.  The solution is given in terms of a list of states, a list of
+    speeds (each of which may be a pair in case of a rarefaction fan), and a
+    function reval(xi) that gives the solution at a point xi=x/t.
 
-       The input and output vectors are the conserved quantities.
+    The input and output vectors are the conserved quantities.
 
-       If phase_plane_curves==True, then the appropriate Hugoniot Locus and/or
-       integral curve is returned for the 1- and 2-waves.
+    If phase_plane_curves==True, then the appropriate Hugoniot Locus and/or
+    integral curve is returned for the 1- and 2-waves.
 
-       For the variable-coefficient nonlinear elasicity problem:
+    For the variable-coefficient nonlinear elasicity problem:
 
            eps_t - u_x = 0
            (\rho(x) u)_t - \sigma(eps,x) = 0
 
-        the solution has two intermediate states.  These must be connected to
-        the left and right states by an integral curve or hugoniot locus, and
-        to each other by continuity of the velocity and stress.
+    the solution has two intermediate states.  These must be connected to
+    the left and right states by an integral curve or hugoniot locus, and
+    to each other by continuity of the velocity and stress.
     """
     eps_l, mom_l = q_l
     eps_r, mom_r = q_r
     rho_l, K1_l, K2_l = aux_l
     rho_r, K1_r, K2_r = aux_r
-
-    def sigma(eps, K1, K2):
-        "Stress."
-        return K1*eps + K2*eps**2
-
-    def dsigma(eps, K1, K2):
-        "Derivative of stress w.r.t. strain."
-        return K1 + 2*K2*eps
-
-    def sound_speed(eps, K1, K2, rho):
-        return np.sqrt(dsigma(eps, K1, K2)/rho)
 
     u_l = mom_l / rho_l
     u_r = mom_r / rho_r
@@ -177,14 +178,27 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
 
 def phase_plane_plot(q_l, q_r, aux_l, aux_r, ax=None):
     r"""Plot the Hugoniot loci or integral curves in the epsilon-u plane."""
+
+    eps_l, mom_l = q_l
+    eps_r, mom_r = q_r
+    rho_l, K1_l, K2_l = aux_l
+    rho_r, K1_r, K2_r = aux_r
+
+    u_l = mom_l / rho_l
+    u_r = mom_r / rho_r
+
+    sigma_l = sigma(eps_l, K1_l, K2_l)
+    sigma_r = sigma(eps_r, K1_r, K2_r)
+
+    integral_curve_1   = lambda eps: u_l + 1./(3*K2_l*np.sqrt(rho_l))*( dsigma(eps,K1_l,K2_l)**1.5 - dsigma(eps_l,K1_l,K2_l)**1.5 )
+    integral_curve_2   = lambda eps: u_r - 1./(3*K2_r*np.sqrt(rho_r))*( dsigma(eps,K1_r,K2_r)**1.5 - dsigma(eps_r,K1_r,K2_r)**1.5 )
+    hugoniot_locus_1   = lambda eps: u_l - np.sqrt((sigma(eps,K1_l,K2_l)-sigma_l)*(eps-eps_l)/rho_l)
+    hugoniot_locus_2   = lambda eps: u_r - np.sqrt((sigma(eps,K1_r,K2_r)-sigma_r)*(eps-eps_r)/rho_r)
+
     # Solve Riemann problem
     ex_states, ex_speeds, reval, wave_types, ppc = \
         exact_riemann_solution(q_l, q_r, aux_l, aux_r, phase_plane_curves=True)
     eps_star_l, eps_star_r, w1, w2 = ppc
-    rho_l = aux_l[0]
-    rho_r = aux_r[0]
-    u_l = q_l[1]/rho_l
-    u_r = q_r[1]/rho_r
 
     # Set plot bounds
     if ax is None:
@@ -193,21 +207,38 @@ def phase_plane_plot(q_l, q_r, aux_l, aux_r, ax=None):
     y = (u_l, w1(eps_star_l), w2(eps_star_r), u_r)
     xmax, xmin = max(x), min(x)
     ymax, ymin = max(y), min(y)
+    ymax = max(abs(ymax), abs(ymin))
     dx, dy = xmax - xmin, ymax - ymin
-    ax.set_xlim(xmin - 0.1*dx, xmax + 0.1*dx)
-    ax.set_ylim(ymin - 0.1*dy, ymax + 0.1*dy)
+    scalefac = 1.2
+    ax.set_xlim(0, xmax*scalefac)
+    ax.set_ylim(-scalefac*ymax, scalefac*ymax)
     ax.set_xlabel('Strain ($\epsilon$)')
     ax.set_ylabel('Velocity (u)')
 
     # Plot curves
     w1v, w2v = (np.vectorize(w1), np.vectorize(w2))
-    eps1 = np.linspace(q_l[0], eps_star_l)
-    eps2 = np.linspace(q_r[0], eps_star_r)
-    ax.plot(eps1, w1v(eps1), colors[wave_types[0]], lw=2)
-    ax.plot(eps2, w2v(eps2), colors[wave_types[2]], lw=2)
+
+    eps1 = np.linspace(1.e-2, eps_star_l)
+    eps2 = np.linspace(eps_star_l, xmax*scalefac)
+    if wave_types[0] == 'shock':
+        ax.plot(eps1, hugoniot_locus_1(eps1), '-r', lw=2)
+        ax.plot(eps2, hugoniot_locus_1(eps2), '--r', lw=2)
+    else:  # 1-rarefaction
+        ax.plot(eps1, integral_curve_1(eps1), '--b', lw=2)
+        ax.plot(eps2, integral_curve_1(eps2), '-b', lw=2)
+
+    eps1 = np.linspace(1.e-2, eps_star_r)
+    eps2 = np.linspace(eps_star_r, xmax*scalefac)
+    if wave_types[2] == 'shock':
+        ax.plot(eps1, hugoniot_locus_2(eps1), '-r', lw=2)
+        ax.plot(eps2, hugoniot_locus_2(eps2), '--r', lw=2)
+    else:  # 2-rarefaction
+        ax.plot(eps1, integral_curve_2(eps1), '--b', lw=2)
+        ax.plot(eps2, integral_curve_2(eps2), '-b', lw=2)
+
     ax.plot([eps_star_l,eps_star_r],[w1v(eps_star_l),w2v(eps_star_r)],colors[wave_types[1]])
     for xp, yp in zip(x, y):
         ax.plot(xp, yp, 'ok', markersize=10)
     # Label states
     for i, label in enumerate(('$q_l$', '$q_l^*$', '$q_r^*$', '$q_r$')):
-        ax.text(x[i] + 0.025*dx, y[i] + 0.025*dy, label)
+        ax.text(x[i] + 0.05*dx, y[i] + 0.05*dy, label)

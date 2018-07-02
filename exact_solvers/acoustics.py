@@ -1,5 +1,9 @@
+"""
+Exact Riemann solvers for the acoustic wave equation in 1D.
+Includes separate solvers for homogeneous and heterogeneous
+media.
+"""
 import numpy as np
-import matplotlib.pyplot as plt
 
 def lambda1(q, xi, aux):
     "Characteristic speed for 1-waves."
@@ -11,7 +15,7 @@ def lambda2(q, xi, aux):
     rho, bulk = aux
     return np.sqrt(bulk/rho)
 
-def exact_riemann_solution(ql,qr,aux):
+def exact_riemann_solution(ql, qr, aux):
 
     # Define delta q, speeds and impedance
     rho, bulk = aux
@@ -23,51 +27,53 @@ def exact_riemann_solution(ql,qr,aux):
     r1 = np.array([-Z, 1])
     r2 = np.array([Z,  1])
 
-    # Compute the alphas
     alpha1 = (-dq[0] + dq[1]*Z)/(2*Z)
     alpha2 = (dq[0] + dq[1]*Z)/(2*Z)
 
     # Compute middle state qm
-    qm = ql + alpha1*r1 
+    qm = ql + alpha1*r1
     # It is equivalent to
-    #qm = qr - alpha2*r2 
-    
-    # Compute waves speeds (characteristics) 
-    wspeeds = np.zeros(2)
-    wspeeds[0] = -c
-    wspeeds[1] = c
-    
+    #qm = qr - alpha2*r2
+
+    # Compute wave speeds
+    speeds = np.zeros(2)
+    speeds[0] = -c
+    speeds[1] = c
+
     # Concatenate states for plotting
     states = np.column_stack([ql,qm,qr])
 
-    # Calculate reval function (only necessary for plotting)
+    # Calculate reval function (used for plotting the solution)
     def reval(xi):
-            r"""Returns the Riemann solution in for any value of xi = x/t.
+            r"""Returns the Riemann solution for any value of xi = x/t.
             """
-            p_out =  (xi<=wspeeds[0]                 )*ql[0]      \
-                    + (xi>wspeeds[0])*(xi<=wspeeds[1])*qm[0]    \
-                    + (xi>wspeeds[1]                 )*qr[0] 
+            p_out =  (xi<=speeds[0]                 )*ql[0]      \
+                    + (xi>speeds[0])*(xi<=speeds[1])*qm[0]    \
+                    + (xi>speeds[1]                 )*qr[0]
 
-            u_out =  (xi<=wspeeds[0]                 )*ql[1]      \
-                    + (xi>wspeeds[0])*(xi<=wspeeds[1])*qm[1]    \
-                    + (xi>wspeeds[1]                 )*qr[1] 
+            u_out =  (xi<=speeds[0]                 )*ql[1]      \
+                    + (xi>speeds[0])*(xi<=speeds[1])*qm[1]    \
+                    + (xi>speeds[1]                 )*qr[1]
             return p_out, u_out
-       
-    return states, wspeeds, reval
 
-def lambda_het_1(q, xi, aux):
-    "Characteristic speed for 1-waves."
-    rho, bulk = aux
+    return states, speeds, reval
+
+
+# Functions for heterogeneous media
+
+def lambda_1_het(q, xi, aux):
+    "Characteristic speed for 1-waves in a heterogeneous medium."
+    rho, K = aux
     return -np.sqrt(K/rho)
 
-def lambda_het_2(q, xi, aux):
-    "Characteristic speed for 2-waves."
-    rho, bulk = aux
+def lambda_2_het(q, xi, aux):
+    "Characteristic speed for 2-waves in a heterogeneous medium."
+    rho, K = aux
     return np.sqrt(K/rho)
 
-def exact_riemann_heterogenous(ql,qr,auxl,auxr):
+def exact_riemann_heterogenous(ql, qr, auxl, auxr):
 
-    # Define delat q, speeds and impedance (left and right) 
+    # Define delta q, speeds and impedance (left and right)
     dq = qr - ql
     rhol, bulkl = auxl
     rhor, bulkr = auxr
@@ -85,15 +91,15 @@ def exact_riemann_heterogenous(ql,qr,auxl,auxr):
     alpha2 = (dq[0] + dq[1]*Zl)/(Zl + Zr)
 
     # Compute middle state qm
-    qm = ql + alpha1*r1 
+    qm = ql + alpha1*r1
     # It is equivalent to
-    #qm = qr - alpha2*r2 
-    
-    # Compute waves speeds (characteristics) 
-    wspeeds = np.zeros(2)
-    wspeeds[0] = -cl
-    wspeeds[1] = cr
-    
+    #qm = qr - alpha2*r2
+
+    # Compute waves speeds (characteristics)
+    speeds = np.zeros(2)
+    speeds[0] = -cl
+    speeds[1] = cr
+
     # Concatenate states for plotting
     states = np.column_stack([ql,qm,qr])
 
@@ -101,14 +107,13 @@ def exact_riemann_heterogenous(ql,qr,auxl,auxr):
     def reval(xi):
             r"""Returns the Riemann solution in for any value of xi = x/t.
             """
-            p_out =  (xi<=wspeeds[0]                 )*ql[0]      \
-                    + (xi>wspeeds[0])*(xi<=wspeeds[1])*qm[0]    \
-                    + (xi>wspeeds[1]                 )*qr[0] 
+            p_out =  (xi<=speeds[0]                 )*ql[0]      \
+                    + (xi>speeds[0])*(xi<=speeds[1])*qm[0]    \
+                    + (xi>speeds[1]                 )*qr[0]
 
-            u_out =  (xi<=wspeeds[0]                 )*ql[1]      \
-                    + (xi>wspeeds[0])*(xi<=wspeeds[1])*qm[1]    \
-                    + (xi>wspeeds[1]                 )*qr[1] 
+            u_out =  (xi<=speeds[0]                 )*ql[1]      \
+                    + (xi>speeds[0])*(xi<=speeds[1])*qm[1]    \
+                    + (xi>speeds[1]                 )*qr[1]
             return p_out, u_out
-       
-    return states, wspeeds, reval
 
+    return states, speeds, reval

@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings("ignore")
 
 conserved_variables = ('Depth', 'Momentum')
 primitive_variables = ('Depth', 'Velocity')
@@ -14,7 +16,8 @@ def primitive_to_conservative(h, u):
     return h, hu
 
 def conservative_to_primitive(h, hu):
-    assert np.all(h>=0)
+    # Check that h>=0 where it is not np.nan:
+    assert np.nanmin(h)>=0
     # We should instead check that hu is zero everywhere that h is
     u = hu/pospart(h)
     return h, u
@@ -52,9 +55,9 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
     integral_curve_2   = lambda h: u_r - 2*(np.sqrt(grav*h_r) -
                                             np.sqrt(grav*np.maximum(h,0)))
     hugoniot_locus_1 = lambda h: (h_l*u_l + (h-h_l)*(u_l -
-            np.sqrt(grav*h_l*(1 + (h-h_l)/h_l) * (1 + (h-h_l)/(2*h_l)))))/h
+                                  np.sqrt(grav*h_l*(1 + (h-h_l)/h_l) * (1 + (h-h_l)/(2*h_l)))))/h
     hugoniot_locus_2 = lambda h: (h_r*u_r + (h-h_r)*(u_r +
-            np.sqrt(grav*h_r*(1 + (h-h_r)/h_r) * (1 + (h-h_r)/(2*h_r)))))/h
+                                  np.sqrt(grav*h_r*(1 + (h-h_r)/h_r) * (1 + (h-h_r)/(2*h_r)))))/h
 
     # Check whether the 1-wave is a shock or rarefaction
     def phi_l(h):
@@ -307,7 +310,8 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
 
-def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', approx_states=None, hmin=0,
+                     color='g'):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
@@ -331,7 +335,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     ymax = max(abs(y))
     dx = xmax - xmin
     ymax = max(abs(y))
-    ax.set_xlim(0, xmax + 0.5*dx)
+    ax.set_xlim(hmin, xmax + 0.5*dx)
     ax.set_ylim(-1.5*ymax, 1.5*ymax)
     ax.set_xlabel('Depth (h)')
     if y_axis == 'u':
@@ -346,13 +350,13 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     if wave_types[0] == 'shock':
         hu1 = hugoniot_locus(h1, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r')
-        ax.plot(h2,hu2,'r')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (unphysical)')
+        ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
         hu2 = integral_curve(h2, h_l, states[1,left], wave_family=1, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'b')
-        ax.plot(h2,hu2,'--b')
+        ax.plot(h1,hu1,'b', label='Integral curve (physical)')
+        ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     h_r = states[0,right]
     h1 = np.linspace(1.e-2,h_r)
@@ -360,19 +364,34 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u'):
     if wave_types[1] == 'shock':
         hu1 = hugoniot_locus(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = hugoniot_locus(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'--r')
-        ax.plot(h2,hu2,'r')
+        ax.plot(h1,hu1,'--r', label='Hugoniot locus (unphysical)')
+        ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
         hu1 = integral_curve(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
         hu2 = integral_curve(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        ax.plot(h1,hu1,'b')
-        ax.plot(h2,hu2,'--b')
+        ax.plot(h1,hu1,'b', label='Integral curve (physical)')
+        ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'ok',markersize=10)
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax,label)
+
+    if approx_states is not None:
+        u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
+        h = approx_states[0,:]
+        ax.plot(h,u,'o-',color=color,markersize=10,zorder=0,label='Approximate solution')
+
+    handles,labels = ax.get_legend_handles_labels()
+    i = np.arange(len(labels))
+    filter = np.array([])
+    unique_labels = list(set(labels))
+    for ul in unique_labels:
+        filter = np.append(filter,[i[np.array(labels)==ul][0]])
+    handles = [handles[int(f)] for f in filter]
+    labels = [labels[int(f)] for f in filter]
+    ax.legend(handles,labels)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
@@ -381,10 +400,10 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     for hustar in np.linspace(-4,4,15):
         if plot_1:
             hu = hugoniot_locus(h,hstar,hustar,wave_family=1,y_axis=y_axis)
-            plt.plot(h,hu,'-',color='cornflowerblue')
+            plt.plot(h,hu,'-',color='coral')
         if plot_2:
             hu = hugoniot_locus(h,hstar,hustar,wave_family=2,y_axis=y_axis)
-            plt.plot(h,hu,'-',color='lightblue')
+            plt.plot(h,hu,'-',color='maroon')
         plt.axis((0,3,-3,3))
         plt.xlabel('depth h')
         if y_axis=='hu':
@@ -402,7 +421,6 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
     import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
     from utils import riemann_tools
-    #plt.style.use('seaborn-talk')
 
     g = 1.
 
@@ -454,10 +472,15 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
             q = primitive[i]
             plt.plot(x,q,'-k',linewidth=3)
             plt.title(primitive_variables[i])
+            if t != 0:
+                plt.suptitle('Solution at time $t='+str(t)+'$',fontsize=12)
+            else:
+                plt.suptitle('Initial data',fontsize=12)
             axes[i].set_xlim(-1,1)
 
-            if i==0:
+            if i==0 and force_waves != 'raref':
                 # plot stripes only on depth plot
+                # (and suppress if nonphysical solution plotted)
                 n = find(t > t_traj)
                 if len(n)==0:
                     n = 0
@@ -480,16 +503,20 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                     if x_traj[0,i]<0:
                         # shades of red for fluid starting from x<0
                         if np.mod(i,2)==0:
-                            c = [1,0,0]
+                            c = 'lightblue'
+                            alpha = 1.0
                         else:
-                            c = [1,0.8,0.8]
+                            c = 'dodgerblue'
+                            alpha = 1.0
                     else:
                         # shades of blue for fluid starting from x<0
                         if np.mod(i,2)==0:
-                            c = [0,0,1]
+                            c = 'cornflowerblue'
+                            alpha = 1.0
                         else:
-                            c = [0.8,0.8,1]
-                    plt.fill_between(x[j1:j2],q[j1:j2],0,color=c)
+                            c = 'blue'
+                            alpha = 1.0
+                    plt.fill_between(x[j1:j2],q[j1:j2],0,color=c,alpha=alpha)
 
         axes[0].set_ylim(hlim)
         axes[1].set_ylim(ulim)
@@ -497,3 +524,132 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
             plt.show()
 
     return plot_shallow_water_demo
+
+def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
+    """
+    Some simulations to show that the Riemann solution describes macroscopic behavior
+    in the Cauchy problem.
+    """
+    from IPython.display import HTML
+    from clawpack import pyclaw
+    import matplotlib.pyplot as plt
+    from matplotlib import animation
+    from clawpack.riemann import shallow_roe_tracer_1D
+    import numpy as np
+
+    depth = 0
+    momentum = 1
+    tracer = 2
+
+    solver = pyclaw.ClawSolver1D(shallow_roe_tracer_1D)
+    solver.num_eqn = 3
+    solver.num_waves = 3
+    solver.bc_lower[0] = pyclaw.BC.wall
+    solver.bc_upper[0] = pyclaw.BC.wall
+    x = pyclaw.Dimension(-1.0,1.0,2000,name='x')
+    domain = pyclaw.Domain(x)
+    state = pyclaw.State(domain,solver.num_eqn)
+
+    state.problem_data['grav'] = 1.0
+
+    grid = state.grid
+    xc = grid.p_centers[0]
+
+    hl = 3.
+    hr = 1.
+    ul = 0.
+    ur = 0.
+
+    xs = 0.1
+
+    alpha = (xs-xc)/(2.*xs)
+    if which=='linear':
+        state.q[depth,:] = hl*(xc<=-xs) + hr*(xc>xs) + (alpha*hl + (1-alpha)*hr)*(xc>-xs)*(xc<=xs)
+        state.q[momentum,:] = hl*ul*(xc<=-xs) + hr*ur*(xc>xs) + (alpha*hl*ul + (1-alpha)*hr*ur)*(xc>-xs)*(xc<=xs)
+    elif which=='oscillatory':
+        state.q[depth,:] = hl*(xc<=-xs) + hr*(xc>xs) + (alpha*hl + (1-alpha)*hr+0.2*np.sin(8*np.pi*xc/xs))*(xc>-xs)*(xc<=xs)
+        state.q[momentum,:] = hl*ul*(xc<=-xs) + hr*ur*(xc>xs) + (alpha*hl*ul + (1-alpha)*hr*ur+0.2*np.cos(8*np.pi*xc/xs))*(xc>-xs)*(xc<=xs)
+
+    state.q[tracer,:] = xc
+
+    claw = pyclaw.Controller()
+    claw.tfinal = 0.5
+    claw.solution = pyclaw.Solution(state,domain)
+    claw.solver = solver
+    claw.keep_copy = True
+    claw.num_output_times = 5
+    claw.verbosity = 0
+
+    claw.run()
+
+    fig = plt.figure(figsize=figsize)
+    ax_h = fig.add_subplot(121)
+    ax_u = fig.add_subplot(122)
+    fills = []
+    frame = claw.frames[0]
+    h = frame.q[0,:]
+    u = frame.q[1,:]/h
+    b = 0*h
+    surface = h+b
+    tracer = frame.q[2,:]
+
+    x, = frame.state.grid.p_centers
+
+    line, = ax_h.plot(x, surface,'-k',linewidth=3)
+    line_u, = ax_u.plot(x, u,'-k',linewidth=3)
+
+    fills = {'navy': None,
+             'blue': None,
+             'cornflowerblue': None,
+             'deepskyblue': None}
+    colors = fills.keys()
+
+    def set_stripe_regions(tracer):
+        widthl = 0.3/hl
+        widthr = 0.3/hr
+        # Designate areas for each color of stripe
+        stripes = {}
+        stripes['navy'] = (tracer>=0)
+        stripes['blue'] = (tracer % widthr>=widthr/2.)*(tracer>=0)
+        stripes['cornflowerblue'] = (tracer<=0)
+        stripes['deepskyblue'] = (tracer % widthl>=widthl/2.)*(tracer<=0)
+        return stripes
+
+    stripes = set_stripe_regions(tracer)
+
+    for color in colors:
+        fills[color] = ax_h.fill_between(x,b,surface,facecolor=color,where=stripes[color],alpha=0.5)
+
+    ax_h.set_xlabel('$x$'); ax_u.set_xlabel('$x$');
+    ax_h.set_xlim(-1,1); ax_h.set_ylim(0,3.5)
+    ax_u.set_xlim(-1,1); ax_u.set_ylim(-1,1)
+    ax_u.set_title('Velocity'); ax_h.set_title('Depth')
+
+    def fplot(frame_number):
+        fig.suptitle('Solution at time $t='+str(frame_number/10.)+'$',fontsize=12)
+        # Remove old fill_between plots
+        for color in colors:
+            fills[color].remove()
+
+        frame = claw.frames[frame_number]
+        h = frame.q[0,:]
+        u = frame.q[1,:]/h
+        b = 0*h
+        tracer = frame.q[2,:]
+        surface = h+b
+        line.set_data(x,surface)
+        line_u.set_data(x,u)
+        stripes = set_stripe_regions(tracer)
+        for color in colors:
+            fills[color] = ax_h.fill_between(x,b,surface,facecolor=color,where=stripes[color],alpha=0.5)
+        return line,
+
+    if context in ['notebook','html']:
+        anim = animation.FuncAnimation(fig, fplot, frames=len(claw.frames), interval=200, repeat=False)
+        plt.close()
+        return HTML(anim.to_jshtml())
+    else:  # PDF output
+        fplot(0)
+        plt.show()
+        fplot(2)
+        return fig

@@ -29,6 +29,8 @@
 ((* endblock markdowncell *))
 
 ((* block title *))
+\input{latexdefs.tex}
+
 \title{The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers}
 ((* endblock title *))
 

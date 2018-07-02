@@ -23,6 +23,23 @@ chapters = ['Preface',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
+# To test a subset, adjust the list of chapters and
+# remove the build_pdf directory before running this script.
+
+chapters = ['Preface',
+            'Introduction',
+            'Advection',
+            'Acoustics',
+            'Traffic_flow',
+            'Burgers_equation',
+            'Shallow_water',
+            'Euler_equations',
+            'Approximate_solvers',
+            'Burgers_approximate',
+            'Shallow_water_approximate_solvers',
+            'Euler_approximate_solvers',
+            'Euler_compare']
+
 build_dir = 'build_pdf/'
 if not os.path.exists(build_dir):
     os.makedirs(build_dir)
@@ -33,7 +50,9 @@ os.system('cp *.html '+build_dir)
 os.system('cp -r figures '+build_dir)
 os.system('cp riemann.tplx '+build_dir)
 os.system('cp *.cls '+build_dir)
+os.system('cp *.css '+build_dir)
 os.system('cp riemann.bib '+build_dir)
+os.system('cp latexdefs.tex '+build_dir)
 
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
@@ -42,10 +61,19 @@ for i, chapter in enumerate(chapters):
     output_filename = str(i).zfill(2)+'-'+filename
     with open(build_dir+output_filename, "w") as output:
         for line in lines:
-            line = re.sub(r'from ipywidgets import interact', 'from utils.snapshot_widgets import interact', line)
             for j, chapter_name in enumerate(chapters):
-                line = re.sub(chapter_name+'.ipynb', str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
-            output.write(re.sub(r'from ipywidgets import interact', 'from utils.snapshot_widgets import interact', line))
+                # fix cross references to other chapters
+                line = re.sub(chapter_name+'.ipynb',
+                              str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+            line = re.sub(r"context = 'notebook'", "context = 'pdf'", line)
+            # The next part is deprecated
+            line = re.sub(r'from ipywidgets import interact',
+                          'from utils.snapshot_widgets import interact', line)
+            line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.',
+                          '', line)
+            #line = re.sub(r"#sns.set_context('paper')",
+            #              r"sns.set_context('paper')", line)
+            output.write(line)
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",
             "--ExecutePreprocessor.kernel_name=python2",
             "--output", output_filename,
