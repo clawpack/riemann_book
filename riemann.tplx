@@ -25,7 +25,7 @@
 ((* endblock author *))
 
 ((* block markdowncell scoped *))
-((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'json',extra_args=[]) | resolve_references | convert_pandoc('json','latex', extra_args=["--chapters"]) )))
+((( cell.source | citation2latex | strip_files_prefix | convert_pandoc('markdown', 'json',extra_args=[]) | resolve_references | convert_pandoc('json','latex', extra_args=["--top-level-division=chapter"]) )))
 ((* endblock markdowncell *))
 
 ((* block title *))
