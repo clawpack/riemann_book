@@ -2,9 +2,8 @@
 *NOTE:* This version is slightly modified from the one in
     $CLAW/visclaw/src/python/visclaw/animation_tools.py
 
-Some functions requires JSAnimation, either from Clawpack 
-or by installing it separately from
-    https://github.com/jakevdp/JSAnimation
+Some functions require JSAnimation, which is available in matplotlib
+version 2.1 and later.
 
 This animation_tools module contains tools to create animations in Python and
 Jupyter notebooks.
@@ -49,16 +48,6 @@ from matplotlib import image, animation
 from matplotlib import pyplot as plt
 from ipywidgets import interact, interact_manual
 import ipywidgets
-
-try:
-    from JSAnimation import IPython_display
-except:
-    try:
-        from clawpack.visclaw.JSAnimation import IPython_display
-    except:
-        print("*** Warning: JSAnimation not found")
-        
-
 
 def make_plotdir(plotdir='_plots', clobber=True):
     """
@@ -180,16 +169,7 @@ def make_html(anim, file_name='anim.html', title=None, raw_html='',
     Take an animation created by make_anim and convert it into a stand-alone
     html file.
     """
-    try:
-        from JSAnimation.IPython_display import anim_to_html
-    except:
-        try:
-            from clawpack.visclaw.JSAnimation.IPython_display import anim_to_html
-        except:
-            print("*** Warning: JSAnimation not found, cannot import anim_to_html")
-
-    html_body = anim_to_html(anim, fps=fps, embed_frames=embed_frames, \
-                 default_mode=default_mode)
+    html_body = anim.to_jshtml(fps, embed_frames, default_mode)
 
     html_file = open(file_name,'w')
     html_file.write("<html>\n <h1>%s</h1>\n" % title)
@@ -205,16 +185,7 @@ def make_rst(anim, file_name='anim.rst',
     Take an animation created by make_anim and convert it into an rst file
     (reStructuredText, for inclusion in Sphinx documentation, for example).
     """
-    try:
-        from JSAnimation.IPython_display import anim_to_html
-    except:
-        try:
-            from clawpack.visclaw.JSAnimation.IPython_display import anim_to_html
-        except:
-            print("*** Warning: JSAnimation not found, cannot import anim_to_html")
-
-    rst_body = anim_to_html(anim, fps=fps, embed_frames=embed_frames, \
-                 default_mode=default_mode)
+    rst_body = anim.to_jshtml()
 
     rst_body = rst_body.split('\n')
 
