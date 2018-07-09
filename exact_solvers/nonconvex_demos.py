@@ -13,15 +13,15 @@ def plot_waves(f,q_left, q_right, xi_left, xi_right, n=1000, axes=None, t=0.2):
     qvals = qtilde(xi)
     fvals = f(qvals)
     dxi = xi[1]-xi[0]
-    #print('+++ qvals:\n',qvals)
-    #print('+++ dxi:\n',dxi)
     smoothness = riemann_tools.detect_smoothness(qvals,dxi,dmax=10)
     values, ranges = riemann_tools.intervals(smoothness)
-    #print('+++ smoothness:\n',smoothness)
-    #print('+++ values:\n',values)
-    #print('+++ ranges:\n',ranges)
     
     # filter out extraneous constant states between rarefactions:
+    # For complicated nonconvex fluxes, 
+    # values tend to contain sequences [1,0,1] indicating a constant
+    # state between two rarefaction waves, which shouldn't happen,
+    # so merge such ranges into a single rarefaction wave.
+    
     jd = []
     for j in range(len(values)):
         try:
@@ -36,11 +36,6 @@ def plot_waves(f,q_left, q_right, xi_left, xi_right, n=1000, axes=None, t=0.2):
         values.pop(j)
         ranges.pop(j+1)
         ranges.pop(j)  
-        
-        
-    #print('+++ values:\n',values)
-    #print('+++ ranges:\n',ranges)
-        
 
     wave_types, speeds = riemann_tools.make_waves(values, ranges, xi)
     riemann_tools.plot_waves(None,speeds,None,wave_types,ax=axes,
