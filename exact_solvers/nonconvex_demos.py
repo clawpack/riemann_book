@@ -3,7 +3,7 @@ import numpy as np
 from . import nonconvex
 import sys
 sys.path.append('../utils')
-from utils import riemann_tools
+import riemann_tools # from ../utils
 
 figsize =(8,4)
 
