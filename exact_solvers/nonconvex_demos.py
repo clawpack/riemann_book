@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from . import nonconvex
-import sys
-sys.path.append('../utils')
-import riemann_tools # from ../utils
+import sys, os
+
+top_dir = os.path.abspath('..')
+if top_dir not in sys.path:
+    sys.path.append(top_dir)
+from utils import riemann_tools
 
 figsize =(8,4)
 
