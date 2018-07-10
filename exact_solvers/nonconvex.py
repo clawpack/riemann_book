@@ -1,7 +1,7 @@
 import numpy as np
 import sys
 sys.path.append('../utils')
-from utils import riemann_tools
+import riemann_tools # from ../utils
 import matplotlib.pyplot as plt
 from ipywidgets import widgets, FloatSlider
 from ipywidgets import interact
