@@ -30,13 +30,13 @@ def interact(f, **kwargs):
         figs = []
         for t in times:
             fargs['t'] = t
-            fig = plt.figure(figsize=(12,6))
+            fig = plt.figure()
             fargs['fig'] = fig
             f(**fargs)
             figs.append(fig)
             plt.close(fig)
         images = animation_tools.make_images(figs)
-        anim = animation_tools.JSAnimate_images(images)
+        anim = animation_tools.JSAnimate_images(images, figsize=(8,4))
         display(anim)
     else:
         # just make one static plot if 't' is not a key:
