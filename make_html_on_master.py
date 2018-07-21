@@ -37,29 +37,37 @@ import re
 import subprocess
 import os
 
+part0 = ['Preface', 'Index']
 
-all_chapters = ['Preface',
-            'Index',
-            'Introduction',
+part1 = ['Introduction',
             'Advection',
             'Acoustics',
             'Traffic_flow',
+            'Burgers_equation',
             'Shallow_water',
             'Shallow_tracer',
-            'Euler_equations',
-            'Approximate_solvers',
-            'Euler_approximate_solvers',
-            'Traffic_variable_speed',
+            'Euler_equations']
+
+part2 = ['Approximate_solvers',
+         'Burgers_approximate',
+         'Shallow_water_approximate_solvers',
+         'Euler_approximate_solvers',
+         'Euler_compare']
+
+others = ['Traffic_variable_speed',
             'Nonlinear_elasticity',
             'Euler_equations_TammannEOS',
             'Nonconvex_scalar',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
+all_chapters = part0 + part1 + part2 + others
+
 chapters = all_chapters  # which chapters to process
 
 # test on a subset:
-#chapters = ['Index','Introduction','Traffic_flow']
+#chapters = part0 + part1
+chapters = ['Euler_equations']
 
 template_path = os.path.realpath('./html.tpl')
 

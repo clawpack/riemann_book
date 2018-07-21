@@ -322,8 +322,8 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
         if extra_axes: num_axes += extra_axes
         if layout == 'horizontal':
             # Plots side by side
-            if num_axes == 4:
-                fig_width = 2.5*num_axes
+            if num_axes >= 4:
+                fig_width = 10
             else:
                 fig_width = 3*num_axes
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,3))
@@ -331,7 +331,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
         elif layout == 'vertical':
             # Plots on top of each other, with shared x-axis
             fig_width = 9
-            fig_height = 3*(num_axes-1)
+            fig_height = 2*(num_axes-1)
             fig, ax = plt.subplots(num_axes,1,figsize=(fig_width,fig_height),sharex=True)
             plt.subplots_adjust(hspace=0)
             ax[-1].set_xlabel('x')
@@ -451,11 +451,11 @@ def make_plot_function(states_list, speeds_list, riemann_eval_list,
 
     def plot_function(t, which_char=None):
         if layout == 'horizontal':
-            fig_width = 3*num_axes
+            fig_width = 9
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width, 3))
         elif layout == 'vertical':
-            fig_width = 9
-            fig_height = 3*(num_axes-1)
+            fig_width = 6
+            fig_height = 2*(num_axes-1)
             fig, ax = plt.subplots(num_axes,1,figsize=(fig_width, fig_height),sharex=True)
             plt.subplots_adjust(hspace=0)
             ax[-1].set_xlabel('x')

@@ -416,7 +416,7 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
 
 def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
-                            force_waves=None):
+                            force_waves=None, stripes=True):
     from matplotlib.mlab import find
     import matplotlib.pyplot as plt
     from exact_solvers import shallow_water
@@ -439,11 +439,22 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
         rho_u = np.vstack((rho,u))
         return rho_u
 
-    x_traj, t_traj, xmax = \
-        riemann_tools.compute_riemann_trajectories(states, speeds, reval_rho_u,
-                                                   wave_types, i_vel=1, xmax=2,
-                                                   rho_left=h_l/4.,
-                                                   rho_right=h_r/4.)
+    if stripes:
+        x_traj, t_traj, xmax = \
+            riemann_tools.compute_riemann_trajectories(states, speeds, 
+                                                       reval_rho_u,
+                                                       wave_types, i_vel=1, 
+                                                       xmax=2,
+                                                       rho_left=h_l/4.,
+                                                       rho_right=h_r/4.)
+    else:
+        x_traj, t_traj, xmax = \
+            riemann_tools.compute_riemann_trajectories(states, speeds, 
+                                                       reval_rho_u,
+                                                       wave_types, i_vel=1, 
+                                                       xmax=2,
+                                                       num_left=3,
+                                                       num_right=3)
 
     num_vars = len(primitive_variables)
 
