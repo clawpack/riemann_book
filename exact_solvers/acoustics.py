@@ -4,6 +4,9 @@ Includes separate solvers for homogeneous and heterogeneous
 media.
 """
 import numpy as np
+import sys
+sys.path.append('../utils')
+from utils import riemann_tools
 
 def lambda1(q, xi, aux):
     "Characteristic speed for 1-waves."
@@ -58,6 +61,16 @@ def exact_riemann_solution(ql, qr, aux):
 
     return states, speeds, reval
 
+
+# Return Riemann shock function for interacts
+def riemann_plot(q_l, q_r, aux):
+    ex_states, ex_speeds, reval = exact_riemann_solution(q_l ,q_r, aux)
+
+    plot_function = riemann_tools.make_plot_function(ex_states, ex_speeds, reval, layout='vertical',
+                                                    variable_names=['pressure', 'velocity'],
+                                                    aux=(np.array(aux),np.array(aux)), 
+                                                    plot_chars=[lambda1, lambda2])
+    return plot_function
 
 # Functions for heterogeneous media
 
