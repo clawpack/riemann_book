@@ -63,7 +63,7 @@ others = ['Traffic_variable_speed',
             'Kitchen_sink_problem']
 
 all_chapters = part0 + part1 + part2 + others
-book_chapters = part0 + part1
+book_chapters = part0 + part1 + part2
 
 chapters = all_chapters  # which chapters to process
 
