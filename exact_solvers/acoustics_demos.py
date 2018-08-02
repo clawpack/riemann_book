@@ -32,7 +32,7 @@ def decompose_q(p,u,K,rho):
     r"""Plotting function for decompose_q_interactive. It 
     should also print the eigenvectors and the values w_1, w_2."""
     Z = np.sqrt(K*rho)
-    fig, axes = plt.subplots(1,2,figsize=(10,6))
+    fig, axes = plt.subplots(1,2,figsize=(8,4)) 
     axes[0].arrow(0,0,-Z,1,head_width=0.05, head_length=0.1, color=colors[0])
     axes[0].arrow(0,0,Z,1, head_width=0.05, head_length=0.1, color=colors[1])
     l1 = axes[0].plot([],[],colors[0])
@@ -53,7 +53,6 @@ def decompose_q(p,u,K,rho):
     axes[1].plot([-Z*alpha1,-Z*alpha1+Z*alpha2],[1*alpha1,alpha1+alpha2], color=colors[1], lw=3)
     axes[1].set_xlim(-1.2,1.2)
     axes[1].set_ylim(-1.2,1.2)
-    axes[1].set_aspect('equal')
     axes[1].legend(['$w$',r'$\alpha_1 r_1$',r'$\alpha_2 r_2$'],loc='best')
     axes[1].plot([0,0],[-2,2],'--k',alpha=0.2)
     axes[1].plot([-2,2],[0,0],'--k',alpha=0.2)
@@ -63,7 +62,7 @@ def decompose_q(p,u,K,rho):
 
 def char_solution_interactive():
     """Plots interactive characteristics solution."""
-    twidget = widgets.FloatSlider(min=0.,max=2,value=0.)
+    twidget = widgets.FloatSlider(min=0.,max=1.2,value=0.)
     rhowidget = widgets.FloatSlider(min=0.1,max=2,value=1.,description=r'$\rho$')
     Kwidget = widgets.FloatSlider(min=0.1,max=2,value=1.)
 
@@ -77,15 +76,15 @@ def char_solution_interactive():
 
 def char_solution(t, K, rho):
     """Plotting function for char_solution_interactive."""
-    fig, axes = plt.subplots(1,2,figsize=(11.5,5.5))
+    fig, axes = plt.subplots(1,2,figsize=(8,4))
     c = np.sqrt(K/rho)
     x = np.linspace(-2*c-1,2*c+1,41)
-    tt = np.linspace(0,2,20)
+    tt = np.linspace(0,1.2,20)
     for ix in x:
         axes[0].plot(ix-c*tt,tt,'-k',lw=0.5,color=colors[0])
         axes[0].plot(ix+c*tt,tt,'-k',lw=0.5,color=colors[1])
     axes[0].set_xlim(-1,1)
-    axes[0].set_ylim(-0.2,2)
+    axes[0].set_ylim(-0.2,1.2)
     axes[0].set_title('Characteristics')
     axes[0].set_xlabel('$x$')
     axes[0].set_ylabel('$t$')
@@ -99,10 +98,12 @@ def char_solution(t, K, rho):
     axes[0].legend(handles=[l1,l2], loc=4)
     axes[1].plot(xx,w120(xx-c*spacing*t)+w220(xx+c*spacing*t)+spacing*t,'-k',lw=2)
     axes[1].set_xlim(-1,1)
-    axes[1].set_ylim(-0.2,2)
+    axes[1].set_ylim(-0.2,1.2)
     axes[1].set_title('Velocity')
     axes[1].set_xlabel('$x$')
-    axes[1].set_ylabel('$t$')
+    #axes[1].set_ylabel('$t$')
+    
+    plt.tight_layout()
 
 
 def phase_plane_plot():
@@ -134,7 +135,7 @@ def phase_plane_plot():
         um = ul + al1
         
         # Set plot bounds
-        fig, ax = plt.subplots(figsize=(8,5))
+        fig, ax = plt.subplots(figsize=(5,4))
         x = (pl, pr, pm)
         y = (ul, ur, um)
         dx, dy = xmax - xmin, ymax - ymin
@@ -260,7 +261,7 @@ def full_riemann_solution_plot():
 
         
         # Set figure grid
-        fig = plt.figure(figsize=(11.5, 5.5))
+        fig = plt.figure(figsize=(10,5)) #figsize=(11.5, 5.5))
         outer_grid = gridspec.GridSpec(1, 2, wspace=0.15, hspace=0.15)
         inner_grid = gridspec.GridSpecFromSubplotSpec(3, 1, subplot_spec=outer_grid[0], wspace=0.0, hspace=0.0)
         ax1 = plt.Subplot(fig, inner_grid[0]) # x-t plane
