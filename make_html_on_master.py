@@ -43,31 +43,33 @@ part1 = ['Introduction',
             'Advection',
             'Acoustics',
             'Traffic_flow',
-            'Burgers_equation',
+            'Burgers',
+            'Nonconvex_scalar',
             'Shallow_water',
             'Shallow_tracer',
-            'Euler_equations']
+            'Euler']
 
 part2 = ['Approximate_solvers',
          'Burgers_approximate',
-         'Shallow_water_approximate_solvers',
-         'Euler_approximate_solvers',
+         'Shallow_water_approximate',
+         'Euler_approximate',
          'Euler_compare']
 
 others = ['Traffic_variable_speed',
             'Nonlinear_elasticity',
-            'Euler_equations_TammannEOS',
+            'Euler_TammannEOS',
             'Nonconvex_scalar',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
 all_chapters = part0 + part1 + part2 + others
+book_chapters = part0 + part1 + part2
 
 chapters = all_chapters  # which chapters to process
 
 # test on a subset:
-#chapters = part0 + part1
-chapters = ['Euler_equations']
+#chapters = part0 + ['Introduction']
+chapters = book_chapters
 
 template_path = os.path.realpath('./html.tpl')
 
