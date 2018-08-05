@@ -2,6 +2,9 @@ import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 import warnings
+from ipywidgets import interact
+from ipywidgets import widgets, Checkbox, fixed
+from . import shallow_demos
 warnings.filterwarnings("ignore")
 
 conserved_variables = ('Depth', 'Momentum')
@@ -115,10 +118,10 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
 
         # Compute middle state h, hu by finding curve intersection
         guess = (u_l-u_r+2.*np.sqrt(grav)*(np.sqrt(h_l)+np.sqrt(h_r)))**2./16./grav
-        h_m,info, ier, msg = fsolve(phi, guess, full_output=True, xtol=1.e-14)
+        h_m, _, ier, msg = fsolve(phi, guess, full_output=True, xtol=1.e-14)
         # For strong rarefactions, sometimes fsolve needs help
         if ier!=1:
-            h_m,info, ier, msg = fsolve(phi, guess,full_output=True,factor=0.1,xtol=1.e-10)
+            h_m, _, ier, msg = fsolve(phi, guess,full_output=True,factor=0.1,xtol=1.e-10)
             # This should not happen:
             if ier!=1:
                 print('Warning: fsolve did not converge.')
@@ -438,18 +441,16 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
                             force_waves=None, stripes=True):
     from matplotlib.mlab import find
-    import matplotlib.pyplot as plt
-    from exact_solvers import shallow_water
     from utils import riemann_tools
 
     g = 1.
 
-    q_l = shallow_water.primitive_to_conservative(h_l,u_l)
-    q_r = shallow_water.primitive_to_conservative(h_r,u_r)
+    q_l = primitive_to_conservative(h_l,u_l)
+    q_r = primitive_to_conservative(h_r,u_r)
 
     x = np.linspace(-1.,1.,1000)
     states, speeds, reval, wave_types = \
-        shallow_water.exact_riemann_solution(q_l,q_r,g,force_waves=force_waves)
+        exact_riemann_solution(q_l,q_r,g,force_waves=force_waves)
 
     # compute particle trajectories:
     def reval_rho_u(x):
@@ -489,7 +490,7 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
         if t<0.02:
             q[1] = np.where(x<0, q_l[1], q_r[1])
 
-        primitive = shallow_water.conservative_to_primitive(q[0],q[1])
+        primitive = conservative_to_primitive(q[0],q[1])
 
         if fig == 0:
             fig = plt.figure(figsize=figsize)
@@ -563,7 +564,6 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
     """
     from IPython.display import HTML
     from clawpack import pyclaw
-    import matplotlib.pyplot as plt
     from matplotlib import animation
     from clawpack.riemann import shallow_roe_tracer_1D
     import numpy as np
@@ -684,3 +684,14 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
         plt.show()
         fplot(2)
         return fig
+
+def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None):
+    plot_function_stripes, plot_function_xt_phase = \
+                shallow_demos.make_plot_functions(h_l,h_r,u_l,u_r,g,
+                                                  force_waves,extra_lines)
+    interact(plot_function_stripes, 
+             t=widgets.FloatSlider(value=0.,min=0,max=.9), fig=fixed(0))
+    interact(plot_function_xt_phase, 
+             plot_1_chars=Checkbox(description='1-characteristics',
+                                   value=False),
+             plot_2_chars=Checkbox(description='2-characteristics'))
