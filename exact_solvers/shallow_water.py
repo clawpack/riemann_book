@@ -310,8 +310,8 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.xlabel("h = depth",fontsize=15)
     plt.ylabel("hu = momentum",fontsize=15)
 
-def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', approx_states=None, hmin=0,
-                     color='g'):
+def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', 
+                     approx_states=None, hmin=0, color='g'):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
@@ -413,6 +413,26 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
         plt.title('Hugoniot loci')
         plt.legend(legend,loc=1)
     plt.show()
+
+def lambda_1(q, xi, g=1.):
+    "Characteristic speed for shallow water 1-waves."
+    h, hu = q
+    if h > 0:
+        u = hu/h
+        return u - np.sqrt(g*h)
+    else:
+        return 0
+
+def lambda_2(q, xi, g=1.):
+    "Characteristic speed for shallow water 2-waves."
+    h, hu = q
+    if h > 0:
+        u = hu/h
+        return u + np.sqrt(g*h)
+    else:
+        return 0
+
+# == Move to demos?
 
 def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
