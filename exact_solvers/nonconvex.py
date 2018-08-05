@@ -1,14 +1,8 @@
-import numpy as np
 import sys, os
 
 top_dir = os.path.abspath('..')
 if top_dir not in sys.path:
     sys.path.append(top_dir)
-from utils import riemann_tools
-
-import matplotlib.pyplot as plt
-from ipywidgets import widgets, FloatSlider
-from ipywidgets import interact
 
 def osher_solution(f, q_left, q_right, n=1000):
     """
@@ -74,7 +68,7 @@ def nonconvex_solutions(f, q_left, q_right, xi_left=None, xi_right=None):
               propagates at speed f'(q).
     """
     
-    from numpy import linspace,empty,argmin,argmax,diff,hstack
+    from numpy import linspace,diff,hstack
     
     qtilde = osher_solution(f, q_left, q_right)
     
