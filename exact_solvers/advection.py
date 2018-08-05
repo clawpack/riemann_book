@@ -1,6 +1,9 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+from utils import riemann_tools
+from ipywidgets import interact
+from ipywidgets import widgets
 
 def characteristics(a=1.):
     x = np.linspace(-2*np.abs(a)-1,2*np.abs(a)+1,41)
@@ -49,3 +52,14 @@ def riemann_solution(q_l, q_r, a=1.):
         return q
 
     return states, speeds, reval, wave_types
+
+def plot_riemann_solution(ql, qr, a):
+    c = lambda q, xi: a
+    soln = riemann_solution(ql ,qr, a)
+
+    plot_advection = riemann_tools.make_plot_function(*soln,
+                                                      plot_chars=[c])
+
+    return interact(plot_advection,
+                    t=widgets.FloatSlider(value=0.0,min=0,max=1.0),
+                    which_char=widgets.fixed(True))
