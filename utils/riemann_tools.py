@@ -328,6 +328,7 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
                 fig_width = 3*num_axes
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width,3))
             plt.subplots_adjust(wspace=0.5)
+            plt.tight_layout()
         elif layout == 'vertical':
             # Plots on top of each other, with shared x-axis
             fig_width = 9
