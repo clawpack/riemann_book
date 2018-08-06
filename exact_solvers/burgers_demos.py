@@ -114,7 +114,19 @@ def triplestate_pyclaw(ql, qm, qr, numframes):
     status = claw.run()
     
     return x, claw.frames
-	
+
+def plot_contour(ql, qm, qr, numframes):
+    x, frames = triplestate_pyclaw(ql, qm, qr, numframes) 
+    characs = np.zeros([numframes,600])
+    xx = np.linspace(-3,3,600)
+    tt = np.linspace(0,2,numframes)
+    for j in range(numframes):
+        for i in range(600):
+            characs[j][i] = frames[j].q[0][i]
+    X,T = np.meshgrid(xx,tt)
+    #plt.contourf(X,T,characs,300)
+    plt.contour(X,T,characs,30,colors='k')
+    plt.show
 
 
 
