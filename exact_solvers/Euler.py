@@ -341,7 +341,6 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
             rho, u, p = cons_to_prim(approx_states[:,j],gamma=gamma)
             p_approx.append(p)
             u_approx.append(u)
-        print(p_approx, u_approx)
         ax.plot(p_approx,u_approx,'o-g',markersize=10,zorder=0)
 
 def plot_integral_curves(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
