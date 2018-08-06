@@ -1,5 +1,9 @@
+"""
+Additional functions and demos for Burgers' equation.
+"""
 from clawpack import pyclaw
 from clawpack import riemann
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import numpy as np
@@ -9,6 +13,7 @@ from utils import riemann_tools
 from . import burgers
 
 def shock():
+    """Returns plot function for a shock solution."""
     q_l, q_r = 5.0, 1.0
     states, speeds, reval, wave_type = burgers.exact_riemann_solution(q_l ,q_r)
 
@@ -19,6 +24,7 @@ def shock():
     return plot_function
 
 def rarefaction():
+    """Returns plot function for a rarefaction solution."""
     q_l, q_r = 2.0, 4.0
     states, speeds, reval, wave_type = burgers.exact_riemann_solution(q_l ,q_r)
 
@@ -29,6 +35,7 @@ def rarefaction():
     return plot_function
 
 def unphysical():
+    """Returns plot function for an unphysical solution."""
     q_l, q_r = 1.0, 5.0
     states, speeds, reval, wave_type = burgers.unphysical_riemann_solution(q_l ,q_r)
 
@@ -39,6 +46,8 @@ def unphysical():
     return plot_function
 
 def bump_animation(numframes):
+    """Plots animation of solution with bump initial condition, 
+    using pyclaw (calls bump_pyclaw)."""
     x, frames = bump_pyclaw(numframes) 
     fig = plt.figure()
     ax = plt.axes(xlim=(-1, 1), ylim=(-0.2, 1.2))
@@ -52,21 +61,8 @@ def bump_animation(numframes):
 
     return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
 
-def triplestate_animation(ql, qm, qr, numframes):
-    x, frames = triplestate_pyclaw(ql, qm, qr, numframes) 
-    fig = plt.figure()
-    ax = plt.axes(xlim=(-3, 3), ylim=(-2, 5))
-    line, = ax.plot([], [], '-k', lw=2)
-
-    def fplot(frame_number):
-        frame = frames[frame_number]
-        pressure = frame.q[0,:]
-        line.set_data(x,pressure)
-        return line,
-
-    return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
-
 def bump_pyclaw(numframes):
+    """Returns pyclaw solution of bump initial condition."""
     # Set pyclaw for burgers equation 1D
     claw = pyclaw.Controller()
     claw.tfinal = 1.5           # Set final time
@@ -87,7 +83,54 @@ def bump_pyclaw(numframes):
     
     return x, claw.frames
 
+def triplestate_animation(ql, qm, qr, numframes):
+    """Plots animation of solution with triple-state initial condition, using pyclaw (calls  
+    triplestate_pyclaw). Also plots characteristic structure by plotting contour plots of the 
+    solution in the x-t plane """
+    # Get solution for animation and set plot
+    x, frames = triplestate_pyclaw(ql, qm, qr, numframes) 
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9,4))
+    ax1.set_xlim(-3, 3)
+    ax1.set_ylim(-3, 5)
+    ax2.set_xlim(-3, 3)
+    ax2.set_ylim(0, 2)
+    ax1.set_title('Solution q(x)')
+    ax1.set_xlabel('$x$')
+    ax1.set_ylabel('$q$')
+    ax2.set_title('xt-plane')
+    ax2.set_xlabel('$x$')
+    ax2.set_ylabel('$t$')
+    matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
+    line1, = ax1.plot([], [], '-k', lw=2)
+
+    # Contour plot of high-res solution to show characteristic structure in xt-plane
+    meshpts = 600
+    numframes2 = 600
+    x2, frames2 = triplestate_pyclaw(ql, qm, qr, numframes2) 
+    characs = np.zeros([numframes2,meshpts])
+    xx = np.linspace(-3,3,meshpts)
+    tt = np.linspace(0,2,numframes2)
+    for j in range(numframes2):
+        characs[j] = frames2[j].q[0]
+    X,T = np.meshgrid(xx,tt)
+    ax2.contour(X, T, characs, 38, colors='k')
+    # Add animated time line to xt-plane
+    line2, = ax2.plot(x, 0*x , '--k')
+
+    line = [line1, line2]
+
+    # Update data function for animation
+    def fplot(frame_number):
+        frame = frames[frame_number]
+        pressure = frame.q[0,:]
+        line[0].set_data(x,pressure)
+        line[1].set_data(x,0*x+frame.t)
+        return line
+
+    return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30, blit=False)
+
 def triplestate_pyclaw(ql, qm, qr, numframes):
+    """Returns pyclaw solution of triple-state initial condition."""
     # Set pyclaw for burgers equation 1D
     meshpts = 600
     claw = pyclaw.Controller()
@@ -114,19 +157,6 @@ def triplestate_pyclaw(ql, qm, qr, numframes):
     status = claw.run()
     
     return x, claw.frames
-
-def plot_contour(ql, qm, qr, numframes):
-    x, frames = triplestate_pyclaw(ql, qm, qr, numframes) 
-    characs = np.zeros([numframes,600])
-    xx = np.linspace(-3,3,600)
-    tt = np.linspace(0,2,numframes)
-    for j in range(numframes):
-        for i in range(600):
-            characs[j][i] = frames[j].q[0][i]
-    X,T = np.meshgrid(xx,tt)
-    #plt.contourf(X,T,characs,300)
-    plt.contour(X,T,characs,30,colors='k')
-    plt.show
 
 
 
