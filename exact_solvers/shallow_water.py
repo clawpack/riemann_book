@@ -379,17 +379,24 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
         ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
     for xp,yp in zip(x,y):
-        ax.plot(xp,yp,'ok',markersize=10)
+        ax.plot(xp,yp,'ok',markersize=10, label='Exact solution states')
     # Label states
     for i,label in enumerate(('Left', 'Middle', 'Right')):
-        ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax,label)
+        ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax, label)
 
     if approx_states is not None:
         u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
         h = approx_states[0,:]
-        ax.plot(h,u,'o-',color=color,markersize=10,zorder=0,label='Approximate solution')
+        ax.plot(h,u,'o-',color=color,markersize=10,zorder=0, label='Approximate solution')
 
-    handles,labels = ax.get_legend_handles_labels()
+    # The code below generates a legend with just one
+    # entry for each kind of line/marker, even if
+    # multiple plotting calls were made with that type
+    # of line/marker.  
+    # It avoids making entries for lines/markers that
+    # don't actually appear on the given plot.
+    # It also alphabetizes the entries.
+    handles, labels = ax.get_legend_handles_labels()
     i = np.arange(len(labels))
     filter = np.array([])
     unique_labels = list(set(labels))
@@ -397,6 +404,9 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
         filter = np.append(filter,[i[np.array(labels)==ul][0]])
     handles = [handles[int(f)] for f in filter]
     labels = [labels[int(f)] for f in filter]
+    order = sorted(range(len(labels)), key=labels.__getitem__)
+    handles = [handles[i] for i in order]
+    labels = [labels[i] for i in order]
     ax.legend(handles,labels)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
