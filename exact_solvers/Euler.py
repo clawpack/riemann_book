@@ -2,6 +2,9 @@ import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 from collections import namedtuple
+from utils import riemann_tools
+from ipywidgets import interact
+from ipywidgets import widgets
 
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
@@ -340,3 +343,57 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
             u_approx.append(u)
         print(p_approx, u_approx)
         ax.plot(p_approx,u_approx,'o-g',markersize=10,zorder=0)
+
+def plot_integral_curves(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
+    N = 400
+    p = np.linspace(0.,5,N)
+    p_0 = 1.
+    uu = np.linspace(-3,3,15)
+    c_0 = np.sqrt(gamma*p_0/rho_0)
+    if plot_1:
+        for u_0 in uu:
+            u = u_0 + (2*c_0)/(gamma-1.)* \
+                (1.-(p/p_0)**((gamma-1)/(2*gamma)))
+            plt.plot(p,u,color='coral')
+    if plot_3:
+        for u_0 in uu:
+            u = u_0 - (2*c_0)/(gamma-1.)* \
+                (1.-(p/p_0)**((gamma-1)/(2*gamma)))
+            plt.plot(p,u,color='maroon')
+    plt.xlabel('p'); plt.ylabel('u')
+    plt.show()
+
+def plot_hugoniot_loci(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
+    N = 400
+    p = np.linspace(1.e-3,5,N)
+    p_0 = 1.
+    uu = np.linspace(-3,3,15)
+    c_0 = np.sqrt(gamma*p_0/rho_0)
+    beta = (gamma+1.)/(gamma-1.)
+    if plot_1:
+        for u_0 in uu:
+            u_1 = u_0 + (2*c_0)/np.sqrt(2*gamma*(gamma-1.))* \
+                (1.-p/p_0)/(np.sqrt(1+beta*p/p_0))
+            plt.plot(p,u_1,color='coral')
+    if plot_3:
+        for u_0 in uu:
+            u_1 = u_0 - (2*c_0)/np.sqrt(2*gamma*(gamma-1.))* \
+                (1.-p/p_0)/(np.sqrt(1+beta*p/p_0))
+            plt.plot(p,u_1,color='maroon')
+    plt.xlabel('p'); plt.ylabel('u')
+    plt.show()
+
+def riemann_solution(left_state, right_state, gamma=1.4):
+    q_left  = primitive_to_conservative(*left_state)
+    q_right = primitive_to_conservative(*right_state)
+
+    ex_states, ex_speeds, reval, wave_types = exact_riemann_solution(q_left ,q_right, gamma)
+    
+    plot_function = riemann_tools.make_plot_function(ex_states, ex_speeds, reval, wave_types,
+                                                     layout='vertical', 
+                                                     variable_names=primitive_variables,
+                                                     plot_chars=[lambda1,lambda2,lambda3],
+                                                     derived_variables=cons_to_prim)
+
+    interact(plot_function, t=widgets.FloatSlider(value=0.1,min=0,max=.9),
+             which_char=widgets.Dropdown(options=[None,1,2,3],description='Show characteristics'))
