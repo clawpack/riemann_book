@@ -4,12 +4,15 @@ import matplotlib.pyplot as plt
 import warnings
 from ipywidgets import interact
 from ipywidgets import widgets, Checkbox, fixed
-from . import shallow_demos
+from utils import riemann_tools
+from collections import namedtuple
 warnings.filterwarnings("ignore")
 
 conserved_variables = ('Depth', 'Momentum')
 primitive_variables = ('Depth', 'Velocity')
 left, middle, right = (0, 1, 2)
+State = namedtuple('State', conserved_variables)
+Primitive_State = namedtuple('PrimState', primitive_variables)
 
 def pospart(x):
     return np.maximum(1.e-15,x)
@@ -441,7 +444,6 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
                             force_waves=None, stripes=True):
     from matplotlib.mlab import find
-    from utils import riemann_tools
 
     g = 1.
 
@@ -519,22 +521,22 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                 else:
                     n = min(n.max(), len(t_traj)-1)
 
-                for i in range(1, x_traj.shape[1]-1):
-                    j1 = find(x_traj[n,i] > x)
+                for j in range(1, x_traj.shape[1]-1):
+                    j1 = find(x_traj[n,j] > x)
                     if len(j1)==0:
                         j1 = 0
                     else:
                         j1 = min(j1.max(), len(x)-1)
-                    j2 = find(x_traj[n,i+1] > x)
+                    j2 = find(x_traj[n,j+1] > x)
                     if len(j2)==0:
                         j2 = 0
                     else:
                         j2 = min(j2.max(), len(x)-1)
 
                     # set advected color for density plot:
-                    if x_traj[0,i]<0:
+                    if x_traj[0,j]<0:
                         # shades of red for fluid starting from x<0
-                        if np.mod(i,2)==0:
+                        if np.mod(j,2)==0:
                             c = 'lightblue'
                             alpha = 1.0
                         else:
@@ -542,7 +544,7 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             alpha = 1.0
                     else:
                         # shades of blue for fluid starting from x<0
-                        if np.mod(i,2)==0:
+                        if np.mod(j,2)==0:
                             c = 'cornflowerblue'
                             alpha = 1.0
                         else:
@@ -566,7 +568,6 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
     from clawpack import pyclaw
     from matplotlib import animation
     from clawpack.riemann import shallow_roe_tracer_1D
-    import numpy as np
 
     depth = 0
     momentum = 1
@@ -651,7 +652,7 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
     for color in colors:
         fills[color] = ax_h.fill_between(x,b,surface,facecolor=color,where=stripes[color],alpha=0.5)
 
-    ax_h.set_xlabel('$x$'); ax_u.set_xlabel('$x$');
+    ax_h.set_xlabel('$x$'); ax_u.set_xlabel('$x$')
     ax_h.set_xlim(-1,1); ax_h.set_ylim(0,3.5)
     ax_u.set_xlim(-1,1); ax_u.set_ylim(-1,1)
     ax_u.set_title('Velocity'); ax_h.set_title('Depth')
@@ -685,9 +686,41 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
         fplot(2)
         return fig
 
+def make_plot_functions(h_l, h_r, u_l, u_r,
+                        g=1.,force_waves=None,extra_lines=None):
+    
+    q_l  = State(Depth = h_l,
+                 Momentum = h_l*u_l)
+    q_r = State(Depth = h_r,
+                Momentum = h_r*u_r)
+    states, speeds, reval, wave_types = \
+        exact_riemann_solution(q_l,q_r,g, force_waves=force_waves)
+        
+    plot_function_stripes = make_demo_plot_function(h_l,h_r,u_l,u_r,
+                                            figsize=(7,2),hlim=(0,4.5),ulim=(-2,2),
+                                            force_waves=force_waves)
+    def plot_function_xt_phase(plot_1_chars=False,plot_2_chars=False):
+        plt.figure(figsize=(7,2))
+        ax = plt.subplot(121)
+        riemann_tools.plot_waves(states, speeds, reval, wave_types, t=0,
+                                 ax=ax, color='multi')
+        if plot_1_chars:
+            riemann_tools.plot_characteristics(reval,lambda_1,
+                                               axes=ax,extra_lines=extra_lines)
+        if plot_2_chars:
+            riemann_tools.plot_characteristics(reval,lambda_2,
+                                               axes=ax,extra_lines=extra_lines)
+        ax = plt.subplot(122)
+        phase_plane_plot(q_l,q_r,g,ax=ax,
+                                       force_waves=force_waves,y_axis='u')
+        plt.title('Phase plane')
+        plt.show()
+    return plot_function_stripes, plot_function_xt_phase
+
+
 def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None):
     plot_function_stripes, plot_function_xt_phase = \
-                shallow_demos.make_plot_functions(h_l,h_r,u_l,u_r,g,
+                make_plot_functions(h_l,h_r,u_l,u_r,g,
                                                   force_waves,extra_lines)
     interact(plot_function_stripes, 
              t=widgets.FloatSlider(value=0.,min=0,max=.9), fig=fixed(0))
