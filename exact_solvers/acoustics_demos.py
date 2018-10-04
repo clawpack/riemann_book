@@ -53,7 +53,7 @@ def decompose_q(p,u,K,rho):
     axes[1].plot([-Z*alpha1,-Z*alpha1+Z*alpha2],[1*alpha1,alpha1+alpha2], color=colors[1], lw=3)
     axes[1].set_xlim(-1.2,1.2)
     axes[1].set_ylim(-1.2,1.2)
-    axes[1].legend(['$w$',r'$\alpha_1 r_1$',r'$\alpha_2 r_2$'],loc='best')
+    axes[1].legend(['$q$',r'$w_1 r_1$',r'$w_2 r_2$'],loc='best')
     axes[1].plot([0,0],[-2,2],'--k',alpha=0.2)
     axes[1].plot([-2,2],[0,0],'--k',alpha=0.2)
 
