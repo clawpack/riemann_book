@@ -12,6 +12,23 @@ sys.path.append('../utils')
 from utils import riemann_tools
 from . import burgers
 
+
+
+def bump_figure(t):
+    """Plots bump-into-wave figure at different times for interactive figure."""
+    x = np.arange(-11.0,11.0,0.1)
+    y = np.exp(-x*x/10)
+    x2 = 1.0*x
+    x2 = x2 + t*y
+    plt.plot(x, y, '--k')
+    plt.plot(x2, y, '-k')
+    plt.xlim([-10,10])
+    if t != 0:
+        numarrows = 7
+        arrowIndexList = np.linspace(len(x)/3,2*len(x)/3,numarrows, dtype = int)
+        for i in arrowIndexList:
+            plt.arrow(x[i], y[i], t*y[i]-0.5, 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
+
 def shock():
     """Returns plot function for a shock solution."""
     q_l, q_r = 5.0, 1.0
