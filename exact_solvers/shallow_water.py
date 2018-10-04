@@ -430,7 +430,7 @@ def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
         plt.legend(legend,loc=1)
     plt.show()
 
-def lambda_1(q, xi, g=1.):
+def lambda_1(q, _, g=1.):
     "Characteristic speed for shallow water 1-waves."
     h, hu = q
     if h > 0:
@@ -439,12 +439,20 @@ def lambda_1(q, xi, g=1.):
     else:
         return 0
 
-def lambda_2(q, xi, g=1.):
+def lambda_2(q, _, g=1.):
     "Characteristic speed for shallow water 2-waves."
     h, hu = q
     if h > 0:
         u = hu/h
         return u + np.sqrt(g*h)
+    else:
+        return 0
+
+def lambda_tracer(q, _, g=1.):
+    h, hu = q
+    if h > 0:
+        u = hu/h
+        return u
     else:
         return 0
 
@@ -697,7 +705,7 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
         return fig
 
 def make_plot_functions(h_l, h_r, u_l, u_r,
-                        g=1.,force_waves=None,extra_lines=None):
+                        g=1.,force_waves=None,extra_lines=None,stripes=True):
     
     q_l  = State(Depth = h_l,
                  Momentum = h_l*u_l)
@@ -708,8 +716,8 @@ def make_plot_functions(h_l, h_r, u_l, u_r,
         
     plot_function_stripes = make_demo_plot_function(h_l,h_r,u_l,u_r,
                                             figsize=(7,2),hlim=(0,4.5),ulim=(-2,2),
-                                            force_waves=force_waves)
-    def plot_function_xt_phase(plot_1_chars=False,plot_2_chars=False):
+                                            force_waves=force_waves,stripes=stripes)
+    def plot_function_xt_phase(plot_1_chars=False,plot_2_chars=False,plot_tracer_chars=False):
         plt.figure(figsize=(7,2))
         ax = plt.subplot(121)
         riemann_tools.plot_waves(states, speeds, reval, wave_types, t=0,
@@ -720,6 +728,9 @@ def make_plot_functions(h_l, h_r, u_l, u_r,
         if plot_2_chars:
             riemann_tools.plot_characteristics(reval,lambda_2,
                                                axes=ax,extra_lines=extra_lines)
+        if plot_tracer_chars:
+            riemann_tools.plot_characteristics(reval,lambda_tracer,
+                                               axes=ax,extra_lines=extra_lines)
         ax = plt.subplot(122)
         phase_plane_plot(q_l,q_r,g,ax=ax,
                                        force_waves=force_waves,y_axis='u')
@@ -728,13 +739,21 @@ def make_plot_functions(h_l, h_r, u_l, u_r,
     return plot_function_stripes, plot_function_xt_phase
 
 
-def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None):
+def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None, tracer=False):
+    stripes = not tracer
     plot_function_stripes, plot_function_xt_phase = \
                 make_plot_functions(h_l,h_r,u_l,u_r,g,
-                                                  force_waves,extra_lines)
+                                    force_waves,extra_lines,stripes=stripes)
     interact(plot_function_stripes, 
              t=widgets.FloatSlider(value=0.,min=0,max=.9), fig=fixed(0))
-    interact(plot_function_xt_phase, 
-             plot_1_chars=Checkbox(description='1-characteristics',
-                                   value=False),
-             plot_2_chars=Checkbox(description='2-characteristics'))
+    if tracer:
+        interact(plot_function_xt_phase, 
+                 plot_1_chars=Checkbox(description='1-characteristics',
+                                       value=False),
+                 plot_2_chars=Checkbox(description='2-characteristics'),
+                 plot_tracer_chars=Checkbox(description='Tracer characteristics'))
+    else:
+        interact(plot_function_xt_phase, 
+                 plot_1_chars=Checkbox(description='1-characteristics',
+                                       value=False),
+                 plot_2_chars=Checkbox(description='2-characteristics'))
