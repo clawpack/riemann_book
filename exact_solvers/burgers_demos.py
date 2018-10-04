@@ -12,8 +12,6 @@ sys.path.append('../utils')
 from utils import riemann_tools
 from . import burgers
 
-
-
 def bump_figure(t):
     """Plots bump-into-wave figure at different times for interactive figure."""
     x = np.arange(-11.0,11.0,0.1)
@@ -39,6 +37,26 @@ def shock():
                                                     variable_names=['q'],
                                                     plot_chars=[burgers.speed])
     return plot_function
+
+def rarefaction_figure(t):
+    """Plots rarefaction figure at different times for interactive figure."""
+    numarrows = 6
+    x = [-10., 0.0]
+    y = [0.2, 0.2]
+    for i in range(numarrows):
+        x.append(0.0)
+        y.append(y[0] + (i+1)*(1.0-y[0])/(numarrows+1))
+    x.extend([0.0,10.0])
+    y.extend([1.0,1.0])
+    x2 = 1.0*np.array(x)
+    x2[1:-1] = x2[1:-1] + t*np.array(y[1:-1])
+    plt.plot(x, y, '--k')
+    plt.plot(x2, y, '-k')
+    plt.xlim([-10,10])
+    plt.ylim([0.0,1.2])
+    if t != 0:
+        for i in range(numarrows):
+            plt.arrow(x[2+i], y[2+i], np.abs(t*y[2+i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
 
 def rarefaction():
     """Returns plot function for a rarefaction solution."""
