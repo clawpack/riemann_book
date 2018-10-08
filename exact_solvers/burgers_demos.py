@@ -12,6 +12,22 @@ sys.path.append('../utils')
 from utils import riemann_tools
 from . import burgers
 
+def bump_figure(t):
+    """Plots bump-into-wave figure at different times for interactive figure."""
+    x = np.arange(-11.0,11.0,0.1)
+    y = np.exp(-x*x/10)
+    x2 = 1.0*x
+    x2 = x2 + t*y
+    plt.plot(x, y, '--k', label = "Initial Condition")
+    plt.plot(x2, y, '-k', label = r"Solution at time $t$")
+    plt.xlim([-10,10])
+    plt.legend(loc = 'upper left')
+    if t != 0:
+        numarrows = 7
+        arrowIndexList = np.linspace(len(x)/3,2*len(x)/3,numarrows, dtype = int)
+        for i in arrowIndexList:
+            plt.arrow(x[i], y[i], np.abs(t*y[i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
+
 def shock():
     """Returns plot function for a shock solution."""
     q_l, q_r = 5.0, 1.0
@@ -22,6 +38,66 @@ def shock():
                                                     variable_names=['q'],
                                                     plot_chars=[burgers.speed])
     return plot_function
+
+def shock_location(xshock=7.75):
+    """Plots equal-area shock figure for different shock positions for interactive figure."""
+    t=10
+    x = np.arange(-11.0,11.0,0.05)
+    y = np.exp(-x*x/10)
+    x = x + t*y
+    x2 = 1.0*x
+    y2 = 1.0*y
+    region = -1
+    for i in range(len(x)):
+        if (x2[i] >= xshock and region == -1):
+            region = 0
+            maxy = 1.0*y[i-1]
+        if (x2[i] >= xshock and region == 0):
+            x2[i] = 1.0*xshock
+            y2[i] = 1.0*maxy
+        if (x2[i] < xshock and region == 0):
+            region = 1
+            maxy = 1.0*y[i-1]
+        if (x2[i] <= xshock and region == 1):
+            x2[i] = 1.0*xshock
+            y2[i] = 1.0*maxy
+        if (x2[i] > xshock and region == 1):
+            region = 2
+    plt.plot(x, y, '-k', lw = 2, label = "Unphysical solution")
+    plt.plot(x2, y2, '--r', lw = 2, label = "Shock solution")
+    if (xshock == 7.75):
+        plt.annotate(r"$A_1$", xy=(2, 0), xytext=(8.5,0.83), fontsize=15)
+        plt.annotate(r"$A_2$", xy=(2, 0), xytext=(6.5,0.15), fontsize=15)
+        plt.annotate(r"Equal Areas", xy=(2, 0), xytext=(-3,0.62), fontsize=15)
+        plt.annotate(r"$A_1=A_2$", xy=(2, 0), xytext=(-2.5,0.5), fontsize=15)
+    plt.xlim([-7.5,11])
+    plt.legend(loc = 'upper left')
+
+def rarefaction_figure(t):
+    """Plots rarefaction figure at different times for interactive figure."""
+    numarrows = 6
+    x = [-5., 0.0]
+    y = [0.2, 0.2]
+    for i in range(numarrows):
+        x.append(0.0)
+        y.append(y[0] + (i+1)*(1.0-y[0])/(numarrows+1))
+    x.extend([0.0,10.0])
+    y.extend([1.0,1.0])
+    x2 = 1.0*np.array(x)
+    x2[1:-1] = x2[1:-1] + t*np.array(y[1:-1])
+    plt.plot(x, y, '--k', label = "Initial Condition")
+    plt.plot(x2, y, '-k', label = r"Solution at time $t$")
+    plt.xlim([-5,10])
+    plt.ylim([0.0,1.2])
+    plt.legend(loc = 'upper left')
+    if t != 0:
+        for i in range(numarrows):
+            plt.arrow(x[2+i], y[2+i], np.abs(t*y[2+i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
+        plt.annotate(r"$q_r t$", xy=(2, 1), xytext=(t/2-0.2, 1.05), fontsize=12)
+        if t > 2:
+            plt.annotate(r"$q_l t$", xy=(2, 0), xytext=(t/8-0.4, 0.12), fontsize=12)
+            plt.arrow(t/2-0.3, 1.07, -t/2+0.8, 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
+            plt.arrow(t/2+0.7, 1.07, t*y[-1] - t/2 - 1, 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
 
 def rarefaction():
     """Returns plot function for a rarefaction solution."""
@@ -104,16 +180,20 @@ def triplestate_animation(ql, qm, qr, numframes):
     line1, = ax1.plot([], [], '-k', lw=2)
 
     # Contour plot of high-res solution to show characteristic structure in xt-plane
-    meshpts = 600
+    meshpts = 2400
     numframes2 = 600
     x2, frames2 = triplestate_pyclaw(ql, qm, qr, numframes2) 
     characs = np.zeros([numframes2,meshpts])
-    xx = np.linspace(-3,3,meshpts)
+    xx = np.linspace(-12,12,meshpts)
     tt = np.linspace(0,2,numframes2)
     for j in range(numframes2):
         characs[j] = frames2[j].q[0]
     X,T = np.meshgrid(xx,tt)
-    ax2.contour(X, T, characs, 38, colors='k')
+    ax2.contour(X, T, characs, levels=np.linspace(ql, ql+0.11 ,20), linewidths=0.5, colors='k')
+    ax2.contour(X, T, characs, levels=np.linspace(qm+0.11, qm+0.13 ,7), linewidths=0.5, colors='k')
+    ax2.contour(X, T, characs, levels=np.linspace(qr+0.13, qr+0.2 ,15), linewidths=0.5, colors='k')
+    ax2.contour(X, T, characs, 12,  linewidths=0.5, colors='k')
+    #ax2.contour(X, T, characs, 38, colors='k')
     # Add animated time line to xt-plane
     line2, = ax2.plot(x, 0*x , '--k')
 
@@ -132,7 +212,7 @@ def triplestate_animation(ql, qm, qr, numframes):
 def triplestate_pyclaw(ql, qm, qr, numframes):
     """Returns pyclaw solution of triple-state initial condition."""
     # Set pyclaw for burgers equation 1D
-    meshpts = 600
+    meshpts = 2400 #600
     claw = pyclaw.Controller()
     claw.tfinal = 2.0           # Set final time
     claw.keep_copy = True       # Keep solution data in memory for plotting
@@ -141,16 +221,22 @@ def triplestate_pyclaw(ql, qm, qr, numframes):
     claw.solver = pyclaw.ClawSolver1D(riemann.burgers_1D)  # Choose burgers 1D Riemann solver
     claw.solver.all_bcs = pyclaw.BC.extrap               # Choose periodic BCs
     claw.verbosity = False                                # Don't print pyclaw output
-    domain = pyclaw.Domain( (-3.,), (3.,), (meshpts,))   # Choose domain and mesh resolution
+    domain = pyclaw.Domain( (-12.,), (12.,), (meshpts,))   # Choose domain and mesh resolution
     claw.solution = pyclaw.Solution(claw.solver.num_eqn,domain)
     # Set initial condition
     x=domain.grid.x.centers
     q0 = 0.0*x
-    xtick1 = int(meshpts/3)
-    xtick2 = int(2*meshpts/3)
-    q0[0:xtick1] = ql
-    q0[xtick1:xtick2] = qm
-    q0[xtick2:meshpts] = qr
+    xtick1 = 900 + int(meshpts/12)
+    xtick2 = xtick1 + int(meshpts/12)
+    for i in range(xtick1):
+	    q0[i] = ql + i*0.0001
+    #q0[0:xtick1] = ql
+    for i in np.arange(xtick1, xtick2):
+        q0[i] = qm + i*0.0001
+    #q0[xtick1:xtick2] = qm
+    for i in np.arange(xtick2, meshpts):
+        q0[i] = qr + i*0.0001
+    #q0[xtick2:meshpts] = qr
     claw.solution.q[0,:] = q0    
     claw.solver.dt_initial = 1.e99
     # Run pyclaw
