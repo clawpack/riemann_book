@@ -12,7 +12,7 @@ sys.path.append('../utils')
 from utils import riemann_tools
 from . import burgers
 
-def bump_figure(t):
+def multivalued_solution(t):
     """Plots bump-into-wave figure at different times for interactive figure."""
     x = np.arange(-11.0,11.0,0.1)
     y = np.exp(-x*x/10)
@@ -63,7 +63,7 @@ def shock_location(xshock=7.75):
             y2[i] = 1.0*maxy
         if (x2[i] > xshock and region == 1):
             region = 2
-    plt.plot(x, y, '-k', lw = 2, label = "Unphysical solution")
+    plt.plot(x, y, '-k', lw = 2, label = "Multivalued solution")
     plt.plot(x2, y2, '--r', lw = 2, label = "Shock solution")
     if (xshock == 7.75):
         plt.annotate(r"$A_1$", xy=(2, 0), xytext=(8.5,0.83), fontsize=15)
