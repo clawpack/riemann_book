@@ -9,14 +9,21 @@ def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
         
     x = np.linspace(-1.,1.,1000)
     states, speeds, reval, wave_types = Euler.exact_riemann_solution(q_l, q_r, gamma=gamma)
-    q = reval(x/t)
+    if t == 0:
+        q = np.zeros((3,len(x)))
+        q[0,:] = q_l[0]*(x<=0) + q_r[0]*(x>0)
+        q[1,:] = q_l[1]*(x<=0) + q_r[1]*(x>0)
+        q[1,:] = q_l[2]*(x<=0) + q_r[2]*(x>0)
+    else:
+        q = reval(x/t)
     primitive = Euler.conservative_to_primitive(q[0],q[1],q[2])
     
     # compute particle trajectories:
     def reval_rho_u(x): 
+        eps = 1.e-16
         q = reval(x)
         rho = q[0]
-        u = q[1]/q[0]
+        u = q[1]/(q[0]+eps)
         rho_u = np.vstack((rho,u))
         return rho_u
     
@@ -34,11 +41,12 @@ def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
     for i in range(3):
         axes[i] = fig.add_subplot(3,1,i+1)
         q = primitive[i]
-        plt.plot(x,q,linewidth=3)
+        plt.plot(x,q,'-k',linewidth=3)
         plt.title(names[i])
         qmax = max(q)
         qmin = min(q)
         qdiff = qmax - qmin
+        if qdiff == 0: qdiff = qmin*0.5
         axes[i].set_ylim((qmin-0.1*qdiff,qmax+0.1*qdiff))
         axes[i].set_xlim(-xmax,xmax)
                 
@@ -76,5 +84,6 @@ def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
                     else:
                         c = [0.8,0.8,1]
                 plt.fill_between(x[j1:j2],q[j1:j2],0,color=c)
+    plt.tight_layout()
     plt.show()
  
