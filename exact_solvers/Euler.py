@@ -387,12 +387,43 @@ def riemann_solution(left_state, right_state, gamma=1.4):
     q_right = primitive_to_conservative(*right_state)
 
     ex_states, ex_speeds, reval, wave_types = exact_riemann_solution(q_left ,q_right, gamma)
-    
+
     plot_function = riemann_tools.make_plot_function(ex_states, ex_speeds, reval, wave_types,
-                                                     layout='vertical', 
+                                                     layout='vertical',
                                                      variable_names=primitive_variables,
                                                      plot_chars=[lambda1,lambda2,lambda3],
                                                      derived_variables=cons_to_prim)
 
     interact(plot_function, t=widgets.FloatSlider(value=0.1,min=0,max=.9),
-             which_char=widgets.Dropdown(options=[None,1,2,3],description='Show characteristics'))
+             which_char=widgets.Dropdown(options=[None,1,2,3],description='Show characteristics:',
+                                         style={'description_width':'initial'}))
+
+def plot_riemann_trajectories(q_l, q_r, gamma=1.4, primitive=False):
+    if primitive:
+        q_left  = Euler.primitive_to_conservative(*q_l)
+        q_right = Euler.primitive_to_conservative(*q_r)
+    else:
+        q_left = q_l
+        q_right = q_r
+
+    ex_states, ex_speeds, reval, wave_types = exact_riemann_solution(q_left ,q_right, gamma=gamma)
+
+    def reval_rho_u(x):
+        q = reval(x)
+        rho = q[0]
+        u = q[1]/q[0]
+        rho_u = np.vstack((rho,u))
+        return rho_u
+
+    # Specify density of trajectories to left and right:
+    rho_l = q_left[0] / 10.
+    rho_r = q_right[0] / 10.
+    x_traj, t_traj, xmax = riemann_tools.compute_riemann_trajectories(ex_states,
+                                                                      ex_speeds,
+                                                                      reval_rho_u,
+                                                                      wave_types,
+                                                                      i_vel=1,
+                                                                      rho_left=rho_l,
+                                                                      rho_right=rho_r)
+
+    riemann_tools.plot_riemann_trajectories(x_traj, t_traj, ex_speeds, wave_types)
