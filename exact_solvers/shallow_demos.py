@@ -1,12 +1,12 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import sys,os
-
-from . import shallow_water
-
+import sys, os
 top_dir = os.path.abspath('..')
 if top_dir not in sys.path:
     sys.path.append(top_dir)
+import matplotlib.pyplot as plt
+import numpy as np
+
+from . import shallow_water
+
 from utils import riemann_tools
 
 figsize =(8,4)

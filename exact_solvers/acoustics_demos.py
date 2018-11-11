@@ -1,16 +1,19 @@
 """
 Additional functions and demos for acoustics equations.
 """
+import sys, os
+top_dir = os.path.abspath('..')
+if top_dir not in sys.path:
+    sys.path.append(top_dir)
 from clawpack import pyclaw
 from clawpack import riemann
 from matplotlib import animation
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
-from ipywidgets import widgets, interact
+from ipywidgets import widgets
+from ipywidgets import interact
 from IPython.display import display
-import sys
-sys.path.append('../utils')
 from utils import riemann_tools
 from . import acoustics
 colors = ['g','orange']
@@ -27,9 +30,12 @@ def decompose_q_interactive():
 
     mainwidget = interact(decompose_q, p=pwidget, u=uwidget, rho=rhowidget, K=Kwidget);
 
-    mainwidget.widget.close()
-    display(interact_gui)
-    display(mainwidget.widget.out)
+    try:
+        mainwidget.widget.close()
+        display(interact_gui)
+        display(mainwidget.widget.out)
+    except:
+        pass
 
 def decompose_q(p,u,K,rho):
     r"""Plotting function for decompose_q_interactive. It 
@@ -73,9 +79,12 @@ def char_solution_interactive():
 
     mainwidget = interact(char_solution, t=twidget, rho=rhowidget, K=Kwidget);
 
-    mainwidget.widget.close()
-    display(interact_gui)
-    display(mainwidget.widget.out)
+    try:
+        mainwidget.widget.close()
+        display(interact_gui)
+        display(mainwidget.widget.out)
+    except:
+        pass
 
 def char_solution(t, K, rho):
     """Plotting function for char_solution_interactive."""
@@ -224,9 +233,12 @@ def interactive_phase_plane(ql=(10.0, -5.0), qr=(40.0, 5.0), rho=2.0, bulk=1.0):
                         rho=rho_widget, bulk=bulk_widget,
                         xmin=xmin_widget, xmax=xmax_widget,
                         ymin=ymin_widget, ymax=ymax_widget)
-    ppwidget.widget.close()
-    display(interact_gui)
-    display(ppwidget.widget.out)
+    try:
+        ppwidget.widget.close()
+        display(interact_gui)
+        display(ppwidget.widget.out)
+    except:
+        pass
 
 
 def full_riemann_solution_plot():
@@ -335,14 +347,22 @@ def riemann_plot_pplane(ql=(10.0, -5.0), qr=(40.0, 5.0), rho=2.0, bulk=1.0):
     interact_gui = widgets.HBox([t_widget, which_char_widget])
 
     # Define interactive widget and run GUI
-    ppwidget = interact(pp_plot, t=t_widget, 
-                        pl=ql[0], ul=ql[1],
-                        pr=qr[0], ur=qr[1],
-                        rho=rho, bulk=bulk,
-                        which_char=which_char_widget)
-    ppwidget.widget.close()
-    display(interact_gui)
-    display(ppwidget.widget.out)
+    # This interact doesn't translate properly to a snapshot_widget.interact
+    try:
+        ppwidget = interact(pp_plot, t=t_widget, 
+                            pl=ql[0], ul=ql[1],
+                            pr=qr[0], ur=qr[1],
+                            rho=rho, bulk=bulk,
+                            which_char=which_char_widget)
+    except:
+        pass
+        
+    try:
+        ppwidget.widget.close()
+        display(interact_gui)
+        display(ppwidget.widget.out)
+    except:
+        pass
 
 
 def full_riemann_interactive(ql=(10.0, -5.0), qr=(40.0, 5.0), rho=2.0, bulk=1.0):
@@ -403,9 +423,12 @@ def full_riemann_interactive(ql=(10.0, -5.0), qr=(40.0, 5.0), rho=2.0, bulk=1.0)
                         which_char=which_char_widget,
                         xmin=xmin_widget, xmax=xmax_widget,
                         ymin=ymin_widget, ymax=ymax_widget)
-    ppwidget.widget.close()
-    display(interact_gui)
-    display(ppwidget.widget.out)
+    try:
+        ppwidget.widget.close()
+        display(interact_gui)
+        display(ppwidget.widget.out)
+    except:
+        pass
 
 def bump_animation(numframes):
     """Plots animation of solution with bump initial condition, 

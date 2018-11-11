@@ -1,8 +1,10 @@
+import sys, os
+top_dir = os.path.abspath('..')
+if top_dir not in sys.path:
+    sys.path.append(top_dir)
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 from utils import riemann_tools
-sys.path.append('../utils')
 
 f = lambda q: q*(1-q)
 c = lambda q: 1 - 2*q

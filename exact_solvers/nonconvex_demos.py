@@ -1,12 +1,12 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import sys, os
-
-from . import nonconvex
-
 top_dir = os.path.abspath('..')
 if top_dir not in sys.path:
     sys.path.append(top_dir)
+import matplotlib.pyplot as plt
+import numpy as np
+
+from . import nonconvex
+
 from utils import riemann_tools
 
 #figsize =(12,4)

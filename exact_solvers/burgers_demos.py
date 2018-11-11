@@ -1,14 +1,16 @@
 """
 Additional functions and demos for Burgers' equation.
 """
+import sys, os
+top_dir = os.path.abspath('..')
+if top_dir not in sys.path:
+    sys.path.append(top_dir)
 from clawpack import pyclaw
 from clawpack import riemann
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import animation
 import numpy as np
-import sys
-sys.path.append('../utils')
 from utils import riemann_tools
 from . import burgers
 

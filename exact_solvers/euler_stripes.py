@@ -1,3 +1,8 @@
+import sys, os
+top_dir = os.path.abspath('..')
+if top_dir not in sys.path:
+    sys.path.append(top_dir)
+
 def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
                                         rho_r=1.,u_r=0.,p_r=1.,gamma=1.4,t=0.4):  
     import matplotlib.pyplot as plt
