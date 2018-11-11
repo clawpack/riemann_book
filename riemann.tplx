@@ -31,7 +31,7 @@
 ((* block title *))
 \input{latexdefs.tex}
 
-\title{The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers}
+\title{Riemann Problems and Jupyter Solutions}
 ((* endblock title *))
 
 ((* block maketitle *))
