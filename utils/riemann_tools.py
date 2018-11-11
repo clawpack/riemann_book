@@ -53,6 +53,15 @@ from IPython.display import display
 
 sympy.init_printing(use_latex='mathjax')
 
+def set_interact(context):
+    if context == 'notebook':
+        from ipywidgets import interact
+    elif context == 'html':
+        from utils.jsanimate_widgets import interact
+    elif context == 'pdf':
+        from utils.snapshot_widgets import interact
+    return interact
+
 def convert_to_list(x):
     if isinstance(x, (list, tuple)):
         return x
