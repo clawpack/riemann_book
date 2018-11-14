@@ -47,6 +47,13 @@ part2 = ['Approximate_solvers',
 
 chapters = part0 + part1 + part2
 
+# For testing purposes:
+chapters = ['Preface',
+            'Introduction',
+            'Advection',
+            'Acoustics']
+
+
 build_dir = 'build_pdf/'
 if not os.path.exists(build_dir):
     os.makedirs(build_dir)
@@ -109,6 +116,7 @@ for i, chapter in enumerate(chapters):
 
 os.chdir(build_dir)
 os.system('python3 -m bookbook.latex --output-file riemann --template riemann.tplx')
+os.system('python3 ../fix_latex_file.py')
 os.system('pdflatex riemann')
 os.system('bibtex riemann')
 os.system('pdflatex riemann')
