@@ -17,6 +17,14 @@ lines = lines.replace(oldpat, newpat)
 # 
 # I suggest we might want to change "Section" to "Chapter" in 
 #   bookbook/filter_links.py
+# Never mind -- I see ketch already contributed this to bookbook.
+#
+# For links to notebooks that are not found in this directory, bookbook
+# leaves it as \url{notebook.ipynb} and the code below changes this to
+# "Chapter \ref{notebook}", which then renders as "Chapter ??".  
+# We should figure out what we want to these links to point to instead,
+# maybe to online versions of other notebooks?  Or eliminate all such
+# cross references for the printed book?
 
 regexp = re.compile(r"\\url{(?P<chap>[^}]*).ipynb}")
 result = regexp.search(lines)
