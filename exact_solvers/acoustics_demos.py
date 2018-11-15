@@ -333,11 +333,107 @@ def full_riemann_solution_plot():
         plt.show()
     return plot_function
 
+def full_riemann_solution_plot_fixed(ql,qr,rho,bulk):
+    """Plots full Riemann solution (with some fixed parameters), including the phase 
+    plane, also used by full_riemann_interactive  and riemann_plot_func_pplane since it 
+    returns plot function ready to use with interact."""
+    
+    def plot_function(t,which_char, xmin=0,xmax=6,ymin=-6,ymax=6):
+        "Subfunction required for interactive (function of only interactive parameters)."
+    
+        # Define parameters
+        pl = ql[0]
+        ul = ql[1]
+        pr = qr[0] 
+        ur = qr[1]
+        dp = pr - pl
+        du = ur - ul
+        c = np.sqrt(bulk/rho)
+        Z = rho*c
+        
+        # Define eigenvectors and functions
+        eig1 = np.array([-Z, 1])
+        eig2 = np.array([Z, 1])
+        lin1l = lambda p: ul - 1./Z*(p-pl) 
+        lin2l = lambda p: ul + 1./Z*(p-pl) 
+        lin1r = lambda p: ur - 1./Z*(p-pr) 
+        lin2r = lambda p: ur + 1./Z*(p-pr) 
+        
+        
+        # Solve Riemann problem       
+        aux = [rho,bulk]
+        states, speeds, riemann_eval = acoustics.exact_riemann_solution(np.array([pl,ul]), np.array([pr,ur]), aux)
+        pm = states[0][1]
+        um = states[1][1]
+
+        
+        # Set figure grid
+        fig = plt.figure(figsize=(10,5)) #figsize=(11.5, 5.5))
+        outer_grid = gridspec.GridSpec(1, 2, wspace=0.15, hspace=0.15)
+        inner_grid = gridspec.GridSpecFromSubplotSpec(3, 1, subplot_spec=outer_grid[0], wspace=0.0, hspace=0.0)
+        ax1 = plt.Subplot(fig, inner_grid[0]) # x-t plane
+        ax2 = plt.Subplot(fig, inner_grid[1]) # x vs pressure
+        ax3 = plt.Subplot(fig, inner_grid[2]) # x vs velocity
+        ax4 = plt.Subplot(fig, outer_grid[1]) # phase plane
+        ax1.set_ylabel("t", fontsize=10)
+        ax2.set_ylabel("pressure", fontsize=10)
+        ax3.set_ylabel("velocity", fontsize=10)
+        ax3.set_xlabel("x", fontsize=10)
+        ax1.set_xticks([])
+        ax2.set_xticks([])
+
+        # Plot Riemann solution on ax1, ax2 and ax3
+        ax = np.array([ax1, ax2, ax3])
+        riemann_tools.plot_riemann(states, speeds, riemann_eval, wave_types=None, t=t, ax=ax, 
+                                   layout='vertical', variable_names=['pressure', 'velocity'])
+        
+        # Plot characteristics on ax1 if required
+        if which_char:
+            plot_chars=[acoustics.lambda1, acoustics.lambda2]
+            riemann_tools.plot_characteristics(riemann_eval, plot_chars[which_char-1],
+                                     aux=(np.array(aux),np.array(aux)), axes=ax[0], speeds=speeds)
+        
+        # Plot solution in phase plane plot ion ax4
+        x = (pl, pr, pm)
+        y = (ul, ur, um)
+        dx, dy = xmax - xmin, ymax - ymin
+        ax4.set_xlim(min(0.00000001,xmin),xmax)
+        ax4.set_ylim(ymin,ymax)
+        ax4.set_xlabel('Pressure (p)', fontsize=10)
+        ax4.set_ylabel('Velocity (u)', fontsize=10)
+        ax4.set_title('Phase plane', fontsize=12)
+        p = np.linspace(xmin,xmax,500)
+
+        # Plot incorrect solution
+        ax4.plot(p,lin2l(p),'--k')
+        ax4.plot(p,lin1r(p),'--k')
+
+        # Plot physical solution
+        ax4.plot(p,lin1l(p),'-k')
+        ax4.plot(p,lin2r(p),'-k')
+        if (pm>=0 and pm <= xmax and um > ymin and um < ymax):
+            ax4.plot(pm, um, '-ok', markersize=10)
+            ax4.text(x[2] + 0.03*dx,y[2] + 0.03*dy, '$q_m$', fontsize=15)
+
+        # Plot initial states and markers
+        ax4.plot(pl, ul, '-ok', markersize=10)
+        ax4.plot(pr, ur, '-ok', markersize=10)
+        for i,label in enumerate(('$q_l$', '$q_r$')):
+            ax4.text(x[i] + 0.03*dx,y[i] + 0.03*dy,label, fontsize=15)
+            
+        # Add all plots to fig and show    
+        fig.add_subplot(ax1)
+        fig.add_subplot(ax2)
+        fig.add_subplot(ax3)
+        fig.add_subplot(ax4)
+        plt.show()
+    return plot_function
+
 def riemann_plot_pplane(ql=(10.0, -5.0), qr=(40.0, 5.0), rho=2.0, bulk=1.0):
     """Plots interactive riemann solution with time dependence and phase plane plot."""
 
     # Create plot function for interact
-    pp_plot = full_riemann_solution_plot()
+    pp_plot = full_riemann_solution_plot_fixed(ql,qr,rho,bulk)
 
     # Declare all widget sliders
     t_widget = widgets.FloatSlider(value=0,min=0.0,max=1.0, description='$t$')
@@ -347,15 +443,8 @@ def riemann_plot_pplane(ql=(10.0, -5.0), qr=(40.0, 5.0), rho=2.0, bulk=1.0):
     interact_gui = widgets.HBox([t_widget, which_char_widget])
 
     # Define interactive widget and run GUI
-    # This interact doesn't translate properly to a snapshot_widget.interact
-    try:
-        ppwidget = interact(pp_plot, t=t_widget, 
-                            pl=ql[0], ul=ql[1],
-                            pr=qr[0], ur=qr[1],
-                            rho=rho, bulk=bulk,
-                            which_char=which_char_widget)
-    except:
-        pass
+    ppwidget = interact(pp_plot, t=t_widget, 
+                        which_char=which_char_widget)
         
     try:
         ppwidget.widget.close()
