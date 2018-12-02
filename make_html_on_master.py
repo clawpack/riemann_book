@@ -80,6 +80,7 @@ os.system('cp -r exact_solvers build_html/')
 os.system('cp -r utils build_html/')
 os.system('cp -r figures build_html/')
 os.system('cp custom.css build_html/')
+os.system('cp html_animations/* build_html/')
 
 # Putting figures inside an img folder doesn't seem to be needed now:
 #os.system('mkdir -p build_html/img')  # for viewing images
