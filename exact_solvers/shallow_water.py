@@ -411,7 +411,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
     order = sorted(range(len(labels)), key=labels.__getitem__)
     handles = [handles[i] for i in order]
     labels = [labels[i] for i in order]
-    ax.legend(handles,labels)
+    #ax.legend(handles,labels)
 
 def plot_hugoniot_loci(plot_1=True,plot_2=False,y_axis='hu'):
     h = np.linspace(0.001,3,100)
