@@ -14,8 +14,10 @@ import numpy as np
 from utils import riemann_tools
 from . import burgers
 
-def multivalued_solution(t):
+def multivalued_solution(t,fig=0):
     """Plots bump-into-wave figure at different times for interactive figure."""
+    if fig==0:
+        fig = plt.figure()
     x = np.arange(-11.0,11.0,0.1)
     y = np.exp(-x*x/10)
     x2 = 1.0*x
@@ -29,6 +31,7 @@ def multivalued_solution(t):
         arrowIndexList = np.linspace(len(x)/3,2*len(x)/3,numarrows, dtype = int)
         for i in arrowIndexList:
             plt.arrow(x[i], y[i], np.abs(t*y[i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
+    if fig==0: plt.show()
 
 def shock():
     """Returns plot function for a shock solution."""
@@ -41,8 +44,10 @@ def shock():
                                                     plot_chars=[burgers.speed])
     return plot_function
 
-def shock_location(xshock=7.75):
+def shock_location(xshock=7.75,fig=0):
     """Plots equal-area shock figure for different shock positions for interactive figure."""
+    if fig==0:
+        fig = plt.figure()
     t=10
     x = np.arange(-11.0,11.0,0.05)
     y = np.exp(-x*x/10)
@@ -74,6 +79,8 @@ def shock_location(xshock=7.75):
         plt.annotate(r"$A_1=A_2$", xy=(2, 0), xytext=(-2.5,0.5), fontsize=15)
     plt.xlim([-7.5,11])
     plt.legend(loc = 'upper left')
+    if fig==0: plt.show()
+
 
 def rarefaction_figure(t):
     """Plots rarefaction figure at different times for interactive figure."""
