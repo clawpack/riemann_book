@@ -8,7 +8,6 @@ _output/
 *.toc
 ??-*.ipynb
 combined_files/
-html/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
