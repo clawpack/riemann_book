@@ -36,6 +36,7 @@ Note:
 import re
 import subprocess
 import os
+import glob
 
 part0 = ['Preface', 'Index']
 
@@ -71,6 +72,7 @@ chapters = all_chapters  # which chapters to process
 #chapters = part0 + ['Introduction']
 chapters = book_chapters
 
+
 template_path = os.path.realpath('./html.tpl')
 
 
@@ -92,6 +94,25 @@ os.system('cp riemann_bib.html build_html/') # bibtex version of bibliography
 
 os.chdir('build_html')
 
+if 0:
+    # fix interact import statements in exact_solver demo codes:
+    # This does not work in several cases so commented out for now.
+    os.chdir('exact_solvers')
+    print('Fixing interacts in %s' % os.getcwd())
+    files = glob.glob('*.py')
+    for file in files:
+        infile = open(file,'r')
+        lines = infile.readlines()
+        infile.close()
+        #print('Fixing %s' % file)
+        with open(file,'w') as outfile:
+            for line in lines:
+                line = re.sub(r"context = 'notebook'", "context = 'html'", line)
+                line = re.sub(r'from ipywidgets import interact',
+                              'from utils.jsanimate_widgets import interact', line)
+                outfile.write(line)
+    os.chdir('..')
+
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
     print("Processing %s" % filename)
@@ -102,7 +123,8 @@ for i, chapter in enumerate(chapters):
     html_filename = chapter+'.html'
 
     with open(output_filename, "w") as output:
-        if chapter in ['Introduction','Shallow_water','Nonconvex_scalar']:
+        if chapter in ['Introduction','Traffic_flow','Shallow_water',
+                       'Nonconvex_scalar']:
             widget = 'from utils.jsanimate_widgets import interact'
         else:
             widget = 'from utils.snapshot_widgets import interact'
