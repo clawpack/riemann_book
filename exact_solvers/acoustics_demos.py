@@ -546,23 +546,6 @@ def bump_animation(numframes):
 
     return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
 
-def make_bump_animation_html(numframes, file_name):
-    anim = bump_animation(numframes)
-    video_html = anim.to_html5_video()
-    f = open(file_name,'w')
-    f.write('<html>\n')
-    file_name = 'acoustics_bump_animation.html'
-    descr = """<h1>Acoustics Bump Animation</h1>
-        This animation is to accompany 
-        <a href="http://www.clawpack.org/riemann_book/html/Acoustics.html">this
-        notebook</a>,\n from the book <a
-        href="http://www.clawpack.org/riemann_book/index.html">Riemann Problems and
-        Jupyter Solutions</a>\n"""
-    f.write(descr)
-    f.write("<p>")
-    f.write(video_html)
-    print("Created ", file_name)
-    f.close()
 
 def bump_pyclaw(numframes):
     """Returns pyclaw solution of bump initial condition."""
