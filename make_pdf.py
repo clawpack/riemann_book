@@ -48,10 +48,11 @@ part2 = ['Approximate_solvers',
 chapters = part0 + part1 + part2
 
 # For testing purposes:
-chapters = ['Preface',
-            'Introduction',
-            'Advection',
-            'Acoustics']
+if 0:
+    chapters = ['Preface',
+                'Introduction',
+                'Advection',
+                'Acoustics']
 
 
 build_dir = 'build_pdf/'
