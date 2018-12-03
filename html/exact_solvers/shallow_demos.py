@@ -1,54 +1,15 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import sys,os
-from collections import namedtuple
-
-from . import shallow_water
-
+import sys, os
 top_dir = os.path.abspath('..')
 if top_dir not in sys.path:
     sys.path.append(top_dir)
+import matplotlib.pyplot as plt
+import numpy as np
+
+from . import shallow_water
+
 from utils import riemann_tools
 
 figsize =(8,4)
-
-def make_plot_functions(h_l, h_r, u_l, u_r,
-                        g=1.,force_waves=None,extra_lines=None):
-    
-    State = namedtuple('State', shallow_water.conserved_variables)
-    Primitive_State = namedtuple('PrimState', shallow_water.primitive_variables)
-
-    q_l  = State(Depth = h_l,
-                 Momentum = h_l*u_l)
-    q_r = State(Depth = h_r,
-                Momentum = h_r*u_r)
-    states, speeds, reval, wave_types = \
-        shallow_water.exact_riemann_solution(q_l,q_r,g, force_waves=force_waves)
-        
-    plot_function_stripes = shallow_water.make_demo_plot_function(h_l,h_r,u_l,u_r,
-                                            figsize=(7,2),hlim=(0,4.5),ulim=(-2,2),
-                                            force_waves=force_waves)
-    
-    def plot_function_xt_phase(plot_1_chars=False,plot_2_chars=False):
-        plt.figure(figsize=(7,2))
-        ax = plt.subplot(121)
-        riemann_tools.plot_waves(states, speeds, reval, wave_types, t=0,
-                                 ax=ax, color='multi')
-        if plot_1_chars:
-            riemann_tools.plot_characteristics(reval,shallow_water.lambda_1,
-                                               axes=ax,extra_lines=extra_lines)
-        if plot_2_chars:
-            riemann_tools.plot_characteristics(reval,shallow_water.lambda_2,
-                                               axes=ax,extra_lines=extra_lines)
-        ax = plt.subplot(122)
-        shallow_water.phase_plane_plot(q_l,q_r,g,ax=ax,
-                                       force_waves=force_waves,y_axis='u')
-        plt.title('Phase plane')
-        plt.show()
-    return plot_function_stripes, plot_function_xt_phase
-
-
-
 
 def plot_int_curves(plot_1=True,plot_2=False,y_axis='hu'):
     N = 400

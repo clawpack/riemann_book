@@ -1,12 +1,12 @@
-import matplotlib.pyplot as plt
-import numpy as np
 import sys, os
-
-from . import nonconvex
-
 top_dir = os.path.abspath('..')
 if top_dir not in sys.path:
     sys.path.append(top_dir)
+import matplotlib.pyplot as plt
+import numpy as np
+
+from . import nonconvex
+
 from utils import riemann_tools
 
 #figsize =(12,4)
@@ -58,8 +58,7 @@ def make_plot_function(f, q_left, q_right, xi_left, xi_right):
         converting to html files.
         """
         if fig==0: 
-            #plt.figure(figsize=(14,6))
-            plt.figure()
+            plt.figure(figsize=(8,4));
             
         # plot solution q(x,t):
         plt.subplot(1,3,1)
@@ -70,7 +69,7 @@ def make_plot_function(f, q_left, q_right, xi_left, xi_right):
         xi_plot = np.hstack((xi_left,xi*t,xi_right))
         q_plot = np.hstack((q_left,qxi,q_right))
         plt.plot(xi_plot, q_plot, 'k', linewidth=2)
-        plt.title('Solution q(x,t) at t = %4.2f' % t)
+        plt.title('Solution q(x,t)\n at t = %4.2f' % t)
         plt.xlabel('x')
         plt.xlim(xi_left,xi_right)
         
@@ -87,6 +86,7 @@ def make_plot_function(f, q_left, q_right, xi_left, xi_right):
         plt.plot([q_left,q_right],[f(q_left),f(q_right)],'bo')
         plt.title('Flux function (dashed)\n Convex hull (solid)')
         plt.xlabel('q')
+        plt.tight_layout()
         #plt.legend()
 
         if fig==0: plt.show()
@@ -159,8 +159,7 @@ def make_plot_function_qsliders(f):
         converting to html files.
         """
         if fig==0: 
-            #plt.figure(figsize=(14,6))
-            plt.figure()
+            plt.figure(figsize=(8,4))
 
         xi_left = -3.
         xi_right = 3.
@@ -176,7 +175,7 @@ def make_plot_function_qsliders(f):
         xi_plot = np.hstack((xi_left,xi*t,xi_right))
         q_plot = np.hstack((q_left,qxi,q_right))
         plt.plot(xi_plot, q_plot, 'k', linewidth=2)
-        plt.title('Solution q(x,t) at t = %4.2f' % t)
+        plt.title('Solution q(x,t)\n at t = %4.2f' % t)
         plt.xlabel('x')
         plt.ylim(-4,4)
 
@@ -199,6 +198,7 @@ def make_plot_function_qsliders(f):
         plt.xlabel('q')
         plt.xlim(ql_plot,qr_plot)
         plt.ylim(-0.8,1.2)
+        plt.tight_layout()
         #plt.legend()
 
 

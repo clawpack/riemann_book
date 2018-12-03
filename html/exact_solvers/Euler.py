@@ -1,7 +1,14 @@
+import sys, os
+top_dir = os.path.abspath('..')
+if top_dir not in sys.path:
+    sys.path.append(top_dir)
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 from collections import namedtuple
+from utils import riemann_tools
+from ipywidgets import interact
+from ipywidgets import widgets
 
 conserved_variables = ('Density', 'Momentum', 'Energy')
 primitive_variables = ('Density', 'Velocity', 'Pressure')
@@ -338,5 +345,89 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
             rho, u, p = cons_to_prim(approx_states[:,j],gamma=gamma)
             p_approx.append(p)
             u_approx.append(u)
-        print(p_approx, u_approx)
         ax.plot(p_approx,u_approx,'o-g',markersize=10,zorder=0)
+
+def plot_integral_curves(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
+    N = 400
+    p = np.linspace(0.,5,N)
+    p_0 = 1.
+    uu = np.linspace(-3,3,15)
+    c_0 = np.sqrt(gamma*p_0/rho_0)
+    if plot_1:
+        for u_0 in uu:
+            u = u_0 + (2*c_0)/(gamma-1.)* \
+                (1.-(p/p_0)**((gamma-1)/(2*gamma)))
+            plt.plot(p,u,color='coral')
+    if plot_3:
+        for u_0 in uu:
+            u = u_0 - (2*c_0)/(gamma-1.)* \
+                (1.-(p/p_0)**((gamma-1)/(2*gamma)))
+            plt.plot(p,u,color='maroon')
+    plt.xlabel('p'); plt.ylabel('u')
+    plt.show()
+
+def plot_hugoniot_loci(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
+    N = 400
+    p = np.linspace(1.e-3,5,N)
+    p_0 = 1.
+    uu = np.linspace(-3,3,15)
+    c_0 = np.sqrt(gamma*p_0/rho_0)
+    beta = (gamma+1.)/(gamma-1.)
+    if plot_1:
+        for u_0 in uu:
+            u_1 = u_0 + (2*c_0)/np.sqrt(2*gamma*(gamma-1.))* \
+                (1.-p/p_0)/(np.sqrt(1+beta*p/p_0))
+            plt.plot(p,u_1,color='coral')
+    if plot_3:
+        for u_0 in uu:
+            u_1 = u_0 - (2*c_0)/np.sqrt(2*gamma*(gamma-1.))* \
+                (1.-p/p_0)/(np.sqrt(1+beta*p/p_0))
+            plt.plot(p,u_1,color='maroon')
+    plt.xlabel('p'); plt.ylabel('u')
+    plt.show()
+
+def riemann_solution(left_state, right_state, gamma=1.4):
+    q_left  = primitive_to_conservative(*left_state)
+    q_right = primitive_to_conservative(*right_state)
+
+    ex_states, ex_speeds, reval, wave_types = exact_riemann_solution(q_left ,q_right, gamma)
+
+    plot_function = riemann_tools.make_plot_function(ex_states, ex_speeds, reval, wave_types,
+                                                     layout='vertical',
+                                                     variable_names=primitive_variables,
+                                                     plot_chars=[lambda1,lambda2,lambda3],
+                                                     derived_variables=cons_to_prim)
+
+    interact(plot_function, t=widgets.FloatSlider(value=0.1,min=0,max=.9),
+             which_char=widgets.Dropdown(options=[None,1,2,3],description='Show characteristics:',
+                                         style={'description_width':'initial'}))
+
+def plot_riemann_trajectories(q_l, q_r, gamma=1.4, primitive=False):
+    if primitive:
+        q_left  = Euler.primitive_to_conservative(*q_l)
+        q_right = Euler.primitive_to_conservative(*q_r)
+    else:
+        q_left = q_l
+        q_right = q_r
+
+    ex_states, ex_speeds, reval, wave_types = exact_riemann_solution(q_left ,q_right, gamma=gamma)
+
+    def reval_rho_u(x):
+        q = reval(x)
+        rho = q[0]
+        u = q[1]/q[0]
+        rho_u = np.vstack((rho,u))
+        return rho_u
+
+    # Specify density of trajectories to left and right:
+    rho_l = q_left[0] / 10.
+    rho_r = q_right[0] / 10.
+    x_traj, t_traj, xmax = riemann_tools.compute_riemann_trajectories(ex_states,
+                                                                      ex_speeds,
+                                                                      reval_rho_u,
+                                                                      wave_types,
+                                                                      i_vel=1,
+                                                                      rho_left=rho_l,
+                                                                      rho_right=rho_r)
+
+    riemann_tools.plot_riemann_trajectories(x_traj, t_traj, ex_speeds, wave_types)

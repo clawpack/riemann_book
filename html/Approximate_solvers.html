@@ -11774,19 +11774,6 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>$$
-\newcommand{\wave}{{\cal W}}
-\newcommand{\amdq}{{\cal A}^-\Delta Q}
-\newcommand{\apdq}{{\cal A}^+\Delta Q}
-$$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Part-II.--Approximate-Riemann-Solvers">Part II.  Approximate Riemann Solvers<a class="anchor-link" href="#Part-II.--Approximate-Riemann-Solvers">&#182;</a></h1>
 </div>
 </div>
@@ -11839,21 +11826,21 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We consider a single Riemann problem with left state $q_l$ and right state $q_r$.  Then the Riemann solution gives a resolution of the jump $\Delta q = (q_r - q_l)$ into a set of propagating waves.  In both of the approaches described below, the approximate Riemann solution consists entirely of traveling discontinuities.     Following <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque, 2002)</a></cite>, we refer to these traveling discontinuities as <em>waves</em>, and denote them by $\wave^p \in {\mathbb R}^m$, where the index $p$ denotes the characteristic family and typically ranges from $1$ to $m$ for a system of $m$ equations, although in an approximate solver the number of waves may be smaller.  For each wave, the approximate solver must also give a wave speed $s^p \in{\mathbb R}$.</p>
+<p>We consider a single Riemann problem with left state $q_l$ and right state $q_r$.  Then the Riemann solution gives a resolution of the jump $\Delta q = (q_r - q_l)$ into a set of propagating waves.  In both of the approaches described below, the approximate Riemann solution consists entirely of traveling discontinuities.     Following <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque, 2002)</a></cite>, we refer to these traveling discontinuities as <em>waves</em>, and denote them by ${\cal W}^p \in {\mathbb R}^m$, where the index $p$ denotes the characteristic family and typically ranges from $1$ to $m$ for a system of $m$ equations, although in an approximate solver the number of waves may be smaller.  For each wave, the approximate solver must also give a wave speed $s^p \in{\mathbb R}$.</p>
 <p>The net effect of each wave from the Riemann solution is given by the product of the wave and its speed.  In Godunov's method, the simplest finite volume method based on Riemann solvers, the rate of change of the cell average to the left of a given interface is given by<br>
-$$\amdq = \sum_{p=1}^m (s^p)^- \wave^p$$<br>
+$${\cal A}^-\Delta Q = \sum_{p=1}^m (s^p)^- {\cal W}^p$$<br>
 and that to the right is given by<br>
-$$\apdq = \sum_{p=1}^m (s^p)^+ \wave^p$$<br>
-where $(x)^- = \min(x,0)$ and $(x)^+ = \max(x,0)$.  We refer to $\amdq, ~\apdq \in {\mathbb R}^m$ as <em>fluctuations</em>.</p>
-<p>The purpose of an approximate Riemann solver, in this context, is to determine the waves $\wave^p$ and speeds $s^p$; these can then be used to update the numerical solution via the fluctuations.</p>
-<p>Note that $\amdq$, for example, should be read as a single symbol and denotes the m-vector defined above.  The notation is motivated by the case of a constant-coefficient linear hyperbolic system of equations with flux function $f(q) = Aq$ for which $A = R\Lambda R^{-1}$ with real eigenvalues $\lambda_p$.  In this case, one can define a splitting $A = A^- + A^+$ in which $A^+ = R\Lambda^+ R^{-1}$ and $A^- = R\Lambda^- R^{-1}$, where the diagonal matrix $\Lambda^-$ has diagonal elements $\min(\lambda_p, 0)$ while $\Lambda^+$ has diagonal elements $\max(\lambda_p, 0)$. In this case the wave speeds are $s^p = \lambda_p$ and the fluctuations reduce to
-$$\amdq = A^-(q_r - q_l), \qquad\text{and}\qquad \apdq = A^+(q_r - q_l).$$</p>
+$${\cal A}^+\Delta Q = \sum_{p=1}^m (s^p)^+ {\cal W}^p$$<br>
+where $(x)^- = \min(x,0)$ and $(x)^+ = \max(x,0)$.  We refer to ${\cal A}^-\Delta Q, ~\apdq \in {\mathbb R}^m$ as <em>fluctuations</em>.</p>
+<p>The purpose of an approximate Riemann solver, in this context, is to determine the waves ${\cal W}^p$ and speeds $s^p$; these can then be used to update the numerical solution via the fluctuations.</p>
+<p>Note that ${\cal A}^-\Delta Q$, for example, should be read as a single symbol and denotes the m-vector defined above.  The notation is motivated by the case of a constant-coefficient linear hyperbolic system of equations with flux function $f(q) = Aq$ for which $A = R\Lambda R^{-1}$ with real eigenvalues $\lambda_p$.  In this case, one can define a splitting $A = A^- + A^+$ in which $A^+ = R\Lambda^+ R^{-1}$ and $A^- = R\Lambda^- R^{-1}$, where the diagonal matrix $\Lambda^-$ has diagonal elements $\min(\lambda_p, 0)$ while $\Lambda^+$ has diagonal elements $\max(\lambda_p, 0)$. In this case the wave speeds are $s^p = \lambda_p$ and the fluctuations reduce to
+$${\cal A}^-\Delta Q = A^-(q_r - q_l), \qquad\text{and}\qquad \apdq = A^+(q_r - q_l).$$</p>
 <p>A common, but different, viewpoint is that the Riemann solver must produce an approximation of the flux at $x=0$, and Godunov's method is defined by differencing the flux at the left edge and right edge of the grid cell in each time step.  For a conservation law $q_t + f(q)_x = 0$, we can define the interface flux based on the fluctuations via
-$$F = f(q_l) + \amdq \qquad\text{or} \qquad F = f(q_r) - \apdq.$$
+$$F = f(q_l) + {\cal A}^-\Delta Q \qquad\text{or} \qquad F = f(q_r) - \apdq.$$
 These two expressions are equal provided that
 \begin{align}
 \label{adqdf}
-\amdq + \apdq = f(q_r) - f(q_l),
+{\cal A}^-\Delta Q + \apdq = f(q_r) - f(q_l),
 \end{align}
 which is a natural requirement to impose on the fluctuations and is satisfied, for example, in the case of the linear problem described above.</p>
 <p>An advantage of working with fluctuations, waves, and speeds rather than interface fluxes is that these quantities often make sense also for non-conservative hyperbolic systems, such as the variable coefficient linear problem $q_t + A(x)q_x = 0$.  A Riemann problem is defined by prescribing matrices $A_l$ and $A_r$ along with the initial data $q_l$ and $q_r$, for example by using the material properties in the grid cells to the left and right of the interface for acoustics through a heterogeneous material.  The waves are then naturally defined using the eigenvectors of $A_l$ corresponding to negative eigenvalues for the left-going waves, and using eigenvectors of $A_r$ corresponding to positive eigenvalues for the right-going waves.  See <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque, 2002)</a></cite> for more details.  <em>[notebook for variable coefficient acoustics?]</em></p>
@@ -11925,7 +11912,7 @@ where the maximum is taken over all values of $q$ between $q_r$ and $q_l$.  This
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>A less dissipative solver can be obtained by allowing the left- and right-going waves to have different speeds.
-This approach was developed in <cite data-cite="HLL"><a href="riemann.html#HLL">(Harten, Lax, and van Leer)</a></cite>.  The solution is then determined by \eqref{AS:middle_state}.  In the original HLL solver, it was suggested to again to use speeds that bound the possible speeds occurring in the true solution.  For a scalar problem, this translates to<br>
+This approach was developed in <cite data-cite="HLL"><a href="riemann.html#HLL">(Harten, Lax, and van Leer)</a></cite>.  The solution is then determined by (\ref{AS:middle_state}).  In the original HLL solver, it was suggested to again to use speeds that bound the possible speeds occurring in the true solution.  For a scalar problem, this translates to<br>
 \begin{align*}
 s_1 &amp; = \min(f'(q)) \\
 s_2 &amp; = \max(f'(q)),
