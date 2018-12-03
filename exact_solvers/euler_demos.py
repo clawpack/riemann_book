@@ -2,6 +2,9 @@ import sys, os
 top_dir = os.path.abspath('..')
 if top_dir not in sys.path:
     sys.path.append(top_dir)
+from IPython.display import display
+from ipywidgets import widgets
+from ipywidgets import interact
 
 def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
                                         rho_r=1.,u_r=0.,p_r=1.,gamma=1.4,t=0.4):  
@@ -92,3 +95,30 @@ def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
     plt.tight_layout()
     plt.show()
  
+def euler_demo1():
+    
+    rhol_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=3.,description=r'$\rho_l$')
+    ul_widget=widgets.FloatSlider(min=-10.,max=10.,step=0.1,value=0.,description=r'$u_l$')
+    pl_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=3.,description=r'$p_l$')
+    rhor_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=1.,description=r'$\rho_r$')
+    ur_widget=widgets.FloatSlider(min=-10.,max=10.,step=0.1,value=0.,description=r'$u_r$')
+    pr_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=1.,description=r'$p_r$')
+    gamma_widget=widgets.FloatSlider(min=1.1,max=2.,step=0.1,value=1.4,description=r'$\gamma$')
+    t_widget=widgets.FloatSlider(min=0.,max=1.,step=0.1,value=0.5)
+
+    interact_gui = widgets.VBox(\
+         [widgets.HBox([rhol_widget, rhor_widget, gamma_widget]),
+          widgets.HBox([ul_widget, ur_widget, t_widget]),
+          widgets.HBox([pl_widget, pr_widget])]);
+
+    mainwidget = interact(plot_exact_riemann_solution_stripes,
+                          rho_l=rhol_widget,u_l=ul_widget,p_l=pl_widget,
+                          rho_r=rhor_widget,u_r=ur_widget,p_r=pr_widget,
+                          gamma=gamma_widget,t=t_widget);
+
+    try:
+        mainwidget.widget.close()
+        display(interact_gui)
+        display(mainwidget.widget.out)
+    except:
+        pass
