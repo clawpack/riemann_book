@@ -33,11 +33,13 @@ def _notebook_run(path):
 
 def run_tests():
     doctest.testmod(utils.riemann_tools)
-    ignore_notebooks = ['Make_html_animations']  # notebooks to ignore in tests
+
+    # notebooks to ignore in tests:
+    ignore_notebooks = ['Make_html_animations.ipynb']
 
     for filename in os.listdir('.'):
-        name,ext = filename.split('.')
-        if (ext == 'ipynb' and name not in ignore_notebooks):
+        if (filename.split('.')[-1] == 'ipynb' and 
+                    filename not in ignore_notebooks):
             nb, errors = _notebook_run(filename)
             if errors != []:
                 raise(Exception)
