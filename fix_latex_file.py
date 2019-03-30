@@ -34,6 +34,21 @@ while result:
     lines = lines.replace(r'\url{%s}' % nbook, r'Chapter~\ref{%s}' % chap)
     result = regexp.search(lines)
 
+# fix links to .py modules in exact_solvers:
+
+regexp = re.compile(r"\\url{exact_solvers/(?P<modname>[^}]*).py}")
+result = regexp.search(lines)
+while result:
+    modname = result.group('modname')
+    print('fixing modname = ',modname)
+    modpath = 'exact_solvers/' + modname + '.py'
+    modlink = 'http://www.clawpack.org/riemann_book/html/' + modpath
+    oldpat = r'\url{' + modpath
+    modpath = modpath.replace('_',r'\_')
+    newpat = r'\hreffoot{%s}{%s' % (modlink, modpath)
+    lines = lines.replace(oldpat, newpat)
+    result = regexp.search(lines)
+
 
 # Write out resulting file:
 outfile = open('riemann.tex','w')
