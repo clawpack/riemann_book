@@ -17,7 +17,7 @@
 ((* endblock predoc *))
 
 ((* block docclass *))
-\documentclass{SIAMGHbook2016}
+\documentclass{SIAMbook2016}
 ((* endblock docclass *))
 
 ((* block author *))
