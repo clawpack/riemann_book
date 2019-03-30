@@ -12016,11 +12016,11 @@ Here the plus sign is for 1-waves and the minus sign is for 3-waves.</p>
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">exact_solvers</span> <span class="k">import</span> <span class="n">Euler</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">exact_solvers</span> <span class="k">import</span> <span class="n">euler</span>
 <span class="kn">from</span> <span class="nn">exact_solvers</span> <span class="k">import</span> <span class="n">euler_demos</span>
 <span class="kn">from</span> <span class="nn">ipywidgets</span> <span class="k">import</span> <span class="n">widgets</span>
 <span class="kn">from</span> <span class="nn">utils.snapshot_widgets</span> <span class="k">import</span> <span class="n">interact</span>
-<span class="n">State</span> <span class="o">=</span> <span class="n">Euler</span><span class="o">.</span><span class="n">Primitive_State</span>
+<span class="n">State</span> <span class="o">=</span> <span class="n">euler</span><span class="o">.</span><span class="n">Primitive_State</span>
 <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.4</span>
 </pre></div>
 
@@ -12047,12 +12047,25 @@ Here the plus sign is for 1-waves and the minus sign is for 3-waves.</p>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you wish to examine the Python code for this chapter, see:</p>
+<ul>
+<li><a href="exact_solvers/euler.py">exact_solvers/euler.py</a></li>
+<li><a href="exact_solvers/euler_demos.py">exact_solvers/euler_demos.py</a></li>
+</ul>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">interact</span><span class="p">(</span><span class="n">Euler</span><span class="o">.</span><span class="n">plot_integral_curves</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">interact</span><span class="p">(</span><span class="n">euler</span><span class="o">.</span><span class="n">plot_integral_curves</span><span class="p">,</span>
          <span class="n">gamma</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mf">1.4</span><span class="p">),</span>
          <span class="n">rho_0</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> 
                                    <span class="n">description</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\rho_0$&#39;</span><span class="p">));</span>
@@ -12107,7 +12120,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">interact</span><span class="p">(</span><span class="n">Euler</span><span class="o">.</span><span class="n">plot_hugoniot_loci</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">interact</span><span class="p">(</span><span class="n">euler</span><span class="o">.</span><span class="n">plot_hugoniot_loci</span><span class="p">,</span>
          <span class="n">gamma</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1.1</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mf">1.4</span><span class="p">),</span>
          <span class="n">rho_0</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> 
                                    <span class="n">description</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\rho_0$&#39;</span><span class="p">))</span>
@@ -12189,18 +12202,6 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you wish to examine the Python code for this chapter, see:</p>
-<ul>
-<li><a href="exact_solvers/Euler.py">exact_solvers/Euler.py</a></li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Problem-1:-Sod-shock-tube">Problem 1: Sod shock tube<a class="anchor-link" href="#Problem-1:-Sod-shock-tube">&#182;</a></h3><p>First we consider the classic shock tube problem. The initial condition consists of high density and pressure on the left, low density and pressure on the right and zero velocity on both sides. The solution is composed of a shock propagating to the right (3-shock), while a left-going rarefaction forms (1-rarefaction). In between these two waves, there is a jump in the density, which is the contact discontinuity (2-wave) in the linearly degenerate characteristic field.</p>
 <p>Note that this set of initial conditions is analogous to the "dam break" problem for shallow water quations, and the resulting structure of the solution is very similar to that obtained when those equations are solved with the addition of a scalar tracer.  However, in the Euler equations the entropy jump across a 2-wave does affect the fluid dynamics on either side, so this is not a passive tracer and solving the Riemann problem is slightly more complex.</p>
 
@@ -12219,7 +12220,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
                     <span class="n">Velocity</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                     <span class="n">Pressure</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 
-<span class="n">Euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
+<span class="n">euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12263,7 +12264,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12314,7 +12315,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
                     <span class="n">Velocity</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">,</span>
                     <span class="n">Pressure</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 
-<span class="n">Euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">);</span>
+<span class="n">euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">);</span>
 </pre></div>
 
 </div>
@@ -12349,7 +12350,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12400,7 +12401,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
                     <span class="n">Velocity</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.</span><span class="p">,</span>
                     <span class="n">Pressure</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 
-<span class="n">Euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
+<span class="n">euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12435,7 +12436,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12486,7 +12487,7 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
                     <span class="n">Velocity</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
                     <span class="n">Pressure</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 
-<span class="n">Euler</span><span class="o">.</span><span class="n">plot_riemann_trajectories</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
+<span class="n">euler</span><span class="o">.</span><span class="n">plot_riemann_trajectories</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12538,15 +12539,6 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For the code that produces the plot, see this file: <a href="exact_solvers/euler_demos.py">exact_solvers/euler_demos.py</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>Let's plot the Sod shock tube data with this colored tracer:</p>
 
 </div>
@@ -12557,12 +12549,12 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot_exact_riemann_solution_stripes_t_slider</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-    <span class="n">euler_demos</span><span class="o">.</span><span class="n">plot_exact_riemann_solution_stripes</span><span class="p">(</span><span class="n">rho_l</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span><span class="n">u_l</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">p_l</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span>
-                                                      <span class="n">rho_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">u_r</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">p_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
-                                                      <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot_with_stripes_t_slider</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">euler_demos</span><span class="o">.</span><span class="n">plot_with_stripes</span><span class="p">(</span><span class="n">rho_l</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span><span class="n">u_l</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">p_l</span><span class="o">=</span><span class="mf">3.</span><span class="p">,</span>
+                                  <span class="n">rho_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">u_r</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">p_r</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
+                                  <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
     
-<span class="n">interact</span><span class="p">(</span><span class="n">plot_exact_riemann_solution_stripes_t_slider</span><span class="p">,</span> 
+<span class="n">interact</span><span class="p">(</span><span class="n">plot_with_stripes_t_slider</span><span class="p">,</span> 
          <span class="n">t</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">FloatSlider</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="nb">max</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="mf">0.5</span><span class="p">));</span>
 </pre></div>
 
@@ -12658,13 +12650,13 @@ Here the plus sign is for 1-shocks and the minus sign is for 3-shocks.</p>
 
  
  
-<div id="239a910f-6ff5-4040-bc08-411660ad5fea"></div>
+<div id="344f6b56-6525-4b65-bf35-66e6706f60fe"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#239a910f-6ff5-4040-bc08-411660ad5fea');
+var element = $('#344f6b56-6525-4b65-bf35-66e6706f60fe');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "167e75421e644d18bd454170c2249f0e"}
+{"version_major": 2, "version_minor": 0, "model_id": "426cdd389d234ce594b3091b9e737797"}
 </script>
 </div>
 
@@ -12680,13 +12672,13 @@ var element = $('#239a910f-6ff5-4040-bc08-411660ad5fea');
 
  
  
-<div id="e7ab81b7-09cd-4267-b782-0922dca5a9e9"></div>
+<div id="a0882be0-638c-4253-b5bf-6fbf7162de8d"></div>
 <div class="output_subarea output_widget_view ">
 <script type="text/javascript">
-var element = $('#e7ab81b7-09cd-4267-b782-0922dca5a9e9');
+var element = $('#a0882be0-638c-4253-b5bf-6fbf7162de8d');
 </script>
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "fbf6c6ee325549a8aba886100f231ceb"}
+{"version_major": 2, "version_minor": 0, "model_id": "2c232d78d0294de3a3706e9e2844b8fe"}
 </script>
 </div>
 
@@ -12730,7 +12722,7 @@ var element = $('#e7ab81b7-09cd-4267-b782-0922dca5a9e9');
                     <span class="n">Velocity</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.</span><span class="p">,</span>
                     <span class="n">Pressure</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 
-<span class="n">Euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
+<span class="n">euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12765,7 +12757,7 @@ var element = $('#e7ab81b7-09cd-4267-b782-0922dca5a9e9');
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12815,7 +12807,7 @@ var element = $('#e7ab81b7-09cd-4267-b782-0922dca5a9e9');
                     <span class="n">Velocity</span> <span class="o">=</span> <span class="mf">10.</span><span class="p">,</span>
                     <span class="n">Pressure</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span>
 
-<span class="n">Euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
+<span class="n">euler</span><span class="o">.</span><span class="n">riemann_solution</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span><span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12850,7 +12842,7 @@ var element = $('#e7ab81b7-09cd-4267-b782-0922dca5a9e9');
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">euler</span><span class="o">.</span><span class="n">phase_plane_plot</span><span class="p">(</span><span class="n">left_state</span><span class="p">,</span> <span class="n">right_state</span><span class="p">)</span>
 </pre></div>
 
 </div>

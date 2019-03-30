@@ -26,6 +26,7 @@ def multivalued_solution(t,fig=0):
     plt.plot(x2, y, '-k', label = r"Solution at time $t$")
     plt.xlim([-10,10])
     plt.legend(loc = 'upper left')
+    plt.title('t = %.2f' % t)
     if t != 0:
         numarrows = 7
         arrowIndexList = np.linspace(len(x)/3,2*len(x)/3,numarrows, dtype = int)
@@ -99,6 +100,7 @@ def rarefaction_figure(t):
     plt.xlim([-5,10])
     plt.ylim([0.0,1.2])
     plt.legend(loc = 'upper left')
+    plt.title('t = %.2f' % t)
     if t != 0:
         for i in range(numarrows):
             plt.arrow(x[2+i], y[2+i], np.abs(t*y[2+i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')

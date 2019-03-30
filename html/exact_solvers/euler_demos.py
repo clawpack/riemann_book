@@ -6,17 +6,17 @@ from IPython.display import display
 from ipywidgets import widgets
 from ipywidgets import interact
 
-def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
-                                        rho_r=1.,u_r=0.,p_r=1.,gamma=1.4,t=0.4):  
+def plot_with_stripes(rho_l=3.,u_l=0.,p_l=3.,
+                      rho_r=1.,u_r=0.,p_r=1.,gamma=1.4,t=0.4):  
     import matplotlib.pyplot as plt
     import numpy as np
-    from exact_solvers import Euler  
+    from exact_solvers import euler  
     from utils import riemann_tools
-    q_l = Euler.primitive_to_conservative(rho_l,u_l,p_l)
-    q_r = Euler.primitive_to_conservative(rho_r,u_r,p_r)
+    q_l = euler.primitive_to_conservative(rho_l,u_l,p_l)
+    q_r = euler.primitive_to_conservative(rho_r,u_r,p_r)
         
     x = np.linspace(-1.,1.,1000)
-    states, speeds, reval, wave_types = Euler.exact_riemann_solution(q_l, q_r, gamma=gamma)
+    states, speeds, reval, wave_types = euler.exact_riemann_solution(q_l, q_r, gamma=gamma)
     if t == 0:
         q = np.zeros((3,len(x)))
         q[0,:] = q_l[0]*(x<=0) + q_r[0]*(x>0)
@@ -24,7 +24,7 @@ def plot_exact_riemann_solution_stripes(rho_l=3.,u_l=0.,p_l=3.,
         q[1,:] = q_l[2]*(x<=0) + q_r[2]*(x>0)
     else:
         q = reval(x/t)
-    primitive = Euler.conservative_to_primitive(q[0],q[1],q[2])
+    primitive = euler.conservative_to_primitive(q[0],q[1],q[2])
     
     # compute particle trajectories:
     def reval_rho_u(x): 
@@ -111,7 +111,7 @@ def euler_demo1():
           widgets.HBox([ul_widget, ur_widget, t_widget]),
           widgets.HBox([pl_widget, pr_widget])]);
 
-    mainwidget = interact(plot_exact_riemann_solution_stripes,
+    mainwidget = interact(plot_with_stripes,
                           rho_l=rhol_widget,u_l=ul_widget,p_l=pl_widget,
                           rho_r=rhor_widget,u_r=ur_widget,p_r=pr_widget,
                           gamma=gamma_widget,t=t_widget);
