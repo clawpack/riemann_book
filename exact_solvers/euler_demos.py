@@ -1,7 +1,4 @@
 import sys, os
-top_dir = os.path.abspath('..')
-if top_dir not in sys.path:
-    sys.path.append(top_dir)
 from IPython.display import display
 from ipywidgets import widgets
 from ipywidgets import interact
