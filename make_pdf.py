@@ -11,19 +11,6 @@ import subprocess
 import os
 import glob
 
-chapters = ['Preface',
-            'Introduction',
-            'Traffic_flow',
-            'Shallow_water',
-            'Approximate_solvers',
-            'Euler_approximate_solvers',
-            'Traffic_variable_speed',
-            'Nonlinear_elasticity',
-            'Euler_equations_TammannEOS',
-            'Nonconvex_scalar',
-            'Pressureless_flow',
-            'Kitchen_sink_problem']
-
 # To test a subset, adjust the list of chapters and
 # remove the build_pdf directory before running this script.
 
@@ -51,8 +38,7 @@ chapters = part0 + part1 + part2
 if 0:
     chapters = ['Preface',
                 'Introduction',
-                'Advection',
-                'Acoustics']
+                'Euler']
 
 
 build_dir = 'build_pdf/'
@@ -110,7 +96,7 @@ for i, chapter in enumerate(chapters):
             #              r"sns.set_context('paper')", line)
             output.write(line)
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",
-            "--ExecutePreprocessor.kernel_name=python2",
+            "--ExecutePreprocessor.kernel_name=python",
             "--output", output_filename,
             "--ExecutePreprocessor.timeout=60", build_dir+output_filename]
     subprocess.check_call(args)
