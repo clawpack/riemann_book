@@ -35,8 +35,8 @@ def run_tests():
     doctest.testmod(utils.riemann_tools)
 
     for filename in os.listdir('.'):
-        if (filename.split('.')[-1] == 'ipynb'
-            nb, errors = _notebook_run(filename)
+        if filename.split('.')[-1] == 'ipynb':
+            _, errors = _notebook_run(filename)
             if errors != []:
                 raise(Exception)
 
