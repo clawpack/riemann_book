@@ -1,8 +1,5 @@
 import sys, os
 
-top_dir = os.path.abspath('..')
-if top_dir not in sys.path:
-    sys.path.append(top_dir)
 
 def osher_solution(f, q_left, q_right, n=1000):
     """

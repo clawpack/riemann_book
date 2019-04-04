@@ -1,13 +1,11 @@
 [![Build Status](https://travis-ci.org/clawpack/riemann_book.svg?branch=master)](https://travis-ci.org/clawpack/riemann_book)
 
-# Riemann_book
-
-## The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers
+# Riemann Problems and Jupyter Solutions
 
 #### by David I. Ketcheson, Randall J. LeVeque, and Mauricio del Razo Sarmina
 
-This repository contains work on a book in progress to illustrate Riemann
-solvers in Jupyter notebooks.
+This repository contains work on a book in progress (nearly complete) to illustrate Riemann
+solutions and approximate Riemann solvers in Jupyter notebooks.
 
 Contributors: @ketch, @rjleveque, and @maojrs.
 
@@ -20,7 +18,7 @@ views (no execution or interactive widgets), but some notebooks include
 animations that will play.  *These may not be up to date with the versions in
 this repository during the development phase of this project.*
 
-# Installation
+## Installation
 To install the dependencies for the book, see
 https://github.com/clawpack/riemann_book/wiki/Installation.  Then clone this
 repository to get all the notebooks.  A table of contents and suggested order

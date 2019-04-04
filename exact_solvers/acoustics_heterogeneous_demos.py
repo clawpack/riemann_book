@@ -2,6 +2,7 @@
 Additional functions and demos for acoustics equations in
 heterogeneous media.
 """
+import sys, os
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
@@ -147,6 +148,9 @@ def interactive_phase_plane(ql=(10.0, -5.0),
                         xmin=xmin_widget, xmax=xmax_widget,
                         ymin=ymin_widget, ymax=ymax_widget,
                         show_phys=show_physical, show_unphys=show_unphysical)
-    ppwidget.widget.close()
-    display(interact_gui)
-    display(ppwidget.widget.out)
+    try:
+        ppwidget.widget.close()
+        display(interact_gui)
+        display(ppwidget.widget.out)
+    except:
+        pass
