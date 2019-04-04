@@ -2,9 +2,8 @@
 Exact Riemann solver for the acoustic wave equation in 1D in
 heterogeneous media.
 """
+import sys, os
 import numpy as np
-import sys
-sys.path.append('../utils')
 from utils import riemann_tools
 
 def lambda1_het(q, xi, aux):

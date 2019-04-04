@@ -1,6 +1,5 @@
+import sys, os
 import numpy as np
-import sys
-sys.path.append('../utils')
 from utils import riemann_tools
 import matplotlib.pyplot as plt
 from ipywidgets import widgets, FloatSlider
@@ -89,6 +88,9 @@ def riemann_solution_interact():
              rho_l=rho_l_widget, rho_r=rho_r_widget,
              t=t_widget,xrange=x_range_widget);
     if traffic_widget:  # Avoid crash when using snapshot_widgets
-        traffic_widget.widget.close()
-        display(params)
-        display(traffic_widget.widget.out)
+        try:
+            traffic_widget.widget.close()
+            display(params)
+            display(traffic_widget.widget.out)
+        except:
+            pass

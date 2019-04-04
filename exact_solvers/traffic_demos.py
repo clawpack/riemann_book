@@ -13,10 +13,15 @@ def plot_flux(fun):
     plt.ylim(0,0.3)
     plt.xlim(0,1); plt.grid(linestyle='--')
 
-def jam(rho_l=0.4,t=0.1):
+def jam(rho_l=0.4,t=0.1,fig=0):
     shock_speed = -rho_l
     shock_location = t*shock_speed
-    _, axes = plt.subplots(1,2,figsize=figsize)
+    
+    if fig==0:
+        fig = plt.figure(figsize=figsize)
+    axes = (fig.add_subplot(121), fig.add_subplot(122))
+    
+    #_, axes = plt.subplots(1,2,figsize=figsize)
     
     axes[0].plot([-1,shock_location],[rho_l,rho_l],'k',lw=2)
     axes[0].plot([shock_location,shock_location],[rho_l,1.],'k',lw=2)
@@ -27,21 +32,23 @@ def jam(rho_l=0.4,t=0.1):
     axes[1].set_ylim(0,1); axes[1].set_xlim(-0.6,0.6)
     axes[0].set_title(r'$t= $'+str(t))
     plt.xlabel('$x$'); plt.ylabel(r'$t$')
-    plt.show()  
+    if fig==0: plt.show()  
 
-def green_light(rho_r=0.,t=0.1):
+def green_light(rho_r=0.,t=0.1,fig=0):
     rho_l = 1.
     left_edge = -t
     right_edge = -t*(2*rho_r - 1)
-    fig, axes = plt.subplots(1,2,figsize=figsize)
+    if fig==0:
+        fig = plt.figure(figsize=figsize)
+    axes = (fig.add_subplot(121), fig.add_subplot(122))
+    #fig, axes = plt.subplots(1,2,figsize=figsize)
     axes[0].plot([-1,left_edge],[rho_l,rho_l],'k',lw=2)
     axes[0].plot([left_edge,right_edge],[rho_l,rho_r],'k',lw=2)
     axes[0].plot([right_edge,1.],[rho_r,rho_r],'k',lw=2)
     axes[0].set_xlabel('$x$'); axes[0].set_ylabel(r'$\rho$');
     axes[0].set_xlim(-1,1);  axes[0].set_ylim(-0.1,1.1)
-    axes[0].set_title('Solution')
-    plt.xlabel('$x$'); plt.ylabel(r'$t$');
-   
-    traffic_LWR.plot_car_trajectories(1.,rho_r,axes[1],t=t,xmax=1.); 
+    axes[0].set_title(r'$t= $'+str(t))
+    plt.xlabel('$x$'); plt.ylabel(r'$t$')
+    traffic_LWR.plot_car_trajectories(1.,rho_r,axes[1],t=t,xmax=1.)
     axes[1].set_ylim(0,1)
-    plt.show()
+    if fig==0: plt.show()

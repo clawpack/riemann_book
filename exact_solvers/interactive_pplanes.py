@@ -2,10 +2,12 @@
 Interactive phase plane plot for Euler equations with ideal gas,
 Euler equations with Tammann equations of state and acoustic equations.
 """
+import sys, os
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
-from ipywidgets import interact, widgets
+from ipywidgets import widgets
+from ipywidgets import interact
 from IPython.display import display
 
 def euler_phase_plane_plot():
@@ -184,9 +186,12 @@ def euler_interactive_phase_plane(ql=(1.0, -3.0, 100.0),
                         xmin=xmin_widget, xmax=xmax_widget,
                         ymin=ymin_widget, ymax=ymax_widget,
                         show_phys=show_physical, show_unphys=show_unphysical)
-    ppwidget.widget.close()
-    display(interact_gui)
-    display(ppwidget.widget.out)
+    try:
+        ppwidget.widget.close()
+        display(interact_gui)
+        display(ppwidget.widget.out)
+    except:
+        pass
 
 
 def euler_tammann_phase_plane_plot():
