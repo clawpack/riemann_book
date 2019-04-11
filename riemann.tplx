@@ -17,7 +17,7 @@
 ((* endblock predoc *))
 
 ((* block docclass *))
-\documentclass{SIAMGHbook2016}
+\documentclass{SIAMbook2016}
 ((* endblock docclass *))
 
 ((* block author *))
@@ -31,7 +31,7 @@
 ((* block title *))
 \input{latexdefs.tex}
 
-\title{The Riemann Problem for Hyperbolic PDEs: Theory and Approximate Solvers}
+\title{Riemann Problems and Jupyter Solutions}
 ((* endblock title *))
 
 ((* block maketitle *))

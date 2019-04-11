@@ -1,9 +1,11 @@
 from __future__ import print_function
+import sys, os
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 from utils import riemann_tools
-from ipywidgets import interact, interactive, widgets
+from ipywidgets import widgets
+from ipywidgets import interact
 from IPython.display import display
 
 conserved_variables = ('Density', 'Momentum', 'Energy')

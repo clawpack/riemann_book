@@ -1,8 +1,7 @@
+import sys, os
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 from utils import riemann_tools
-sys.path.append('../utils')
 
 f = lambda q: q*(1-q)
 c = lambda q: 1 - 2*q
