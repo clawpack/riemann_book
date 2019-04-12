@@ -755,22 +755,31 @@ def make_plot_functions(h_l, h_r, u_l, u_r,
     return plot_function_stripes, plot_function_xt_phase
 
 
-def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None, tracer=False):
+def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None, 
+                    tracer=False, particle_paths=True):
     stripes = not tracer
     plot_function_stripes, plot_function_xt_phase = \
                 make_plot_functions(h_l,h_r,u_l,u_r,g,
                                     force_waves,extra_lines,stripes=stripes,
                                     include_contact=tracer)
     interact(plot_function_stripes, 
-             t=widgets.FloatSlider(value=0.,min=0,max=.9), fig=fixed(0))
+             t=widgets.FloatSlider(value=0.,min=0,max=.5), fig=fixed(0))
     if tracer:
         interact(plot_function_xt_phase, 
                  plot_1_chars=Checkbox(description='1-characteristics',
                                        value=False),
                  plot_2_chars=Checkbox(description='2-characteristics'),
                  plot_tracer_chars=Checkbox(description='Tracer characteristics'))
+    elif particle_paths:
+    
+        interact(plot_function_xt_phase, 
+                 plot_1_chars=Checkbox(description='1-characteristics',
+                                       value=False),
+                 plot_2_chars=Checkbox(description='2-characteristics'),
+                 plot_tracer_chars=Checkbox(description='Particle paths'))
     else:
         interact(plot_function_xt_phase, 
                  plot_1_chars=Checkbox(description='1-characteristics',
                                        value=False),
-                 plot_2_chars=Checkbox(description='2-characteristics'))
+                 plot_2_chars=Checkbox(description='2-characteristics'),
+                 plot_tracer_chars=fixed(value=False))  # suppress checkbox
