@@ -1,4 +1,3 @@
-import sys, os
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
@@ -401,8 +400,8 @@ def riemann_solution(left_state, right_state, gamma=1.4):
 
 def plot_riemann_trajectories(q_l, q_r, gamma=1.4, primitive=False):
     if primitive:
-        q_left  = euler.primitive_to_conservative(*q_l)
-        q_right = euler.primitive_to_conservative(*q_r)
+        q_left  = primitive_to_conservative(*q_l)
+        q_right = primitive_to_conservative(*q_r)
     else:
         q_left = q_l
         q_right = q_r
