@@ -5,7 +5,7 @@ import sys, os
 import numpy as np
 from utils import riemann_tools
 from ipywidgets import widgets
-from utils.snapshot_widgets import interact
+from ipywidgets import interact
 from IPython.display import display
 import matplotlib.pyplot as plt
 
