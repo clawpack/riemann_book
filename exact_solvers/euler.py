@@ -400,8 +400,8 @@ def riemann_solution(left_state, right_state, gamma=1.4):
 
 def plot_riemann_trajectories(q_l, q_r, gamma=1.4, primitive=False):
     if primitive:
-        q_left  = Euler.primitive_to_conservative(*q_l)
-        q_right = Euler.primitive_to_conservative(*q_r)
+        q_left  = primitive_to_conservative(*q_l)
+        q_right = primitive_to_conservative(*q_r)
     else:
         q_left = q_l
         q_right = q_r

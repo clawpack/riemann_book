@@ -2,9 +2,8 @@
 Exact Riemann solver for the acoustics wave equation in 1D, 
 including some plotting functionality.
 """
+import sys, os
 import numpy as np
-import sys
-sys.path.append('../utils')
 from utils import riemann_tools
 
 def lambda1(q, xi, aux):

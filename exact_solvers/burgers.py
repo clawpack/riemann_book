@@ -1,13 +1,14 @@
 """
 Exact Riemann solvers for Burgers' equation in 1D and interactive plot function.
 """
+import sys, os
 import numpy as np
-from ipywidgets import widgets, interact
+from utils import riemann_tools
+from ipywidgets import widgets
+from ipywidgets import interact
 from IPython.display import display
 import matplotlib.pyplot as plt
-import sys
-sys.path.append('../utils')
-from utils import riemann_tools
+
 
 
 def speed(q, xi):
@@ -85,9 +86,12 @@ def riemann_solution_interact():
 
     burgers_widget = interact(plot_riemann, q_l=ql_widget, q_r=qr_widget, 
                               t=t_widget, x_range=x_range_widget)
-    burgers_widget.widget.close()
-    display(interact_gui)
-    display(burgers_widget.widget.out)
+    try:
+        burgers_widget.widget.close()
+        display(interact_gui)
+        display(burgers_widget.widget.out)
+    except:
+        pass
 
 	
 

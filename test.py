@@ -34,9 +34,14 @@ def _notebook_run(path):
 def run_tests():
     doctest.testmod(utils.riemann_tools)
 
+    # We don't test this notebook because we don't
+    # install the required ffmpeg library on Travis.
+    ignore_notebooks = ['Make_html_animations.ipynb']
+
     for filename in os.listdir('.'):
-        if (filename.split('.')[-1] == 'ipynb'):
-            nb, errors = _notebook_run(filename)
+        if (filename.split('.')[-1] == 'ipynb' and
+                    filename not in ignore_notebooks):
+            _, errors = _notebook_run(filename)
             if errors != []:
                 raise(Exception)
 
