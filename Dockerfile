@@ -33,8 +33,10 @@ ENV PATH ${VIRTUAL_ENV}/bin:${PATH}
 ENV SHELL /bin/bash
 
 # Set up user
-ENV NB_USER jovyan
-ENV NB_UID 1000
+ARG NB_USER=jovyan
+ARG NB_UID=1000
+ENV NB_UID ${NB_UID}
+ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
 
 RUN adduser --disabled-password \
@@ -46,7 +48,7 @@ WORKDIR ${HOME}
 
 RUN mkdir -p ${VIRTUAL_ENV} && chown ${NB_USER}:${NB_USER} ${VIRTUAL_ENV}
 
-User jovyan
+User ${NB_USER}
 
 RUN virtualenv ${VIRTUAL_ENV}
 ENV PYTHONHOME ${VIRTUAL_ENV}
