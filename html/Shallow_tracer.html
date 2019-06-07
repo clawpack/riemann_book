@@ -11778,20 +11778,24 @@ div#notebook {
 $$
 \phi_t(x,t) + u(x,t)\phi_x(x,t) = 0.
 $$
-This is also called the "color equation", since we can think of $\phi$ as measuring the concentration of a dye that changes the color of the water.  We will use this interpretation in the plots below.  By setting the intitial conditions $\phi(x,0)$ to be piecewise constant with different values corresponding to different colors, we can visualize the motion of the fluid better.   We will use two shades of blue for the water that is initially to the left of a dam at $x=0$ and two lighter shades of blue for the water that is initially to the right.</p>
+This is also called the "color equation", since we can think of $\phi$ as measuring the concentration of a dye that changes the color of the water.  We will use this interpretation in the plots below.  By setting the intitial conditions $\phi(x,0)$ to be piecewise constant with different values corresponding to different colors, we can visualize the motion of the fluid better.   We will use a dark shade of blue for the water that is initially to the left of a dam at $x=0$ and a lighter shade of blue for the water that is initially to the right.</p>
 <p>The quantity $h\phi$ satisfies the conservative form of the advection equation,
 $$
 (h\phi)_t + (uh\phi)_x = 0.
 $$
 This can be derived by combining the color equation with the conservation of mass equation $h_t +(hu)_x  = 0$.  Since $h\phi$ measures the concentration of dye per unit length in $x$, and we assume molecules of dye are not created or destroyed, it makes sense that this is the conserved quantity.</p>
-<p>The full system of equations in conservation form is thus:
+<p>The full system of equations in conservation form,
 \begin{align} \label{SW-tracer}
+q_t(x,t) + f(q(x,t))_x = 0
+\end{align}
+thus takes the form
+\begin{align*}
 \begin{split}
 h_t + (hu)_x &amp;=0\\
 (hu)_t + \left(hu^2 + \frac 1 2 gh^2\right)_x &amp;=0\\
 (h\phi)_t + (uh\phi)_x &amp;= 0
 \end{split}
-\end{align}</p>
+\end{align*}</p>
 <p>The Riemann solution for this system has 3 waves.  Two of these waves, with speeds $u\pm c$ (where $c=\sqrt{gh}$) are just the same waves we studied in the shallow water system.  We refer to these as the 1-wave and 2-wave, to maintain consistency with the last chapter.  The additional wave appearing in this system (the <em>tracer</em> wave) moves at the fluid velocity $u$ and carries only a jump in the tracer concentration $\phi$.  It is our first example of what is known as a contact discontinuity or linearly degenerate wave.  Because the fluid velocity is constant across this wave, tracer characteristics travel parallel to the wave on either side.  Thus this family does not admit shock or rarefaction waves.  The 1- and 2-waves can of course each be either a shock wave or rarefaction wave depending on the initial data, as explained in <a href="Shallow_water.html">Shallow_water.html</a>.  Below we consider a dam break problem in which case there is one of each.</p>
 
 </div>
@@ -11913,10 +11917,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="m2a5c782ecc" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m7d7b079ee9" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="67.622894" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="67.622894" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_1">
@@ -11951,7 +11955,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="118.875852" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="118.875852" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_2">
@@ -11987,7 +11991,7 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="170.12881" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="170.12881" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_3">
@@ -12004,10 +12008,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="mbbbe38d130" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m99cb25c848" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mbbbe38d130" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m99cb25c848" y="131.038125"/>
       </g>
      </g>
      <g id="text_4">
@@ -12030,7 +12034,7 @@ z
     <g id="ytick_2">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mbbbe38d130" y="109.294125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m99cb25c848" y="109.294125"/>
       </g>
      </g>
      <g id="text_5">
@@ -12071,7 +12075,7 @@ z
     <g id="ytick_3">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mbbbe38d130" y="87.550125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m99cb25c848" y="87.550125"/>
       </g>
      </g>
      <g id="text_6">
@@ -12105,7 +12109,7 @@ z
     <g id="ytick_4">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mbbbe38d130" y="65.806125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m99cb25c848" y="65.806125"/>
       </g>
      </g>
      <g id="text_7">
@@ -12152,7 +12156,7 @@ z
     <g id="ytick_5">
      <g id="line2d_8">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mbbbe38d130" y="44.062125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m99cb25c848" y="44.062125"/>
       </g>
      </g>
      <g id="text_8">
@@ -12208,7 +12212,7 @@ z
     <g id="ytick_6">
      <g id="line2d_9">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mbbbe38d130" y="22.318125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m99cb25c848" y="22.318125"/>
       </g>
      </g>
      <g id="text_9">
@@ -12222,37 +12226,42 @@ z
     </g>
    </g>
    <g id="line2d_10">
-    <path clip-path="url(#pabc68aef05)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
 L 30.103125 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_11">
-    <path clip-path="url(#pabc68aef05)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
 L 44.419118 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_12">
-    <path clip-path="url(#pabc68aef05)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
 L 58.735111 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_13">
-    <path clip-path="url(#pabc68aef05)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
 L 73.051105 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_14">
-    <path clip-path="url(#pabc68aef05)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
 L 87.367098 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_15">
-    <path clip-path="url(#pabc68aef05)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
+L 157.051834 22.318125 
+" style="fill:none;stroke:#000000;stroke-linecap:square;stroke-width:1.5;"/>
+   </g>
+   <g id="line2d_16">
+    <path clip-path="url(#p0e98e50c34)" d="M 118.875852 131.038125 
 L 202.040091 22.318125 
 " style="fill:none;stroke:#ff0000;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
-   <g id="line2d_16">
-    <path clip-path="url(#pabc68aef05)" d="M 30.103125 131.038125 
+   <g id="line2d_17">
+    <path clip-path="url(#p0e98e50c34)" d="M 30.103125 131.038125 
 L 207.64858 131.038125 
 " style="fill:none;stroke:#000000;stroke-dasharray:1.85,0.8;stroke-dashoffset:0;stroke-width:0.5;"/>
    </g>
@@ -12527,9 +12536,9 @@ z
    </g>
    <g id="matplotlib.axis_3">
     <g id="xtick_4">
-     <g id="line2d_17">
+     <g id="line2d_18">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_11">
@@ -12540,9 +12549,9 @@ z
      </g>
     </g>
     <g id="xtick_5">
-     <g id="line2d_18">
+     <g id="line2d_19">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="287.544034" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="287.544034" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_12">
@@ -12553,9 +12562,9 @@ z
      </g>
     </g>
     <g id="xtick_6">
-     <g id="line2d_19">
+     <g id="line2d_20">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="331.930398" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="331.930398" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_13">
@@ -12566,9 +12575,9 @@ z
      </g>
     </g>
     <g id="xtick_7">
-     <g id="line2d_20">
+     <g id="line2d_21">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="376.316761" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="376.316761" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_14">
@@ -12613,9 +12622,9 @@ z
      </g>
     </g>
     <g id="xtick_8">
-     <g id="line2d_21">
+     <g id="line2d_22">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="420.703125" xlink:href="#m2a5c782ecc" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="420.703125" xlink:href="#m7d7b079ee9" y="131.038125"/>
       </g>
      </g>
      <g id="text_15">
@@ -12705,9 +12714,9 @@ z
    </g>
    <g id="matplotlib.axis_4">
     <g id="ytick_7">
-     <g id="line2d_22">
+     <g id="line2d_23">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mbbbe38d130" y="125.331941"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m99cb25c848" y="125.331941"/>
       </g>
      </g>
      <g id="text_17">
@@ -12721,9 +12730,9 @@ z
      </g>
     </g>
     <g id="ytick_8">
-     <g id="line2d_23">
+     <g id="line2d_24">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mbbbe38d130" y="101.005033"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m99cb25c848" y="101.005033"/>
       </g>
      </g>
      <g id="text_18">
@@ -12763,9 +12772,9 @@ z
      </g>
     </g>
     <g id="ytick_9">
-     <g id="line2d_24">
+     <g id="line2d_25">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mbbbe38d130" y="76.678125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m99cb25c848" y="76.678125"/>
       </g>
      </g>
      <g id="text_19">
@@ -12778,9 +12787,9 @@ z
      </g>
     </g>
     <g id="ytick_10">
-     <g id="line2d_25">
+     <g id="line2d_26">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mbbbe38d130" y="52.351217"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m99cb25c848" y="52.351217"/>
       </g>
      </g>
      <g id="text_20">
@@ -12793,9 +12802,9 @@ z
      </g>
     </g>
     <g id="ytick_11">
-     <g id="line2d_26">
+     <g id="line2d_27">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mbbbe38d130" y="28.024309"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m99cb25c848" y="28.024309"/>
       </g>
      </g>
      <g id="text_21">
@@ -12915,8 +12924,8 @@ z
      </g>
     </g>
    </g>
-   <g id="line2d_27">
-    <path clip-path="url(#pcef63e0305)" d="M 281.865033 -1 
+   <g id="line2d_28">
+    <path clip-path="url(#p215f27cdde)" d="M 281.865033 -1 
 L 284.228644 1.739331 
 L 286.937119 4.776438 
 L 289.645593 7.720964 
@@ -12954,8 +12963,8 @@ L 373.608287 74.955238
 L 376.316761 76.678125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
-   <g id="line2d_28">
-    <path clip-path="url(#pcef63e0305)" d="M 376.316761 76.678125 
+   <g id="line2d_29">
+    <path clip-path="url(#p215f27cdde)" d="M 376.316761 76.678125 
 L 377.222606 77.250425 
 L 378.12845 77.820794 
 L 379.034294 78.389253 
@@ -13007,91 +13016,95 @@ L 419.797281 102.254524
 L 420.703125 102.751626 
 " style="fill:none;stroke:#0000ff;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
    </g>
-   <g id="line2d_29">
-    <path clip-path="url(#pcef63e0305)" d="M 248.46775 169.594375 
-L 248.982248 164.434047 
-L 249.879034 157.179798 
-L 250.77582 151.137718 
-L 251.672606 145.979765 
-L 252.569391 141.48999 
-L 253.466177 137.519644 
-L 254.362963 133.962471 
-L 255.259748 130.74028 
-L 256.156534 127.794074 
-L 257.05332 125.078396 
-L 257.950106 122.557575 
-L 258.846891 120.203179 
-L 259.743677 117.992229 
-L 260.640463 115.905927 
-L 261.537248 113.928726 
-L 262.434034 112.047641 
-L 263.33082 110.251736 
-L 264.227606 108.531723 
-L 265.124391 106.879657 
-L 266.021177 105.288699 
-L 266.917963 103.752924 
-L 267.814748 102.267172 
-L 268.711534 100.826925 
-L 269.60832 99.428207 
-L 270.505106 98.067507 
-L 271.401891 96.741708 
-L 272.298677 95.448035 
-L 273.195463 94.184006 
-L 274.092248 92.947395 
-L 274.989034 91.736199 
-L 275.88582 90.548612 
-L 276.782606 89.382997 
-L 277.679391 88.23787 
-L 278.576177 87.111879 
-L 279.472963 86.003794 
-L 280.369748 84.912488 
-L 281.266534 83.836929 
-L 282.16332 82.776172 
-L 283.060106 81.729345 
-L 283.956891 80.695646 
-L 284.853677 79.674334 
-L 285.750463 78.664726 
-L 286.647248 77.666185 
-L 287.544034 76.678125 
-" style="fill:none;stroke:#ff0000;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
-   </g>
    <g id="line2d_30">
-    <path clip-path="url(#pcef63e0305)" d="M 287.544034 76.678125 
-L 290.261567 73.742598 
-L 292.979099 70.885273 
-L 295.696631 68.09538 
-L 298.414164 65.364064 
-L 301.131696 62.683981 
-L 303.849229 60.04898 
-L 306.566761 57.453867 
-L 309.284294 54.894229 
-L 312.001826 52.366286 
-L 314.719359 49.866785 
-L 317.436891 47.392905 
-L 320.154424 44.942192 
-L 322.871956 42.512499 
-L 325.589489 40.101937 
-L 328.307021 37.70884 
-L 331.024554 35.331732 
-L 333.742086 32.969299 
-L 336.459619 30.620369 
-L 339.177151 28.283893 
-L 341.894683 25.958927 
-L 344.612216 23.644623 
-L 347.329748 21.340213 
-L 350.047281 19.045002 
-L 352.764813 16.75836 
-L 355.482346 14.479712 
-L 358.199878 12.208535 
-L 360.917411 9.944351 
-L 363.634943 7.68672 
-L 366.352476 5.435241 
-L 369.070008 3.189544 
-L 371.787541 0.949287 
-L 374.157539 -1 
-" style="fill:none;stroke:#ff0000;stroke-linecap:square;stroke-width:1.5;"/>
+    <path clip-path="url(#p215f27cdde)" d="M 243.601534 163.009124 
+L 245.266998 151.527276 
+L 246.932462 144.362749 
+L 248.597926 138.673055 
+L 250.26339 133.806146 
+L 251.928853 129.483404 
+L 253.594317 125.555034 
+L 255.259781 121.92948 
+L 256.925245 118.545933 
+L 258.590709 115.361566 
+L 260.256173 112.344864 
+L 261.921637 109.471839 
+L 263.587101 106.723729 
+L 265.252564 104.085534 
+L 266.918028 101.545033 
+L 268.583492 99.092114 
+L 270.248956 96.718301 
+L 271.91442 94.4164 
+L 273.579884 92.180246 
+L 275.245348 90.004509 
+L 276.910812 87.88454 
+L 278.576275 85.816259 
+L 280.241739 83.796061 
+L 281.907203 81.82074 
+L 283.572667 79.887432 
+L 285.238131 77.993565 
+L 286.903595 76.13682 
+L 288.569059 74.315095 
+L 290.234522 72.52648 
+L 291.899986 70.769235 
+L 293.56545 69.041762 
+L 295.230914 67.3426 
+L 296.896378 65.670399 
+L 298.561842 64.023916 
+L 300.227306 62.401999 
+L 301.89277 60.803581 
+L 303.558233 59.227668 
+L 305.223697 57.673337 
+L 306.889161 56.139724 
+L 308.554625 54.626022 
+L 310.220089 53.131475 
+L 311.885553 51.655374 
+L 313.551017 50.197052 
+L 315.216481 48.755882 
+L 316.881944 47.331272 
+L 318.547408 45.922665 
+L 320.212872 44.529533 
+L 321.878336 43.151377 
+L 323.5438 41.787724 
+L 325.209264 40.438125 
+" style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_31">
+    <path clip-path="url(#p215f27cdde)" d="M 325.209264 40.438125 
+L 327.158118 38.876158 
+L 329.106972 37.332207 
+L 331.055827 35.805664 
+L 333.004681 34.295952 
+L 334.953535 32.802527 
+L 336.90239 31.324872 
+L 338.851244 29.862498 
+L 340.800098 28.414941 
+L 342.748953 26.981759 
+L 344.697807 25.562533 
+L 346.646661 24.156862 
+L 348.595515 22.764366 
+L 350.54437 21.38468 
+L 352.493224 20.017458 
+L 354.442078 18.662367 
+L 356.390933 17.319091 
+L 358.339787 15.987325 
+L 360.288641 14.66678 
+L 362.237496 13.357175 
+L 364.18635 12.058243 
+L 366.135204 10.769728 
+L 368.084059 9.491383 
+L 370.032913 8.22297 
+L 371.981767 6.964263 
+L 373.930622 5.715041 
+L 375.879476 4.475092 
+L 377.82833 3.244215 
+L 379.777184 2.022212 
+L 381.726039 0.808894 
+L 383.674893 -0.395921 
+L 384.658824 -1 
+" style="fill:none;stroke:#0000ff;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
+   </g>
+   <g id="line2d_32">
     <defs>
      <path d="M 0 5 
 C 1.326016 5 2.597899 4.473168 3.535534 3.535534 
@@ -13103,20 +13116,25 @@ C -4.473168 -2.597899 -5 -1.326016 -5 0
 C -5 1.326016 -4.473168 2.597899 -3.535534 3.535534 
 C -2.597899 4.473168 -1.326016 5 0 5 
 z
-" id="mab1ad5ab55" style="stroke:#000000;"/>
+" id="mbfa5f15c46" style="stroke:#000000;"/>
     </defs>
-    <g clip-path="url(#pcef63e0305)">
-     <use style="stroke:#000000;" x="376.316761" xlink:href="#mab1ad5ab55" y="76.678125"/>
-    </g>
-   </g>
-   <g id="line2d_32">
-    <g clip-path="url(#pcef63e0305)">
-     <use style="stroke:#000000;" x="325.209264" xlink:href="#mab1ad5ab55" y="40.438125"/>
+    <g clip-path="url(#p215f27cdde)">
+     <use style="stroke:#000000;" x="376.316761" xlink:href="#mbfa5f15c46" y="76.678125"/>
     </g>
    </g>
    <g id="line2d_33">
-    <g clip-path="url(#pcef63e0305)">
-     <use style="stroke:#000000;" x="287.544034" xlink:href="#mab1ad5ab55" y="76.678125"/>
+    <g clip-path="url(#p215f27cdde)">
+     <use style="stroke:#000000;" x="325.209264" xlink:href="#mbfa5f15c46" y="40.438125"/>
+    </g>
+   </g>
+   <g id="line2d_34">
+    <g clip-path="url(#p215f27cdde)">
+     <use style="stroke:#000000;" x="325.209264" xlink:href="#mbfa5f15c46" y="40.438125"/>
+    </g>
+   </g>
+   <g id="line2d_35">
+    <g clip-path="url(#p215f27cdde)">
+     <use style="stroke:#000000;" x="287.544034" xlink:href="#mbfa5f15c46" y="76.678125"/>
     </g>
    </g>
    <g id="patch_8">
@@ -13344,10 +13362,10 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pabc68aef05">
+  <clipPath id="p0e98e50c34">
    <rect height="108.72" width="177.545455" x="30.103125" y="22.318125"/>
   </clipPath>
-  <clipPath id="pcef63e0305">
+  <clipPath id="p215f27cdde">
    <rect height="108.72" width="177.545455" x="243.15767" y="22.318125"/>
   </clipPath>
  </defs>
@@ -13365,7 +13383,16 @@ z
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Hyperbolic-structure">Hyperbolic structure<a class="anchor-link" href="#Hyperbolic-structure">&#182;</a></h2><p>We can write (\ref{SW-tracer}) in the canonical form $q_t + f(q)_x = 0$ if we define<br>
+<p><em>In the live notebook you can select which set of characteristics to plot. Note that the characteristics corresponding to the tracer are equivalent to the particle paths of the water that were shown in similar examples in <a href="Shallow_water.html">Shallow_water.html</a>. This is because the characteristic speed is equal to $u$, the fluid velocity.</em></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hyperbolic-structure">Hyperbolic structure<a class="anchor-link" href="#Hyperbolic-structure">&#182;</a></h2><p>The canonical form (\ref{SW-tracer}) arises by defining 
 \begin{align}
 q &amp; = \begin{pmatrix} h \\ hu \\ h \phi \end{pmatrix} &amp; f &amp; = \begin{pmatrix} hu \\ hu^2 + \frac{1}{2}gh^2 \\ uh\phi\end{pmatrix}.
 \end{align}<br>
@@ -13397,7 +13424,17 @@ We see immediately that the tracer wave carries only a jump in the tracer itself
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Linear-degeneracy">Linear degeneracy<a class="anchor-link" href="#Linear-degeneracy">&#182;</a></h2><p>The speed of the tracer wave depends only on $u$, and $u$ is constant across the tracer wave.  This means that tracer characteristics can neither converge nor diverge due to a jump in $\phi$, but rather run parallel to it.  Characteristic fields with this property are referred to as being <strong>linearly degenerate</strong>.  We will see another example of a linearly degenerate family in the next chapter.</p>
+<h2 id="Linear-degeneracy">Linear degeneracy<a class="anchor-link" href="#Linear-degeneracy">&#182;</a></h2><p>The speed of the tracer wave depends only on $u$, and $u$ is constant across the tracer wave.  This means that tracer characteristics can neither converge nor diverge due to a jump in $\phi$, but rather run parallel to it.  Characteristic fields with this property are referred to as being <strong>linearly degenerate</strong> since the Riemann solution to the linear advection equation has this same property, that the characteristic speed is independent of changes in the variable that jumps across the wave.</p>
+<p>If we compute the gradient of the eigenvalue $\lambda_\text{tracer}$ by differentiating $u = hu/h$ with respect to each of the component of $q=(h, hu, h\phi)$, we obtain
+\begin{align} \label{SW:gradu}
+\nabla \lambda_\text{tracer} = \begin{bmatrix} -hu/h^2\\ 1/h \\ 0\end{bmatrix}.
+\end{align}
+Note that this vector is orthogonal to the corresponding eigenvector,
+\begin{align} \label{SW:lindeg}
+\nabla \lambda_\text{tracer} \cdot r_\text{tracer} \equiv 0
+\end{align}
+for all values of $q$.  This is the general mathematical condition for a linearly degenerate field, since it shows that the eigenvalue is unchanged as we move along integral curves of the corresponding eigenvalue.</p>
+<p>We will see another example of a linearly degenerate family in the next chapter, <a href="Euler.html">Euler.html</a>, where we will see that the Riemann solution to the Euler equations has a very similar structure to that of the shallow water equations with a tracer.  In general it consists of two nonlinear acoustic waves that can be either shock or rarefaction waves, depending on the initial data, and an intermediate contact discontinuity that propagates with the intermediate fluid velocity, and across which the fluid velocity is constant.</p>
 
 </div>
 </div>

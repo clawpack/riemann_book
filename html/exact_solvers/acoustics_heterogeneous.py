@@ -3,9 +3,6 @@ Exact Riemann solver for the acoustic wave equation in 1D in
 heterogeneous media.
 """
 import sys, os
-top_dir = os.path.abspath('..')
-if top_dir not in sys.path:
-    sys.path.append(top_dir)
 import numpy as np
 from utils import riemann_tools
 

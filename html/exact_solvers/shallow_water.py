@@ -1,7 +1,4 @@
 import sys, os
-top_dir = os.path.abspath('..')
-if top_dir not in sys.path:
-    sys.path.append(top_dir)
 import numpy as np
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
@@ -35,7 +32,8 @@ def conservative_to_primitive(h, hu):
 def cons_to_prim(q):
     return conservative_to_primitive(*q)
 
-def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs=False):
+def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None,
+                           primitive_inputs=False, include_contact=False):
     """Return the exact solution to the Riemann problem with initial states q_l, q_r.
        The solution is given in terms of a list of states, a list of speeds (each of which
        may be a pair in case of a rarefaction fan), and a function reval(xi) that gives the
@@ -186,6 +184,12 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None, primitive_inputs
     else:
         speeds[1] = (ws[2],ws[3])
 
+    if include_contact:
+        states = np.column_stack([q_l,q_m,q_m,q_r])
+        um = q_m[1]/q_m[0]
+        speeds = [speeds[0],um,speeds[1]]
+        wave_types = [wave_types[0],'contact',wave_types[1]]
+        
     def reval(xi):
         """
         Function that evaluates the Riemann solution for arbitrary xi = x/t.
@@ -321,11 +325,12 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
     plt.ylabel("hu = momentum",fontsize=15)
 
 def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', 
-                     approx_states=None, hmin=0, color='g'):
+                     approx_states=None, hmin=0, color='g', include_contact=False):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
-                        exact_riemann_solution(q_l, q_r, g, force_waves=force_waves)
+                        exact_riemann_solution(q_l, q_r, g, force_waves=force_waves,
+                                                include_contact=include_contact)
 
     # Set plot bounds
     if ax is None:
@@ -385,7 +390,11 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
     for xp,yp in zip(x,y):
         ax.plot(xp,yp,'ok',markersize=10, label='Exact solution states')
     # Label states
-    for i,label in enumerate(('Left', 'Middle', 'Right')):
+    if include_contact:
+        state_labels = ('Left', 'Middle', '', 'Right')
+    else:
+        state_labels = ('Left', 'Middle', 'Right')
+    for i,label in enumerate(state_labels):
         ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax, label)
 
     if approx_states is not None:
@@ -709,14 +718,16 @@ def macro_riemann_plot(which,context='notebook',figsize=(10,3)):
         return fig
 
 def make_plot_functions(h_l, h_r, u_l, u_r,
-                        g=1.,force_waves=None,extra_lines=None,stripes=True):
+                        g=1.,force_waves=None,extra_lines=None,stripes=True,
+                        include_contact=False):
     
     q_l  = State(Depth = h_l,
                  Momentum = h_l*u_l)
     q_r = State(Depth = h_r,
                 Momentum = h_r*u_r)
     states, speeds, reval, wave_types = \
-        exact_riemann_solution(q_l,q_r,g, force_waves=force_waves)
+        exact_riemann_solution(q_l,q_r,g, force_waves=force_waves, 
+                               include_contact=include_contact)
         
     plot_function_stripes = make_demo_plot_function(h_l,h_r,u_l,u_r,
                                             figsize=(7,2),hlim=(0,4.5),ulim=(-2,2),
@@ -737,27 +748,38 @@ def make_plot_functions(h_l, h_r, u_l, u_r,
                                                axes=ax,extra_lines=extra_lines)
         ax = plt.subplot(122)
         phase_plane_plot(q_l,q_r,g,ax=ax,
-                                       force_waves=force_waves,y_axis='u')
+                                       force_waves=force_waves,y_axis='u',
+                                       include_contact=include_contact)
         plt.title('Phase plane')
         plt.show()
     return plot_function_stripes, plot_function_xt_phase
 
 
-def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None, tracer=False):
+def plot_riemann_SW(h_l,h_r,u_l,u_r,g=1.,force_waves=None,extra_lines=None, 
+                    tracer=False, particle_paths=True):
     stripes = not tracer
     plot_function_stripes, plot_function_xt_phase = \
                 make_plot_functions(h_l,h_r,u_l,u_r,g,
-                                    force_waves,extra_lines,stripes=stripes)
+                                    force_waves,extra_lines,stripes=stripes,
+                                    include_contact=tracer)
     interact(plot_function_stripes, 
-             t=widgets.FloatSlider(value=0.,min=0,max=.9), fig=fixed(0))
+             t=widgets.FloatSlider(value=0.,min=0,max=.5), fig=fixed(0))
     if tracer:
         interact(plot_function_xt_phase, 
                  plot_1_chars=Checkbox(description='1-characteristics',
                                        value=False),
                  plot_2_chars=Checkbox(description='2-characteristics'),
                  plot_tracer_chars=Checkbox(description='Tracer characteristics'))
+    elif particle_paths:
+    
+        interact(plot_function_xt_phase, 
+                 plot_1_chars=Checkbox(description='1-characteristics',
+                                       value=False),
+                 plot_2_chars=Checkbox(description='2-characteristics'),
+                 plot_tracer_chars=Checkbox(description='Particle paths'))
     else:
         interact(plot_function_xt_phase, 
                  plot_1_chars=Checkbox(description='1-characteristics',
                                        value=False),
-                 plot_2_chars=Checkbox(description='2-characteristics'))
+                 plot_2_chars=Checkbox(description='2-characteristics'),
+                 plot_tracer_chars=fixed(value=False))  # suppress checkbox

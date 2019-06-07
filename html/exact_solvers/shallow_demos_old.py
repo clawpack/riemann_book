@@ -5,9 +5,6 @@ from collections import namedtuple
 
 from . import shallow_water
 
-top_dir = os.path.abspath('..')
-if top_dir not in sys.path:
-    sys.path.append(top_dir)
 from utils import riemann_tools
 
 figsize =(8,4)
