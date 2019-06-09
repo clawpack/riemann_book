@@ -32,46 +32,75 @@ From [https://github.com/clawpack/riemann_book](https://github.com/clawpack/riem
 """  
 #------------------------
 
-for pydir in ['exact_solvers', 'utils']:
+def make_highlighted_html(pydir, py_name):
+    pandir = os.path.join(pydir, 'pandoc')
+    os.system('mkdir -p %s' % pandir)
+    py_path = os.path.join(pydir, py_name)
 
-    os.chdir(pydir)
+    f = open(py_path).read()
 
-    os.system('mkdir -p pandoc')
-    index_file = os.path.join('pandoc','index.html')
-    index = open(index_file,'w')
-    index.write('<html><h1>Python code in %s</h1>\n' % pydir)
-    index.write('<ul>\n')
+    # make a new version for a .md file that has the code in a
+    # ```python ... ```  code block, and a title at the top:
 
-    py_files = glob.glob('*.py')
-    for py_name in py_files:
+    title = "---\ntitle: %s/%s\n" % (pydir,py_name)
 
-        #if py_name != 'burgers.py': continue  # to test on one file
+    f2 = title + header + f + '\n```\n'
 
-        f = open(py_name).read()
+    md_name = os.path.join(pydir, 'pandoc', os.path.splitext(py_name)[0] + '.md')
+    with open(md_name, 'w') as tfile:
+        tfile.write(f2)
 
-        # make a new version for a .md file that has the code in a
-        # ```python ... ```  code block, and a title at the top:
+    # run pandoc to perform syntax highlighting and produce html:
 
-        title = "---\ntitle: %s/%s\n" % (pydir,py_name)
+    html_name = os.path.join(pydir, 'pandoc', os.path.splitext(py_name)[0] + '.html')
+    cmd = 'pandoc %s -s --highlight-style %s -o %s' % (md_name,hstyle,html_name)
+    print(cmd)
+    os.system(cmd)
 
-        f2 = title + header + f + '\n```\n'
+    os.system('rm %s' % md_name)  # remove markdown version
 
-        md_name = os.path.join('pandoc', os.path.splitext(py_name)[0] + '.md')
-        with open(md_name, 'w') as tfile:
-            tfile.write(f2)
+if __name__=='__main__':
 
-        # run pandoc to perform syntax highlighting and produce html:
+    for pydir in ['exact_solvers', 'utils']:
 
-        html_name = os.path.join('pandoc', os.path.splitext(py_name)[0] + '.html')
-        cmd = 'pandoc %s -s --highlight-style %s -o %s' % (md_name,hstyle,html_name)
-        print(cmd)
-        os.system(cmd)
+        os.chdir(pydir)
 
-        os.system('rm %s' % md_name)  # remove markdown version
+        os.system('mkdir -p pandoc')
+        index_file = os.path.join('pandoc','index.html')
+        index = open(index_file,'w')
+        index.write('<html><h1>Python code in %s</h1>\n' % pydir)
+        index.write('<ul>\n')
 
-        index.write('<li> <a href="%s">%s</a>' \
-            % (os.path.splitext(py_name)[0] + '.html', py_name))
-    
-    index.write('</ul>\n</html>\n')
-    index.close()
-    os.chdir(topdir)
+        py_files = glob.glob('*.py')
+        for py_name in py_files:
+
+            #if py_name != 'burgers.py': continue  # to test on one file
+
+            f = open(py_name).read()
+
+            # make a new version for a .md file that has the code in a
+            # ```python ... ```  code block, and a title at the top:
+
+            title = "---\ntitle: %s/%s\n" % (pydir,py_name)
+
+            f2 = title + header + f + '\n```\n'
+
+            md_name = os.path.join('pandoc', os.path.splitext(py_name)[0] + '.md')
+            with open(md_name, 'w') as tfile:
+                tfile.write(f2)
+
+            # run pandoc to perform syntax highlighting and produce html:
+
+            html_name = os.path.join('pandoc', os.path.splitext(py_name)[0] + '.html')
+            cmd = 'pandoc %s -s --highlight-style %s -o %s' % (md_name,hstyle,html_name)
+            print(cmd)
+            os.system(cmd)
+
+            os.system('rm %s' % md_name)  # remove markdown version
+
+            index.write('<li> <a href="%s">%s</a>' \
+                % (os.path.splitext(py_name)[0] + '.html', py_name))
+        
+        index.write('</ul>\n</html>\n')
+        index.close()
+        os.chdir(topdir)
