@@ -181,7 +181,7 @@ def triplestate_animation(ql, qm, qr, numframes):
     ax1.set_title('Solution q(x)')
     ax1.set_xlabel('$x$')
     ax1.set_ylabel('$q$')
-    ax2.set_title('xt-plane')
+    ax2.set_title('Characteristics')
     ax2.set_xlabel('$x$')
     ax2.set_ylabel('$t$')
     matplotlib.rcParams['contour.negative_linestyle'] = 'solid'
