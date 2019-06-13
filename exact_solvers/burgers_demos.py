@@ -7,6 +7,7 @@ from clawpack import riemann
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import animation
+from IPython.display import HTML
 import numpy as np
 from utils import riemann_tools
 from . import burgers
@@ -143,7 +144,8 @@ def bump_animation(numframes):
         line.set_data(x,pressure)
         return line,
 
-    return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
+    anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
+    return HTML(anim.to_jshtml())
 
 def bump_pyclaw(numframes):
     """Returns pyclaw solution of bump initial condition."""
@@ -215,7 +217,8 @@ def triplestate_animation(ql, qm, qr, numframes):
         line[1].set_data(x,0*x+frame.t)
         return line
 
-    return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30, blit=False)
+    anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30, blit=False)
+    return HTML(anim.to_jshtml())
 
 def triplestate_pyclaw(ql, qm, qr, numframes):
     """Returns pyclaw solution of triple-state initial condition."""
