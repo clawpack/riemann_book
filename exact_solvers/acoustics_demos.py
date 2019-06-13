@@ -543,6 +543,7 @@ def bump_animation(numframes):
         return line,
 
     anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
+    plt.close('all')
     return HTML(anim.to_jshtml())
 
 
