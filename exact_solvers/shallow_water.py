@@ -565,20 +565,20 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
 
                     # set advected color for density plot:
                     if x_traj[0,j]<0:
-                        # shades of red for fluid starting from x<0
+                        # shades of blue for fluid starting from x<0
                         if np.mod(j,2)==0:
-                            c = 'lightblue'
+                            c = 'dodgerblue'
                             alpha = 1.0
                         else:
-                            c = 'dodgerblue'
+                            c = 'lightblue'
                             alpha = 1.0
                     else:
                         # shades of blue for fluid starting from x<0
                         if np.mod(j,2)==0:
-                            c = 'cornflowerblue'
+                            c = 'blue'
                             alpha = 1.0
                         else:
-                            c = 'blue'
+                            c = 'cornflowerblue'
                             alpha = 1.0
                     plt.fill_between(x[j1:j2],q[j1:j2],0,color=c,alpha=alpha)
 
