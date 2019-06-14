@@ -5,6 +5,7 @@ import sys, os
 from clawpack import pyclaw
 from clawpack import riemann
 from matplotlib import animation
+from IPython.display import HTML
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
@@ -541,7 +542,9 @@ def bump_animation(numframes):
         line[1].set_data(x,velocity)
         return line,
 
-    return animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
+    anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
+    plt.close('all')
+    return HTML(anim.to_jshtml())
 
 
 def bump_pyclaw(numframes):

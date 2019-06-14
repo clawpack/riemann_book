@@ -6,7 +6,7 @@ from . import nonconvex
 
 from utils import riemann_tools
 
-#figsize =(12,4)
+figsize =(8,4)
 
 def plot_waves(f,q_left, q_right, xi_left, xi_right, n=1000, axes=None, t=0.2):
     qtilde = nonconvex.osher_solution(f, q_left, q_right, 1000)
@@ -55,7 +55,7 @@ def make_plot_function(f, q_left, q_right, xi_left, xi_right):
         converting to html files.
         """
         if fig==0: 
-            plt.figure(figsize=(8,4));
+            plt.figure(figsize=figsize);
             
         # plot solution q(x,t):
         plt.subplot(1,3,1)
@@ -93,7 +93,7 @@ def make_plot_function(f, q_left, q_right, xi_left, xi_right):
 def demo1():
     f = lambda q: q*(1-q)
 
-    #plt.figure(figsize=(12,5))
+    plt.figure(figsize=figsize)
     plt.subplot(121)
 
     q_left = 0.6;  q_right = 0.1
@@ -120,7 +120,7 @@ def plot_flux(f, q_left, q_right, plot_zero=True):
     dfdq = np.diff(fvals) / (qvals[1]-qvals[0])  # approximate df/dq
     qmid = 0.5*(qvals[:-1] + qvals[1:])   # midpoints for plotting dfdq
 
-    #plt.figure(figsize=(12,4))
+    plt.figure(figsize=(8,3))  # figures look better this way
     plt.subplot(131)
     plt.plot(qvals,fvals)
     plt.xlabel('q')
@@ -156,7 +156,7 @@ def make_plot_function_qsliders(f):
         converting to html files.
         """
         if fig==0: 
-            plt.figure(figsize=(8,4))
+            plt.figure(figsize=figsize)
 
         xi_left = -3.
         xi_right = 3.
