@@ -474,7 +474,6 @@ def lambda_tracer(q, _, g=1.):
 def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
                             figsize=(10,3), hlim=(0,3.5), ulim=(-1,1),
                             force_waves=None, stripes=True):
-    from matplotlib.mlab import find
 
     g = 1.
 
@@ -546,19 +545,19 @@ def make_demo_plot_function(h_l=3., h_r=1., u_l=0., u_r=0,
             if i==0 and force_waves != 'raref':
                 # plot stripes only on depth plot
                 # (and suppress if nonphysical solution plotted)
-                n = find(t > t_traj)
+                n = np.where(t > t_traj)[0]
                 if len(n)==0:
                     n = 0
                 else:
                     n = min(n.max(), len(t_traj)-1)
 
                 for j in range(1, x_traj.shape[1]-1):
-                    j1 = find(x_traj[n,j] > x)
+                    j1 = np.where(x_traj[n,j] > x)[0]
                     if len(j1)==0:
                         j1 = 0
                     else:
                         j1 = min(j1.max(), len(x)-1)
-                    j2 = find(x_traj[n,j+1] > x)
+                    j2 = np.where(x_traj[n,j+1] > x)[0]
                     if len(j2)==0:
                         j2 = 0
                     else:
