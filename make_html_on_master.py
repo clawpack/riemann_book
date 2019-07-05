@@ -66,14 +66,15 @@ others = ['Traffic_variable_speed',
 all_chapters = part0 + part1 + part2 + others
 book_chapters = part0 + part1 + part2
 
-chapters = all_chapters  # which chapters to process
-
-# test on a subset:
-#chapters = part0 + ['Introduction']
+# which chapters to process:
+#chapters = all_chapters
 chapters = book_chapters
 
+# test on a small subset:
+#chapters = part0 + ['Introduction']
 
-template_path = os.path.realpath('./html.tpl')
+
+template_path = os.path.realpath('files_for_html/html.tpl')
 
 
 os.system('mkdir -p build_html')  # for intermediate processing
@@ -81,7 +82,7 @@ os.system('mkdir -p build_html')  # for intermediate processing
 os.system('cp -r exact_solvers build_html/')
 os.system('cp -r utils build_html/')
 os.system('cp -r figures build_html/')
-os.system('cp custom.css build_html/')
+os.system('cp files_for_html/custom.css build_html/')
 os.system('cp html_animations/* build_html/')
 
 # Putting figures inside an img folder doesn't seem to be needed now:
