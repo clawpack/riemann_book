@@ -82,6 +82,7 @@ os.system('mkdir -p build_html')  # for intermediate processing
 os.system('cp -r exact_solvers build_html/')
 os.system('cp -r utils build_html/')
 os.system('cp -r figures build_html/')
+os.system('cp -r phase_plane build_html/')
 os.system('cp files_for_html/custom.css build_html/')
 os.system('cp html_animations/* build_html/')
 
