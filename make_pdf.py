@@ -37,8 +37,7 @@ chapters = part0 + part1 + part2
 # For testing purposes:
 if 0:
     chapters = ['Preface',
-                'Introduction',
-                'Euler']
+                'Introduction']
 
 
 build_dir = 'build_pdf/'
@@ -47,13 +46,11 @@ if not os.path.exists(build_dir):
 
 os.system('cp -r exact_solvers '+build_dir)
 os.system('cp -r utils '+build_dir)
-os.system('cp *.html '+build_dir)
 os.system('cp -r figures '+build_dir)
-os.system('cp riemann.tplx '+build_dir)
-os.system('cp *.cls '+build_dir)
-os.system('cp *.css '+build_dir)
+os.system('cp files_for_latex_pdf/riemann.tplx '+build_dir)
+os.system('cp files_for_latex_pdf/SIAMbook2016.cls '+build_dir)
 os.system('cp riemann.bib '+build_dir)
-os.system('cp latexdefs.tex '+build_dir)
+os.system('cp files_for_latex_pdf/latexdefs.tex '+build_dir)
 
 # fix interact import statements in exact_solver demo codes:
 os.chdir(os.path.join(build_dir, 'exact_solvers'))
@@ -103,10 +100,10 @@ for i, chapter in enumerate(chapters):
 
 os.chdir(build_dir)
 os.system('python3 -m bookbook.latex --output-file riemann --template riemann.tplx')
-os.system('python3 ../fix_latex_file.py')
+os.system('python3 ../files_for_latex_pdf/fix_latex_file.py')
 os.system('pdflatex riemann')
 os.system('bibtex riemann')
 os.system('pdflatex riemann')
 os.system('pdflatex riemann')
-os.system('cp riemann.pdf ..')
+os.system('cp riemann.pdf ../RiemannProblemsJupyterSolutions.pdf')
 os.chdir('..')
