@@ -35,9 +35,9 @@ part2 = ['Approximate_solvers',
 chapters = part0 + part1 + part2
 
 # For testing purposes:
-if 0:
-    chapters = ['Preface',
-                'Introduction']
+if 1:
+    chapters = ['Shallow_water',
+                'Shallow_tracer']
 
 
 build_dir = 'build_pdf/'
