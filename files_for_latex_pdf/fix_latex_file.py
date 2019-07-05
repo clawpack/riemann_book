@@ -35,6 +35,8 @@ while result:
     result = regexp.search(lines)
 
 # fix links to .py modules in exact_solvers:
+# We now include links to github in the notebooks, so change these
+# urls to not create a footnote at all:
 
 regexp = re.compile(r"\\url{exact_solvers/(?P<modname>[^}]*).py}")
 result = regexp.search(lines)
@@ -45,7 +47,8 @@ while result:
     modlink = 'http://www.clawpack.org/riemann_book/html/' + modpath
     oldpat = r'\url{' + modpath
     modpath = modpath.replace('_',r'\_')
-    newpat = r'\hreffoot{%s}{%s' % (modlink, modpath)
+    #newpat = r'\hreffoot{%s}{%s' % (modlink, modpath)
+    newpat = r'{%s' % modpath
     lines = lines.replace(oldpat, newpat)
     result = regexp.search(lines)
 
