@@ -39,6 +39,7 @@ if 1:
     chapters = ['Shallow_water',
                 'Shallow_tracer']
 
+# Create build_dir directory and copy notebooks, templates, etc. into it:
 
 build_dir = 'build_pdf/'
 if not os.path.exists(build_dir):
@@ -70,7 +71,8 @@ for file in files:
             
 os.chdir('../..')
 
-# execute all the notebooks:
+# edit each notebook to modify interact imports, 
+# then execute the notebook using nbcovert:
 
 for i, chapter in enumerate(chapters):
     filename = chapter + '.ipynb'
@@ -79,12 +81,16 @@ for i, chapter in enumerate(chapters):
     output_filename = str(i).zfill(2)+'-'+filename
     with open(build_dir+output_filename, "w") as output:
         for line in lines:
-            for j, chapter_name in enumerate(chapters):
+            #for j, chapter_name in enumerate(chapters):
                 # fix cross references to other chapters
-                line = re.sub(chapter_name+'.ipynb',
-                              str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
-            line = re.sub(r"context = 'notebook'", "context = 'pdf'", line)
-            # The next part is deprecated
+                # should be handled automatically
+                # line = re.sub(chapter_name+'.ipynb',
+                #               str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+
+            # not using context now, so this line not needed:
+            #line = re.sub(r"context = 'notebook'", "context = 'pdf'", line)
+
+            # replace widgets:
             line = re.sub(r'from ipywidgets import interact',
                           'from utils.snapshot_widgets import interact', line)
             line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.',
@@ -92,18 +98,34 @@ for i, chapter in enumerate(chapters):
             #line = re.sub(r"#sns.set_context('paper')",
             #              r"sns.set_context('paper')", line)
             output.write(line)
+
+    # execute to create output with snapshot_widgets:
     args = ["jupyter", "nbconvert", "--to", "notebook", "--execute",
             "--ExecutePreprocessor.kernel_name=python",
             "--output", output_filename,
             "--ExecutePreprocessor.timeout=60", build_dir+output_filename]
     subprocess.check_call(args)
 
+# Use bookbook to combine all the notebooks into a latex file:
+#     see https://github.com/takluyver/bookbook
+
 os.chdir(build_dir)
 os.system('python3 -m bookbook.latex --output-file riemann --template riemann.tplx')
+
+# Apply some fixes to the latex file:
 os.system('python3 ../files_for_latex_pdf/fix_latex_file.py')
+
+# Use pdflatex and bibtex as usual to build the pdf file
 os.system('pdflatex riemann')
 os.system('bibtex riemann')
 os.system('pdflatex riemann')
 os.system('pdflatex riemann')
-os.system('cp riemann.pdf ../RiemannProblemsJupyterSolutions.pdf')
+
 os.chdir('..')
+print('The pdf and latex files are in build_pdf directory')
+
+if 1:
+    # copy and rename pdf file if desired:
+    pdf_name = 'RiemannProblemsJupyterSolutions.pdf'
+    os.system('cp build_pdf/riemann.pdf %s' % pdf_name)
+    print('The pdf file has also been copied to %s' % pdf_name)
