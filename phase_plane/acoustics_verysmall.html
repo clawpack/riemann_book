@@ -1,0 +1,505 @@
+
+
+<style>
+
+</style>
+
+<div id="fig_el170741397577382733607706160149"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+if(typeof(mpld3) !== "undefined" && mpld3._mpld3IsLoaded){
+   // already loaded: just create the figure
+   !function(mpld3){
+       
+    // init custom PPLane plugin
+    mpld3.register_plugin("drag", PPlanePlugin);
+    PPlanePlugin.prototype = Object.create(mpld3.Plugin.prototype);
+    PPlanePlugin.prototype.constructor = PPlanePlugin;
+    PPlanePlugin.prototype.requiredProps = ["id", "idmpoint", 
+                                            "idlinesla", "idlineslb", "idlinesra", "idlinesrb",  
+                                            "idqlm", "idqmm", "idqrm", "idqone", "idqtwo", 
+                                            "idrl0", "idrl1", "idrr0", "idrr1"];
+    PPlanePlugin.prototype.defaultProps = {}
+    function PPlanePlugin(fig, props){
+        mpld3.Plugin.call(this, fig, props);
+        mpld3.insert_css("#" + fig.figid + " path.dragging",
+                         {"fill-opacity": "1.0 !important",
+                          "stroke-opacity": "1.0 !important"});
+    };
+
+    // Call draw function, this function is being looped all the time
+    PPlanePlugin.prototype.draw = function(){
+        // Get elements into script variables
+        var obj = mpld3.get_element(this.props.id);
+        var midpoint = mpld3.get_element(this.props.idmpoint);
+        var linesla = mpld3.get_element(this.props.idlinesla);
+        var lineslb = mpld3.get_element(this.props.idlineslb);
+        var linesra = mpld3.get_element(this.props.idlinesra);
+        var linesrb = mpld3.get_element(this.props.idlinesrb);
+        var qlm = mpld3.get_element(this.props.idqlm);
+        var qmm = mpld3.get_element(this.props.idqmm);
+        var qrm = mpld3.get_element(this.props.idqrm);
+        var qone = mpld3.get_element(this.props.idqone);
+        var qtwo = mpld3.get_element(this.props.idqtwo);
+        var rl0 = this.props.idrl0;
+        var rl1 = this.props.idrl1;
+        var rr0 = this.props.idrr0;
+        var rr1 = this.props.idrr1;
+        
+        // Set initial conditions for javascript calculations
+        var qleft = obj.offsets[0];
+        var qright = obj.offsets[1];
+        var qmid = midpoint.offsets[0];
+        var off = 7; //13
+        // Calculate slopes for eigenlines
+        var ml = rl1/rl0;
+        var mr = rr1/rr0;
+        
+        // Main d3 drag function
+        var drag = d3.behavior.drag()
+            .origin(function(d) { return {x:obj.ax.x(d[0]),
+                                          y:obj.ax.y(d[1])}; })                              
+            .on("dragstart", dragstarted)
+            .on("drag", dragged)
+            .on("dragend", dragended);
+    
+        // Set elements of ql and qr points and call main drag function
+        obj.elements()
+           .data(obj.offsets)
+           .style("cursor", "default")
+           .call(drag);      
+
+        // Begin drag function
+        function dragstarted(d) {
+          d3.event.sourceEvent.stopPropagation();
+          d3.select(this).classed("dragging", true);
+        }
+    
+        // The drag function called while dragging is happening (meat of code here)
+        function dragged(d,i) {
+          // Convert mouse coordinates in drag event (d3.event) to python coordinates d
+          d[0] = obj.ax.x.invert(d3.event.x);
+          d[1] = obj.ax.y.invert(d3.event.y);             
+          // Move ql and qr stored in obj (they have been selected in drag)
+          d3.select(this)
+            .attr("transform", "translate(" + [d3.event.x, d3.event.y] + ")");
+          // If obj corresponds to ql, move all the other left elements 
+          if (i==0){
+              // Move text marker
+              qlm.elements().transition().duration(1)
+                  .attr("transform", "translate(" + [d3.event.x + off, d3.event.y + off] + ")");
+                  
+              // Move eigenlines
+              for (var ii=0; ii<2; ii++) {
+                linesla.data[ii][1] = ml*(linesla.data[ii][0] - d[0]) + d[1];
+                lineslb.data[ii][1] = mr*(lineslb.data[ii][0] - d[0]) + d[1]; }
+                
+              // In script calculations of middle state
+              qleft = [d[0], d[1]];
+              var det = rl0*rr1 - rr0*rl1;
+              var alphal = (rr1*(qright[0] - qleft[0]) - rr0*(qright[1] - qleft[1]))/det
+              qmid[0] = qleft[0] + alphal*rl0;
+              qmid[1] = qleft[1] + alphal*rl1;
+              var xx = obj.ax.x(qmid[0]);
+              var yy = obj.ax.y(qmid[1]); 
+             
+                }
+          // if element corresponds to qr
+          else {
+              // Move text marker
+              qrm.elements().transition().duration(1)
+                  .attr("transform", "translate(" + [d3.event.x + off, d3.event.y + off] + ")");
+                  
+              // Move eigenlines
+              for (var ii=0; ii<2; ii++) {
+                linesra.data[ii][1] = ml*(linesra.data[ii][0] - d[0]) + d[1];
+                linesrb.data[ii][1] = mr*(linesrb.data[ii][0] - d[0]) + d[1]; }
+                
+              // In script calculations of middle state    
+              qright = [d[0], d[1]];
+              var det = rl0*rr1 - rr0*rl1;
+              var alphal = (rr1*(qright[0] - qleft[0]) - rr0*(qright[1] - qleft[1]))/det
+              qmid[0] = qleft[0] + alphal*rl0;
+              qmid[1] = qleft[1] + alphal*rl1;
+              var xx = obj.ax.x(qmid[0]);
+              var yy = obj.ax.y(qmid[1]);
+                }
+              // Update middle state point and marker position
+              midpoint.elements().transition().duration(5)
+                .attr("transform", "translate(" + [xx, yy] + ")");
+              qmm.elements().transition().duration(5)
+                .attr("transform", "translate(" + [xx + off, yy + off] + ")"); 
+                
+              // Update eigenlines
+              linesla.elements().transition().duration(5)
+                  .attr("d", linesla.datafunc(linesla.data));
+              lineslb.elements().transition().duration(5)
+                  .attr("d", lineslb.datafunc(lineslb.data));
+              linesra.elements().transition().duration(5)
+                  .attr("d", linesra.datafunc(linesra.data));
+              linesrb.elements().transition().duration(5)
+                  .attr("d", linesrb.datafunc(linesrb.data));
+                
+              // Update subplots of q1 and q2
+              qone.data[0][1] = qleft[0];
+              qone.data[1][1] = qleft[0];
+              qone.data[2][1] = qmid[0];
+              qone.data[3][1] = qmid[0];
+              qone.data[4][1] = qright[0];
+              qone.data[5][1] = qright[0];
+              qtwo.data[0][2] = qleft[1];
+              qtwo.data[1][2] = qleft[1];
+              qtwo.data[2][2] = qmid[1];
+              qtwo.data[3][2] = qmid[1];
+              qtwo.data[4][2] = qright[1];
+              qtwo.data[5][2] = qright[1];
+              qone.elements().transition().duration(5)
+                .attr("d", qone.datafunc(qone.data));
+              qtwo.elements().transition().duration(5)
+                .attr("d", qtwo.datafunc(qtwo.data));  
+        }
+        // End dragging
+        function dragended(d) {
+          d3.select(this).classed("dragging", false);
+        }
+    }
+    mpld3.register_plugin("drag", PPlanePlugin); 
+    
+       mpld3.draw_figure("fig_el170741397577382733607706160149", {"axes": [{"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "Pressure", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757738814352"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Velocity", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [-0.16335063437139563, 0.5], "rotation": -90.0, "id": "el17074139757738093392"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Phase Plane", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757737776272"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data01", "id": "el17074139757737946576"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data02", "id": "el17074139757736913872"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data03", "id": "el17074139757736448912"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data04", "id": "el17074139757736450512"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data09", "id": "el17074139757737084816"}], "markers": [{"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]], "alpha": 0.7, "xindex": 0, "data": "data05", "id": "el17074139757736493136pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.04975971544254065, 1.149392666590987], [-0.38729329852045247, 1.7226699965943926], [-0.9832746811972601, 2.0197146857380712], [-1.5773640594846179, 2.3148673704923], [-2.298217731865138, 2.3148673704923], [-3.3028720626631856, 2.3148673704923], [-3.874257388277141, 1.6375297990691342], [-4.443750709501646, 0.9601922276459687], [-4.443750709501646, -0.2279865289287466], [-4.443750709501646, -1.1853407499905395], [-4.091837893063912, -2.0783668218110263], [-3.739925076626178, -2.9713928936315126], [-3.083399553486964, -3.6808945396753314], [-2.6576985658606724, -4.142543610701177], [-2.105233284141219, -4.39039618571915], [-1.5527680024217654, -4.638248760737125], [-0.9435425890188069, -4.638248760737125], [-0.21133689030158553, -4.638248760737125], [0.26166420706096094, -4.348772089151247], [0.7346653044235065, -4.059295417565369], [0.9484618004313772, -3.4746660612252622], [1.1376622393763958, -4.467968365686608], [2.231240776478602, -4.467968365686608], [0.4641086767321303, 4.638248760737126], [-0.6313618647595263, 4.638248760737126], [-3.3142240889998864, -0.3888069020320124], [-3.3142240889998864, 0.48719113028342287], [-2.949067241836001, 0.9450561925303671], [-2.5820183902826654, 1.4029212547773116], [-1.8895447837438981, 1.4029212547773116], [-0.860294395882998, 1.4029212547773116], [-0.13376471033412862, 0.419078972263216], [0.5927649752147426, -0.5647633102508793], [0.5927649752147426, -1.9724145760018157], [0.5927649752147426, -2.8238165512543985], [0.21625610171415577, -3.2760056003329927], [-0.15836076739698068, -3.728194649411586], [-0.860294395882998, -3.728194649411586], [-1.374919589813448, -3.728194649411586], [-1.8138646081658911, -3.487910091951413], [-2.2509176221288834, -3.2495175388806894], [-2.5763423771143152, -2.787868467854845], [-2.918795171604798, -2.303515344155598], [-3.1174556324970677, -1.6526658341847353], [-3.3142240889998864, -1.003708328603322], [-3.3142240889998864, -0.3888069020320124], [4.2384682332463, -2.311272562152343], [4.999999999999998, -2.311272562152343], [3.7457902902334723, 4.129299579975026], [2.984258523479774, 4.129299579975026]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "L", "L", "L", "Z"]], "alpha": 1, "xindex": 0, "data": "data06", "id": "el17074139757736494672pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[-0.6506860476485343, 0.9899618681354498], [-1.027115992569175, 1.4837206270573284], [-1.5404295538245933, 1.7395626242544735], [-2.0521135482188835, 1.9937750545904902], [-2.67297852230877, 1.9937750545904902], [-3.538278525567904, 1.9937750545904902], [-4.030407717628655, 1.4103901183065544], [-4.520907342828276, 0.8270051820226187], [-4.520907342828276, -0.19636280676596152], [-4.520907342828276, -1.0209236384968874], [-4.21780790665841, -1.7900791969494507], [-3.914708470488544, -2.559234755402014], [-3.3492487696770197, -3.170322328325131], [-2.9825962259231495, -3.567936642440439], [-2.5067627024736825, -3.7814099012482476], [-2.030929179024215, -3.994883160056057], [-1.5062086497408989, -3.994883160056057], [-0.8755662744842416, -3.994883160056057], [-0.468174559202164, -3.745559430303425], [-0.06078284392008548, -3.496235700550793], [0.12335821138741387, -2.9926995404621453], [0.28631489750024475, -3.8482221425545093], [1.2282045432324091, -3.8482221425545093], [-0.29381090506143437, 3.994883160056057], [-1.2373301176547273, 3.994883160056057], [-3.5480559267346736, -0.33487598996186807], [-3.5480559267346736, 0.4196134667405407], [-3.2335495225369097, 0.8139686471335921], [-2.917413551478017, 1.2083238275266437], [-2.320992080305055, 1.2083238275266437], [-1.4345077078512531, 1.2083238275266437], [-0.8087540331779817, 0.3609490597399212], [-0.1830003585047093, -0.48642570804680063], [-0.1830003585047093, -1.6988234527262651], [-0.1830003585047093, -2.4321285402340056], [-0.5072841638692438, -2.821595020043673], [-0.8299384023726493, -3.211061499853338], [-1.4345077078512531, -3.211061499853338], [-1.8777498940781538, -3.211061499853338], [-2.2558094058599223, -3.004106508490043], [-2.6322393507805626, -2.7987810839878753], [-2.9125248508946324, -2.4011667698725674], [-3.207476452758857, -1.9839976534237198], [-3.3785809731773293, -1.4234266531955806], [-3.5480559267346736, -0.8644852198285695], [-3.5480559267346736, -0.33487598996186807], [4.874523351693121, 0.16980086692957075], [4.775282729850405, 0.11618811719844913], [4.646383991135156, 0.08767069712870357], [4.518625949222697, 0.05915327705895823], [4.3726167584656, 0.05915327705895823], [3.8478962291822842, 0.05915327705895823], [3.455496529022586, 0.45725646123260466], [3.0642375256656784, 0.8542189486034615], [2.935338786950429, 1.5215265782355054], [2.532672815565623, 3.556529674412541], [1.8767721539614772, 3.556529674412541], [2.657008767069714, -0.43590913535182296], [3.3129094286738585, -0.43590913535182296], [3.1885734771697685, 0.18462992536583833], [3.4486523482058473, -0.16100120587947653], [3.8102532346902187, -0.3457940879314274], [4.172994817977383, -0.5317276667861675], [4.582504970178926, -0.5317276667861675], [4.6897304696411695, -0.5317276667861675], [4.792393181892253, -0.5191800019554795], [4.896196590946126, -0.5077730339275817], [5.000000000000002, -0.4792556138578361]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "S", "S", "S", "S", "L", "L", "L", "L", "L", "S", "S", "S", "S", "Z"]], "alpha": 1, "xindex": 0, "data": "data07", "id": "el17074139757736496400pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]], "alpha": 0.9, "xindex": 0, "data": "data08", "id": "el17074139757737083472pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[-1.7132160977291755, 0.748115856361756], [-1.9976848431111764, 1.121250184719965], [-2.385596768632087, 1.3145904142653075], [-2.772277227722772, 1.506699177380425], [-3.24146593763854, 1.506699177380425], [-3.8953746120880743, 1.506699177380425], [-4.267277474016058, 1.065834195359835], [-4.637948869513817, 0.6249692133392448], [-4.637948869513817, -0.14839170484212572], [-4.637948869513817, -0.7715137185360326], [-4.408896113491946, -1.3527658736022854], [-4.179843357470075, -1.9340180286685382], [-3.7525245061819614, -2.3958179400029556], [-3.475444559381311, -2.6962957489778834], [-3.1158563617555783, -2.8576178513373724], [-2.7562681641298457, -3.0189399536968624], [-2.3597359735973598, -3.0189399536968624], [-1.8831584651002409, -3.0189399536968624], [-1.575291857543963, -2.83052558987242], [-1.267425249987685, -2.6421112260479775], [-1.1282695433722472, -2.2615880991084185], [-1.0051229003497357, -2.908107974976602], [-0.2933353036796209, -2.908107974976602], [-1.443524949509876, 3.018939953696863], [-2.156544012610216, 3.018939953696863], [-3.902763410669425, -0.2530663514112603], [-3.902763410669425, 0.3171026057829667], [-3.6650903896359783, 0.6151174818974439], [-3.426185902172307, 0.913132358011921], [-2.9754691887099156, 0.913132358011921], [-2.3055514506674544, 0.913132358011921], [-1.8326683414610119, 0.2727698142948627], [-1.3597852322545685, -0.36759272942219545], [-1.3597852322545685, -1.283803753509679], [-1.3597852322545685, -1.8379636471109793], [-1.604847051869366, -2.132284123934782], [-1.8486774050539378, -2.426604600758583], [-2.3055514506674544, -2.426604600758583], [-2.6405103196886848, -2.426604600758583], [-2.926210531500911, -2.270208364119994], [-3.210679276882912, -2.1150435939116297], [-3.4224915028816314, -1.8145657849367027], [-3.6453869267523764, -1.4993103787990738], [-3.7746909019260135, -1.0756859268016354], [-3.902763410669425, -0.6532929412344219], [-3.902763410669425, -0.2530663514112603], [4.956898674942121, 0.8662134870203443], [4.604329835968674, 2.6876754839663075], [4.108664597803065, 2.6876754839663075], [4.456061277769569, 0.8825919905423383], [4.477611940298507, 0.7670804393872228], [4.4879562583123995, 0.6834638687749376], [4.499162602827447, 0.5998472981626526], [4.499162602827447, 0.5403674695827797], [4.499162602827447, 0.2981380227575001], [4.363824442145708, 0.16366188857691788], [4.229348307965125, 0.02918575439633586], [3.9871188611398445, 0.02918575439633586], [3.62592975715482, 0.02918575439633586], [3.3431850647751347, 0.2998620757598154], [3.0604403723954476, 0.570538397123295], [2.976823801783164, 1.004137727205557], [2.645805625338654, 2.6876754839663075], [2.150140387173046, 2.6876754839663075], [2.5027092261464956, 0.8825919905423383], [2.5242598886754353, 0.7834589429092168], [2.534604206689326, 0.6989803457957742], [2.545810551204375, 0.6136397221811739], [2.545810551204375, 0.5464016550908827], [2.545810551204375, 0.3007241022609728], [2.4113344170237925, 0.16538594157923292], [2.276858282843211, 0.02918575439633586], [2.039800995024877, 0.02918575439633586], [1.6734397320329064, 0.02918575439633586], [1.389833013152062, 0.2998620757598154], [1.1070883207723758, 0.570538397123295], [1.0234717501600912, 1.004137727205557], [0.6924535737155804, 2.6876754839663075], [0.19678833554997333, 2.6876754839663075], [0.7864144623417575, -0.32941727008521715], [1.2820797005073654, -0.32941727008521715], [1.1881188118811883, 0.13952514654450576], [1.389833013152062, -0.125116989310871], [1.6605093345155417, -0.26304122949608333], [1.9320476823801798, -0.4018274961824533], [2.241515196295749, -0.4018274961824533], [2.569947293236787, -0.4018274961824533], [2.7811437860203947, -0.2294221959509375], [2.9932023053051564, -0.057016895719422145], [3.0363036303630366, 0.24986453869267566], [3.262154573666324, -0.06822324023447046], [3.559553716565688, -0.2345943549578835], [3.8578148859662083, -0.4018274961824533], [4.188833062410721, -0.4018274961824533], [4.5767449879316295, -0.4018274961824533], [4.7879414807152365, -0.1785626323826408], [5.0, 0.04470223141717211], [5.0, 0.4541648194670218], [5.0, 0.5429535490862524], [4.988793655484951, 0.6498448352297921], [4.97844933747106, 0.7558740948721744], [4.956898674942121, 0.8662134870203443]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "L", "L", "L", "S", "S", "S", "S", "S", "S", "L", "L", "L", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "L", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S"]], "alpha": 1, "xindex": 0, "data": "data09", "id": "el17074139757737084816pts"}], "id": "el17074139757737991376", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.050000000000000003, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}, {"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "x", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757738093840"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Pressure", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757737589840"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1.0, "xindex": 0, "linewidth": 2.0, "data": "data10", "id": "el17074139757737029776"}], "markers": [], "id": "el17074139757737946832", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.34621212121212119, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}, {"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "x", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757736937936"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Velocity", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757736734800"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 2, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1.0, "xindex": 0, "linewidth": 2.0, "data": "data10", "id": "el17074139757736988752"}], "markers": [], "id": "el17074139757737404944", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.64242424242424234, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}], "height": 216.0, "width": 612.0, "plugins": [{"idlinesla": "el17074139757737946576", "idlineslb": "el17074139757736913872", "idrr1": 1.0, "idrr0": 2.0, "idqtwo": "el17074139757736988752", "idlinesra": "el17074139757736448912", "idqone": "el17074139757737029776", "idqlm": "el17074139757736494672pts", "idqmm": "el17074139757737084816pts", "idrl0": -2.0, "idrl1": 1.0, "idqrm": "el17074139757736496400pts", "idlinesrb": "el17074139757736450512", "idmpoint": "el17074139757737083472pts", "type": "drag", "id": "el17074139757736493136pts"}], "data": {"data10": [[-5.0, -2.0, 2.0], [-2.0, -2.0, 2.0], [-2.0, 4.0, -1.0], [2.0, 4.0, -1.0], [2.0, 0.0, -3.0], [5.0, 0.0, -3.0]], "data08": [[4.0, -1.0]], "data09": [[4.4, -1.28]], "data06": [[-1.6, 1.6]], "data07": [[0.4, -3.4]], "data04": [[-5.00000000003, -0.5], [5.00000000003, -5.5]], "data05": [[-2.0, 2.0], [0.0, -3.0]], "data02": [[-5.00000000001, 0.49999999997], [5.00000000001, 5.50000000007]], "data03": [[-5.00000000002, -5.50000000005], [5.00000000002, -0.49999999995]], "data01": [[-5.0, 3.5], [5.0, -1.5]]}, "id": "el17074139757738273360"});
+   }(mpld3);
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "https://mpld3.github.io/js/d3.v3.min"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.3.js", function(){
+         
+    // init custom PPLane plugin
+    mpld3.register_plugin("drag", PPlanePlugin);
+    PPlanePlugin.prototype = Object.create(mpld3.Plugin.prototype);
+    PPlanePlugin.prototype.constructor = PPlanePlugin;
+    PPlanePlugin.prototype.requiredProps = ["id", "idmpoint", 
+                                            "idlinesla", "idlineslb", "idlinesra", "idlinesrb",  
+                                            "idqlm", "idqmm", "idqrm", "idqone", "idqtwo", 
+                                            "idrl0", "idrl1", "idrr0", "idrr1"];
+    PPlanePlugin.prototype.defaultProps = {}
+    function PPlanePlugin(fig, props){
+        mpld3.Plugin.call(this, fig, props);
+        mpld3.insert_css("#" + fig.figid + " path.dragging",
+                         {"fill-opacity": "1.0 !important",
+                          "stroke-opacity": "1.0 !important"});
+    };
+
+    // Call draw function, this function is being looped all the time
+    PPlanePlugin.prototype.draw = function(){
+        // Get elements into script variables
+        var obj = mpld3.get_element(this.props.id);
+        var midpoint = mpld3.get_element(this.props.idmpoint);
+        var linesla = mpld3.get_element(this.props.idlinesla);
+        var lineslb = mpld3.get_element(this.props.idlineslb);
+        var linesra = mpld3.get_element(this.props.idlinesra);
+        var linesrb = mpld3.get_element(this.props.idlinesrb);
+        var qlm = mpld3.get_element(this.props.idqlm);
+        var qmm = mpld3.get_element(this.props.idqmm);
+        var qrm = mpld3.get_element(this.props.idqrm);
+        var qone = mpld3.get_element(this.props.idqone);
+        var qtwo = mpld3.get_element(this.props.idqtwo);
+        var rl0 = this.props.idrl0;
+        var rl1 = this.props.idrl1;
+        var rr0 = this.props.idrr0;
+        var rr1 = this.props.idrr1;
+        
+        // Set initial conditions for javascript calculations
+        var qleft = obj.offsets[0];
+        var qright = obj.offsets[1];
+        var qmid = midpoint.offsets[0];
+        var off = 7; //13
+        // Calculate slopes for eigenlines
+        var ml = rl1/rl0;
+        var mr = rr1/rr0;
+        
+        // Main d3 drag function
+        var drag = d3.behavior.drag()
+            .origin(function(d) { return {x:obj.ax.x(d[0]),
+                                          y:obj.ax.y(d[1])}; })                              
+            .on("dragstart", dragstarted)
+            .on("drag", dragged)
+            .on("dragend", dragended);
+    
+        // Set elements of ql and qr points and call main drag function
+        obj.elements()
+           .data(obj.offsets)
+           .style("cursor", "default")
+           .call(drag);      
+
+        // Begin drag function
+        function dragstarted(d) {
+          d3.event.sourceEvent.stopPropagation();
+          d3.select(this).classed("dragging", true);
+        }
+    
+        // The drag function called while dragging is happening (meat of code here)
+        function dragged(d,i) {
+          // Convert mouse coordinates in drag event (d3.event) to python coordinates d
+          d[0] = obj.ax.x.invert(d3.event.x);
+          d[1] = obj.ax.y.invert(d3.event.y);             
+          // Move ql and qr stored in obj (they have been selected in drag)
+          d3.select(this)
+            .attr("transform", "translate(" + [d3.event.x, d3.event.y] + ")");
+          // If obj corresponds to ql, move all the other left elements 
+          if (i==0){
+              // Move text marker
+              qlm.elements().transition().duration(1)
+                  .attr("transform", "translate(" + [d3.event.x + off, d3.event.y + off] + ")");
+                  
+              // Move eigenlines
+              for (var ii=0; ii<2; ii++) {
+                linesla.data[ii][1] = ml*(linesla.data[ii][0] - d[0]) + d[1];
+                lineslb.data[ii][1] = mr*(lineslb.data[ii][0] - d[0]) + d[1]; }
+                
+              // In script calculations of middle state
+              qleft = [d[0], d[1]];
+              var det = rl0*rr1 - rr0*rl1;
+              var alphal = (rr1*(qright[0] - qleft[0]) - rr0*(qright[1] - qleft[1]))/det
+              qmid[0] = qleft[0] + alphal*rl0;
+              qmid[1] = qleft[1] + alphal*rl1;
+              var xx = obj.ax.x(qmid[0]);
+              var yy = obj.ax.y(qmid[1]); 
+             
+                }
+          // if element corresponds to qr
+          else {
+              // Move text marker
+              qrm.elements().transition().duration(1)
+                  .attr("transform", "translate(" + [d3.event.x + off, d3.event.y + off] + ")");
+                  
+              // Move eigenlines
+              for (var ii=0; ii<2; ii++) {
+                linesra.data[ii][1] = ml*(linesra.data[ii][0] - d[0]) + d[1];
+                linesrb.data[ii][1] = mr*(linesrb.data[ii][0] - d[0]) + d[1]; }
+                
+              // In script calculations of middle state    
+              qright = [d[0], d[1]];
+              var det = rl0*rr1 - rr0*rl1;
+              var alphal = (rr1*(qright[0] - qleft[0]) - rr0*(qright[1] - qleft[1]))/det
+              qmid[0] = qleft[0] + alphal*rl0;
+              qmid[1] = qleft[1] + alphal*rl1;
+              var xx = obj.ax.x(qmid[0]);
+              var yy = obj.ax.y(qmid[1]);
+                }
+              // Update middle state point and marker position
+              midpoint.elements().transition().duration(5)
+                .attr("transform", "translate(" + [xx, yy] + ")");
+              qmm.elements().transition().duration(5)
+                .attr("transform", "translate(" + [xx + off, yy + off] + ")"); 
+                
+              // Update eigenlines
+              linesla.elements().transition().duration(5)
+                  .attr("d", linesla.datafunc(linesla.data));
+              lineslb.elements().transition().duration(5)
+                  .attr("d", lineslb.datafunc(lineslb.data));
+              linesra.elements().transition().duration(5)
+                  .attr("d", linesra.datafunc(linesra.data));
+              linesrb.elements().transition().duration(5)
+                  .attr("d", linesrb.datafunc(linesrb.data));
+                
+              // Update subplots of q1 and q2
+              qone.data[0][1] = qleft[0];
+              qone.data[1][1] = qleft[0];
+              qone.data[2][1] = qmid[0];
+              qone.data[3][1] = qmid[0];
+              qone.data[4][1] = qright[0];
+              qone.data[5][1] = qright[0];
+              qtwo.data[0][2] = qleft[1];
+              qtwo.data[1][2] = qleft[1];
+              qtwo.data[2][2] = qmid[1];
+              qtwo.data[3][2] = qmid[1];
+              qtwo.data[4][2] = qright[1];
+              qtwo.data[5][2] = qright[1];
+              qone.elements().transition().duration(5)
+                .attr("d", qone.datafunc(qone.data));
+              qtwo.elements().transition().duration(5)
+                .attr("d", qtwo.datafunc(qtwo.data));  
+        }
+        // End dragging
+        function dragended(d) {
+          d3.select(this).classed("dragging", false);
+        }
+    }
+    mpld3.register_plugin("drag", PPlanePlugin); 
+    
+         mpld3.draw_figure("fig_el170741397577382733607706160149", {"axes": [{"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "Pressure", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757738814352"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Velocity", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [-0.16335063437139563, 0.5], "rotation": -90.0, "id": "el17074139757738093392"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Phase Plane", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757737776272"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data01", "id": "el17074139757737946576"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data02", "id": "el17074139757736913872"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data03", "id": "el17074139757736448912"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data04", "id": "el17074139757736450512"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data09", "id": "el17074139757737084816"}], "markers": [{"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]], "alpha": 0.7, "xindex": 0, "data": "data05", "id": "el17074139757736493136pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.04975971544254065, 1.149392666590987], [-0.38729329852045247, 1.7226699965943926], [-0.9832746811972601, 2.0197146857380712], [-1.5773640594846179, 2.3148673704923], [-2.298217731865138, 2.3148673704923], [-3.3028720626631856, 2.3148673704923], [-3.874257388277141, 1.6375297990691342], [-4.443750709501646, 0.9601922276459687], [-4.443750709501646, -0.2279865289287466], [-4.443750709501646, -1.1853407499905395], [-4.091837893063912, -2.0783668218110263], [-3.739925076626178, -2.9713928936315126], [-3.083399553486964, -3.6808945396753314], [-2.6576985658606724, -4.142543610701177], [-2.105233284141219, -4.39039618571915], [-1.5527680024217654, -4.638248760737125], [-0.9435425890188069, -4.638248760737125], [-0.21133689030158553, -4.638248760737125], [0.26166420706096094, -4.348772089151247], [0.7346653044235065, -4.059295417565369], [0.9484618004313772, -3.4746660612252622], [1.1376622393763958, -4.467968365686608], [2.231240776478602, -4.467968365686608], [0.4641086767321303, 4.638248760737126], [-0.6313618647595263, 4.638248760737126], [-3.3142240889998864, -0.3888069020320124], [-3.3142240889998864, 0.48719113028342287], [-2.949067241836001, 0.9450561925303671], [-2.5820183902826654, 1.4029212547773116], [-1.8895447837438981, 1.4029212547773116], [-0.860294395882998, 1.4029212547773116], [-0.13376471033412862, 0.419078972263216], [0.5927649752147426, -0.5647633102508793], [0.5927649752147426, -1.9724145760018157], [0.5927649752147426, -2.8238165512543985], [0.21625610171415577, -3.2760056003329927], [-0.15836076739698068, -3.728194649411586], [-0.860294395882998, -3.728194649411586], [-1.374919589813448, -3.728194649411586], [-1.8138646081658911, -3.487910091951413], [-2.2509176221288834, -3.2495175388806894], [-2.5763423771143152, -2.787868467854845], [-2.918795171604798, -2.303515344155598], [-3.1174556324970677, -1.6526658341847353], [-3.3142240889998864, -1.003708328603322], [-3.3142240889998864, -0.3888069020320124], [4.2384682332463, -2.311272562152343], [4.999999999999998, -2.311272562152343], [3.7457902902334723, 4.129299579975026], [2.984258523479774, 4.129299579975026]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "L", "L", "L", "Z"]], "alpha": 1, "xindex": 0, "data": "data06", "id": "el17074139757736494672pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[-0.6506860476485343, 0.9899618681354498], [-1.027115992569175, 1.4837206270573284], [-1.5404295538245933, 1.7395626242544735], [-2.0521135482188835, 1.9937750545904902], [-2.67297852230877, 1.9937750545904902], [-3.538278525567904, 1.9937750545904902], [-4.030407717628655, 1.4103901183065544], [-4.520907342828276, 0.8270051820226187], [-4.520907342828276, -0.19636280676596152], [-4.520907342828276, -1.0209236384968874], [-4.21780790665841, -1.7900791969494507], [-3.914708470488544, -2.559234755402014], [-3.3492487696770197, -3.170322328325131], [-2.9825962259231495, -3.567936642440439], [-2.5067627024736825, -3.7814099012482476], [-2.030929179024215, -3.994883160056057], [-1.5062086497408989, -3.994883160056057], [-0.8755662744842416, -3.994883160056057], [-0.468174559202164, -3.745559430303425], [-0.06078284392008548, -3.496235700550793], [0.12335821138741387, -2.9926995404621453], [0.28631489750024475, -3.8482221425545093], [1.2282045432324091, -3.8482221425545093], [-0.29381090506143437, 3.994883160056057], [-1.2373301176547273, 3.994883160056057], [-3.5480559267346736, -0.33487598996186807], [-3.5480559267346736, 0.4196134667405407], [-3.2335495225369097, 0.8139686471335921], [-2.917413551478017, 1.2083238275266437], [-2.320992080305055, 1.2083238275266437], [-1.4345077078512531, 1.2083238275266437], [-0.8087540331779817, 0.3609490597399212], [-0.1830003585047093, -0.48642570804680063], [-0.1830003585047093, -1.6988234527262651], [-0.1830003585047093, -2.4321285402340056], [-0.5072841638692438, -2.821595020043673], [-0.8299384023726493, -3.211061499853338], [-1.4345077078512531, -3.211061499853338], [-1.8777498940781538, -3.211061499853338], [-2.2558094058599223, -3.004106508490043], [-2.6322393507805626, -2.7987810839878753], [-2.9125248508946324, -2.4011667698725674], [-3.207476452758857, -1.9839976534237198], [-3.3785809731773293, -1.4234266531955806], [-3.5480559267346736, -0.8644852198285695], [-3.5480559267346736, -0.33487598996186807], [4.874523351693121, 0.16980086692957075], [4.775282729850405, 0.11618811719844913], [4.646383991135156, 0.08767069712870357], [4.518625949222697, 0.05915327705895823], [4.3726167584656, 0.05915327705895823], [3.8478962291822842, 0.05915327705895823], [3.455496529022586, 0.45725646123260466], [3.0642375256656784, 0.8542189486034615], [2.935338786950429, 1.5215265782355054], [2.532672815565623, 3.556529674412541], [1.8767721539614772, 3.556529674412541], [2.657008767069714, -0.43590913535182296], [3.3129094286738585, -0.43590913535182296], [3.1885734771697685, 0.18462992536583833], [3.4486523482058473, -0.16100120587947653], [3.8102532346902187, -0.3457940879314274], [4.172994817977383, -0.5317276667861675], [4.582504970178926, -0.5317276667861675], [4.6897304696411695, -0.5317276667861675], [4.792393181892253, -0.5191800019554795], [4.896196590946126, -0.5077730339275817], [5.000000000000002, -0.4792556138578361]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "S", "S", "S", "S", "L", "L", "L", "L", "L", "S", "S", "S", "S", "Z"]], "alpha": 1, "xindex": 0, "data": "data07", "id": "el17074139757736496400pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]], "alpha": 0.9, "xindex": 0, "data": "data08", "id": "el17074139757737083472pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[-1.7132160977291755, 0.748115856361756], [-1.9976848431111764, 1.121250184719965], [-2.385596768632087, 1.3145904142653075], [-2.772277227722772, 1.506699177380425], [-3.24146593763854, 1.506699177380425], [-3.8953746120880743, 1.506699177380425], [-4.267277474016058, 1.065834195359835], [-4.637948869513817, 0.6249692133392448], [-4.637948869513817, -0.14839170484212572], [-4.637948869513817, -0.7715137185360326], [-4.408896113491946, -1.3527658736022854], [-4.179843357470075, -1.9340180286685382], [-3.7525245061819614, -2.3958179400029556], [-3.475444559381311, -2.6962957489778834], [-3.1158563617555783, -2.8576178513373724], [-2.7562681641298457, -3.0189399536968624], [-2.3597359735973598, -3.0189399536968624], [-1.8831584651002409, -3.0189399536968624], [-1.575291857543963, -2.83052558987242], [-1.267425249987685, -2.6421112260479775], [-1.1282695433722472, -2.2615880991084185], [-1.0051229003497357, -2.908107974976602], [-0.2933353036796209, -2.908107974976602], [-1.443524949509876, 3.018939953696863], [-2.156544012610216, 3.018939953696863], [-3.902763410669425, -0.2530663514112603], [-3.902763410669425, 0.3171026057829667], [-3.6650903896359783, 0.6151174818974439], [-3.426185902172307, 0.913132358011921], [-2.9754691887099156, 0.913132358011921], [-2.3055514506674544, 0.913132358011921], [-1.8326683414610119, 0.2727698142948627], [-1.3597852322545685, -0.36759272942219545], [-1.3597852322545685, -1.283803753509679], [-1.3597852322545685, -1.8379636471109793], [-1.604847051869366, -2.132284123934782], [-1.8486774050539378, -2.426604600758583], [-2.3055514506674544, -2.426604600758583], [-2.6405103196886848, -2.426604600758583], [-2.926210531500911, -2.270208364119994], [-3.210679276882912, -2.1150435939116297], [-3.4224915028816314, -1.8145657849367027], [-3.6453869267523764, -1.4993103787990738], [-3.7746909019260135, -1.0756859268016354], [-3.902763410669425, -0.6532929412344219], [-3.902763410669425, -0.2530663514112603], [4.956898674942121, 0.8662134870203443], [4.604329835968674, 2.6876754839663075], [4.108664597803065, 2.6876754839663075], [4.456061277769569, 0.8825919905423383], [4.477611940298507, 0.7670804393872228], [4.4879562583123995, 0.6834638687749376], [4.499162602827447, 0.5998472981626526], [4.499162602827447, 0.5403674695827797], [4.499162602827447, 0.2981380227575001], [4.363824442145708, 0.16366188857691788], [4.229348307965125, 0.02918575439633586], [3.9871188611398445, 0.02918575439633586], [3.62592975715482, 0.02918575439633586], [3.3431850647751347, 0.2998620757598154], [3.0604403723954476, 0.570538397123295], [2.976823801783164, 1.004137727205557], [2.645805625338654, 2.6876754839663075], [2.150140387173046, 2.6876754839663075], [2.5027092261464956, 0.8825919905423383], [2.5242598886754353, 0.7834589429092168], [2.534604206689326, 0.6989803457957742], [2.545810551204375, 0.6136397221811739], [2.545810551204375, 0.5464016550908827], [2.545810551204375, 0.3007241022609728], [2.4113344170237925, 0.16538594157923292], [2.276858282843211, 0.02918575439633586], [2.039800995024877, 0.02918575439633586], [1.6734397320329064, 0.02918575439633586], [1.389833013152062, 0.2998620757598154], [1.1070883207723758, 0.570538397123295], [1.0234717501600912, 1.004137727205557], [0.6924535737155804, 2.6876754839663075], [0.19678833554997333, 2.6876754839663075], [0.7864144623417575, -0.32941727008521715], [1.2820797005073654, -0.32941727008521715], [1.1881188118811883, 0.13952514654450576], [1.389833013152062, -0.125116989310871], [1.6605093345155417, -0.26304122949608333], [1.9320476823801798, -0.4018274961824533], [2.241515196295749, -0.4018274961824533], [2.569947293236787, -0.4018274961824533], [2.7811437860203947, -0.2294221959509375], [2.9932023053051564, -0.057016895719422145], [3.0363036303630366, 0.24986453869267566], [3.262154573666324, -0.06822324023447046], [3.559553716565688, -0.2345943549578835], [3.8578148859662083, -0.4018274961824533], [4.188833062410721, -0.4018274961824533], [4.5767449879316295, -0.4018274961824533], [4.7879414807152365, -0.1785626323826408], [5.0, 0.04470223141717211], [5.0, 0.4541648194670218], [5.0, 0.5429535490862524], [4.988793655484951, 0.6498448352297921], [4.97844933747106, 0.7558740948721744], [4.956898674942121, 0.8662134870203443]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "L", "L", "L", "S", "S", "S", "S", "S", "S", "L", "L", "L", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "L", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S"]], "alpha": 1, "xindex": 0, "data": "data09", "id": "el17074139757737084816pts"}], "id": "el17074139757737991376", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.050000000000000003, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}, {"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "x", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757738093840"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Pressure", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757737589840"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1.0, "xindex": 0, "linewidth": 2.0, "data": "data10", "id": "el17074139757737029776"}], "markers": [], "id": "el17074139757737946832", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.34621212121212119, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}, {"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "x", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757736937936"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Velocity", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757736734800"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 2, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1.0, "xindex": 0, "linewidth": 2.0, "data": "data10", "id": "el17074139757736988752"}], "markers": [], "id": "el17074139757737404944", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.64242424242424234, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}], "height": 216.0, "width": 612.0, "plugins": [{"idlinesla": "el17074139757737946576", "idlineslb": "el17074139757736913872", "idrr1": 1.0, "idrr0": 2.0, "idqtwo": "el17074139757736988752", "idlinesra": "el17074139757736448912", "idqone": "el17074139757737029776", "idqlm": "el17074139757736494672pts", "idqmm": "el17074139757737084816pts", "idrl0": -2.0, "idrl1": 1.0, "idqrm": "el17074139757736496400pts", "idlinesrb": "el17074139757736450512", "idmpoint": "el17074139757737083472pts", "type": "drag", "id": "el17074139757736493136pts"}], "data": {"data10": [[-5.0, -2.0, 2.0], [-2.0, -2.0, 2.0], [-2.0, 4.0, -1.0], [2.0, 4.0, -1.0], [2.0, 0.0, -3.0], [5.0, 0.0, -3.0]], "data08": [[4.0, -1.0]], "data09": [[4.4, -1.28]], "data06": [[-1.6, 1.6]], "data07": [[0.4, -3.4]], "data04": [[-5.00000000003, -0.5], [5.00000000003, -5.5]], "data05": [[-2.0, 2.0], [0.0, -3.0]], "data02": [[-5.00000000001, 0.49999999997], [5.00000000001, 5.50000000007]], "data03": [[-5.00000000002, -5.50000000005], [5.00000000002, -0.49999999995]], "data01": [[-5.0, 3.5], [5.0, -1.5]]}, "id": "el17074139757738273360"});
+      });
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("https://mpld3.github.io/js/d3.v3.min.js", function(){
+         mpld3_load_lib("https://mpld3.github.io/js/mpld3.v0.3.js", function(){
+                 
+    // init custom PPLane plugin
+    mpld3.register_plugin("drag", PPlanePlugin);
+    PPlanePlugin.prototype = Object.create(mpld3.Plugin.prototype);
+    PPlanePlugin.prototype.constructor = PPlanePlugin;
+    PPlanePlugin.prototype.requiredProps = ["id", "idmpoint", 
+                                            "idlinesla", "idlineslb", "idlinesra", "idlinesrb",  
+                                            "idqlm", "idqmm", "idqrm", "idqone", "idqtwo", 
+                                            "idrl0", "idrl1", "idrr0", "idrr1"];
+    PPlanePlugin.prototype.defaultProps = {}
+    function PPlanePlugin(fig, props){
+        mpld3.Plugin.call(this, fig, props);
+        mpld3.insert_css("#" + fig.figid + " path.dragging",
+                         {"fill-opacity": "1.0 !important",
+                          "stroke-opacity": "1.0 !important"});
+    };
+
+    // Call draw function, this function is being looped all the time
+    PPlanePlugin.prototype.draw = function(){
+        // Get elements into script variables
+        var obj = mpld3.get_element(this.props.id);
+        var midpoint = mpld3.get_element(this.props.idmpoint);
+        var linesla = mpld3.get_element(this.props.idlinesla);
+        var lineslb = mpld3.get_element(this.props.idlineslb);
+        var linesra = mpld3.get_element(this.props.idlinesra);
+        var linesrb = mpld3.get_element(this.props.idlinesrb);
+        var qlm = mpld3.get_element(this.props.idqlm);
+        var qmm = mpld3.get_element(this.props.idqmm);
+        var qrm = mpld3.get_element(this.props.idqrm);
+        var qone = mpld3.get_element(this.props.idqone);
+        var qtwo = mpld3.get_element(this.props.idqtwo);
+        var rl0 = this.props.idrl0;
+        var rl1 = this.props.idrl1;
+        var rr0 = this.props.idrr0;
+        var rr1 = this.props.idrr1;
+        
+        // Set initial conditions for javascript calculations
+        var qleft = obj.offsets[0];
+        var qright = obj.offsets[1];
+        var qmid = midpoint.offsets[0];
+        var off = 7; //13
+        // Calculate slopes for eigenlines
+        var ml = rl1/rl0;
+        var mr = rr1/rr0;
+        
+        // Main d3 drag function
+        var drag = d3.behavior.drag()
+            .origin(function(d) { return {x:obj.ax.x(d[0]),
+                                          y:obj.ax.y(d[1])}; })                              
+            .on("dragstart", dragstarted)
+            .on("drag", dragged)
+            .on("dragend", dragended);
+    
+        // Set elements of ql and qr points and call main drag function
+        obj.elements()
+           .data(obj.offsets)
+           .style("cursor", "default")
+           .call(drag);      
+
+        // Begin drag function
+        function dragstarted(d) {
+          d3.event.sourceEvent.stopPropagation();
+          d3.select(this).classed("dragging", true);
+        }
+    
+        // The drag function called while dragging is happening (meat of code here)
+        function dragged(d,i) {
+          // Convert mouse coordinates in drag event (d3.event) to python coordinates d
+          d[0] = obj.ax.x.invert(d3.event.x);
+          d[1] = obj.ax.y.invert(d3.event.y);             
+          // Move ql and qr stored in obj (they have been selected in drag)
+          d3.select(this)
+            .attr("transform", "translate(" + [d3.event.x, d3.event.y] + ")");
+          // If obj corresponds to ql, move all the other left elements 
+          if (i==0){
+              // Move text marker
+              qlm.elements().transition().duration(1)
+                  .attr("transform", "translate(" + [d3.event.x + off, d3.event.y + off] + ")");
+                  
+              // Move eigenlines
+              for (var ii=0; ii<2; ii++) {
+                linesla.data[ii][1] = ml*(linesla.data[ii][0] - d[0]) + d[1];
+                lineslb.data[ii][1] = mr*(lineslb.data[ii][0] - d[0]) + d[1]; }
+                
+              // In script calculations of middle state
+              qleft = [d[0], d[1]];
+              var det = rl0*rr1 - rr0*rl1;
+              var alphal = (rr1*(qright[0] - qleft[0]) - rr0*(qright[1] - qleft[1]))/det
+              qmid[0] = qleft[0] + alphal*rl0;
+              qmid[1] = qleft[1] + alphal*rl1;
+              var xx = obj.ax.x(qmid[0]);
+              var yy = obj.ax.y(qmid[1]); 
+             
+                }
+          // if element corresponds to qr
+          else {
+              // Move text marker
+              qrm.elements().transition().duration(1)
+                  .attr("transform", "translate(" + [d3.event.x + off, d3.event.y + off] + ")");
+                  
+              // Move eigenlines
+              for (var ii=0; ii<2; ii++) {
+                linesra.data[ii][1] = ml*(linesra.data[ii][0] - d[0]) + d[1];
+                linesrb.data[ii][1] = mr*(linesrb.data[ii][0] - d[0]) + d[1]; }
+                
+              // In script calculations of middle state    
+              qright = [d[0], d[1]];
+              var det = rl0*rr1 - rr0*rl1;
+              var alphal = (rr1*(qright[0] - qleft[0]) - rr0*(qright[1] - qleft[1]))/det
+              qmid[0] = qleft[0] + alphal*rl0;
+              qmid[1] = qleft[1] + alphal*rl1;
+              var xx = obj.ax.x(qmid[0]);
+              var yy = obj.ax.y(qmid[1]);
+                }
+              // Update middle state point and marker position
+              midpoint.elements().transition().duration(5)
+                .attr("transform", "translate(" + [xx, yy] + ")");
+              qmm.elements().transition().duration(5)
+                .attr("transform", "translate(" + [xx + off, yy + off] + ")"); 
+                
+              // Update eigenlines
+              linesla.elements().transition().duration(5)
+                  .attr("d", linesla.datafunc(linesla.data));
+              lineslb.elements().transition().duration(5)
+                  .attr("d", lineslb.datafunc(lineslb.data));
+              linesra.elements().transition().duration(5)
+                  .attr("d", linesra.datafunc(linesra.data));
+              linesrb.elements().transition().duration(5)
+                  .attr("d", linesrb.datafunc(linesrb.data));
+                
+              // Update subplots of q1 and q2
+              qone.data[0][1] = qleft[0];
+              qone.data[1][1] = qleft[0];
+              qone.data[2][1] = qmid[0];
+              qone.data[3][1] = qmid[0];
+              qone.data[4][1] = qright[0];
+              qone.data[5][1] = qright[0];
+              qtwo.data[0][2] = qleft[1];
+              qtwo.data[1][2] = qleft[1];
+              qtwo.data[2][2] = qmid[1];
+              qtwo.data[3][2] = qmid[1];
+              qtwo.data[4][2] = qright[1];
+              qtwo.data[5][2] = qright[1];
+              qone.elements().transition().duration(5)
+                .attr("d", qone.datafunc(qone.data));
+              qtwo.elements().transition().duration(5)
+                .attr("d", qtwo.datafunc(qtwo.data));  
+        }
+        // End dragging
+        function dragended(d) {
+          d3.select(this).classed("dragging", false);
+        }
+    }
+    mpld3.register_plugin("drag", PPlanePlugin); 
+    
+                 mpld3.draw_figure("fig_el170741397577382733607706160149", {"axes": [{"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "Pressure", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757738814352"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Velocity", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [-0.16335063437139563, 0.5], "rotation": -90.0, "id": "el17074139757738093392"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Phase Plane", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757737776272"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data01", "id": "el17074139757737946576"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data02", "id": "el17074139757736913872"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data03", "id": "el17074139757736448912"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data04", "id": "el17074139757736450512"}, {"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 1.5, "data": "data09", "id": "el17074139757737084816"}], "markers": [{"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]], "alpha": 0.7, "xindex": 0, "data": "data05", "id": "el17074139757736493136pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.04975971544254065, 1.149392666590987], [-0.38729329852045247, 1.7226699965943926], [-0.9832746811972601, 2.0197146857380712], [-1.5773640594846179, 2.3148673704923], [-2.298217731865138, 2.3148673704923], [-3.3028720626631856, 2.3148673704923], [-3.874257388277141, 1.6375297990691342], [-4.443750709501646, 0.9601922276459687], [-4.443750709501646, -0.2279865289287466], [-4.443750709501646, -1.1853407499905395], [-4.091837893063912, -2.0783668218110263], [-3.739925076626178, -2.9713928936315126], [-3.083399553486964, -3.6808945396753314], [-2.6576985658606724, -4.142543610701177], [-2.105233284141219, -4.39039618571915], [-1.5527680024217654, -4.638248760737125], [-0.9435425890188069, -4.638248760737125], [-0.21133689030158553, -4.638248760737125], [0.26166420706096094, -4.348772089151247], [0.7346653044235065, -4.059295417565369], [0.9484618004313772, -3.4746660612252622], [1.1376622393763958, -4.467968365686608], [2.231240776478602, -4.467968365686608], [0.4641086767321303, 4.638248760737126], [-0.6313618647595263, 4.638248760737126], [-3.3142240889998864, -0.3888069020320124], [-3.3142240889998864, 0.48719113028342287], [-2.949067241836001, 0.9450561925303671], [-2.5820183902826654, 1.4029212547773116], [-1.8895447837438981, 1.4029212547773116], [-0.860294395882998, 1.4029212547773116], [-0.13376471033412862, 0.419078972263216], [0.5927649752147426, -0.5647633102508793], [0.5927649752147426, -1.9724145760018157], [0.5927649752147426, -2.8238165512543985], [0.21625610171415577, -3.2760056003329927], [-0.15836076739698068, -3.728194649411586], [-0.860294395882998, -3.728194649411586], [-1.374919589813448, -3.728194649411586], [-1.8138646081658911, -3.487910091951413], [-2.2509176221288834, -3.2495175388806894], [-2.5763423771143152, -2.787868467854845], [-2.918795171604798, -2.303515344155598], [-3.1174556324970677, -1.6526658341847353], [-3.3142240889998864, -1.003708328603322], [-3.3142240889998864, -0.3888069020320124], [4.2384682332463, -2.311272562152343], [4.999999999999998, -2.311272562152343], [3.7457902902334723, 4.129299579975026], [2.984258523479774, 4.129299579975026]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "L", "L", "L", "Z"]], "alpha": 1, "xindex": 0, "data": "data06", "id": "el17074139757736494672pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[-0.6506860476485343, 0.9899618681354498], [-1.027115992569175, 1.4837206270573284], [-1.5404295538245933, 1.7395626242544735], [-2.0521135482188835, 1.9937750545904902], [-2.67297852230877, 1.9937750545904902], [-3.538278525567904, 1.9937750545904902], [-4.030407717628655, 1.4103901183065544], [-4.520907342828276, 0.8270051820226187], [-4.520907342828276, -0.19636280676596152], [-4.520907342828276, -1.0209236384968874], [-4.21780790665841, -1.7900791969494507], [-3.914708470488544, -2.559234755402014], [-3.3492487696770197, -3.170322328325131], [-2.9825962259231495, -3.567936642440439], [-2.5067627024736825, -3.7814099012482476], [-2.030929179024215, -3.994883160056057], [-1.5062086497408989, -3.994883160056057], [-0.8755662744842416, -3.994883160056057], [-0.468174559202164, -3.745559430303425], [-0.06078284392008548, -3.496235700550793], [0.12335821138741387, -2.9926995404621453], [0.28631489750024475, -3.8482221425545093], [1.2282045432324091, -3.8482221425545093], [-0.29381090506143437, 3.994883160056057], [-1.2373301176547273, 3.994883160056057], [-3.5480559267346736, -0.33487598996186807], [-3.5480559267346736, 0.4196134667405407], [-3.2335495225369097, 0.8139686471335921], [-2.917413551478017, 1.2083238275266437], [-2.320992080305055, 1.2083238275266437], [-1.4345077078512531, 1.2083238275266437], [-0.8087540331779817, 0.3609490597399212], [-0.1830003585047093, -0.48642570804680063], [-0.1830003585047093, -1.6988234527262651], [-0.1830003585047093, -2.4321285402340056], [-0.5072841638692438, -2.821595020043673], [-0.8299384023726493, -3.211061499853338], [-1.4345077078512531, -3.211061499853338], [-1.8777498940781538, -3.211061499853338], [-2.2558094058599223, -3.004106508490043], [-2.6322393507805626, -2.7987810839878753], [-2.9125248508946324, -2.4011667698725674], [-3.207476452758857, -1.9839976534237198], [-3.3785809731773293, -1.4234266531955806], [-3.5480559267346736, -0.8644852198285695], [-3.5480559267346736, -0.33487598996186807], [4.874523351693121, 0.16980086692957075], [4.775282729850405, 0.11618811719844913], [4.646383991135156, 0.08767069712870357], [4.518625949222697, 0.05915327705895823], [4.3726167584656, 0.05915327705895823], [3.8478962291822842, 0.05915327705895823], [3.455496529022586, 0.45725646123260466], [3.0642375256656784, 0.8542189486034615], [2.935338786950429, 1.5215265782355054], [2.532672815565623, 3.556529674412541], [1.8767721539614772, 3.556529674412541], [2.657008767069714, -0.43590913535182296], [3.3129094286738585, -0.43590913535182296], [3.1885734771697685, 0.18462992536583833], [3.4486523482058473, -0.16100120587947653], [3.8102532346902187, -0.3457940879314274], [4.172994817977383, -0.5317276667861675], [4.582504970178926, -0.5317276667861675], [4.6897304696411695, -0.5317276667861675], [4.792393181892253, -0.5191800019554795], [4.896196590946126, -0.5077730339275817], [5.000000000000002, -0.4792556138578361]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "S", "S", "S", "S", "L", "L", "L", "L", "L", "S", "S", "S", "S", "Z"]], "alpha": 1, "xindex": 0, "data": "data07", "id": "el17074139757736496400pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[0.0, 3.0], [0.7956093000000001, 3.0], [1.5587396123545605, 2.683901074764725], [2.121320343559643, 2.121320343559643], [2.683901074764725, 1.5587396123545605], [3.0, 0.7956093000000001], [3.0, 0.0], [3.0, -0.7956093000000001], [2.683901074764725, -1.5587396123545605], [2.121320343559643, -2.121320343559643], [1.5587396123545605, -2.683901074764725], [0.7956093000000001, -3.0], [0.0, -3.0], [-0.7956093000000001, -3.0], [-1.5587396123545605, -2.683901074764725], [-2.121320343559643, -2.121320343559643], [-2.683901074764725, -1.5587396123545605], [-3.0, -0.7956093000000001], [-3.0, 0.0], [-3.0, 0.7956093000000001], [-2.683901074764725, 1.5587396123545605], [-2.121320343559643, 2.121320343559643], [-1.5587396123545605, 2.683901074764725], [-0.7956093000000001, 3.0], [0.0, 3.0]], ["M", "C", "C", "C", "C", "C", "C", "C", "C", "Z"]], "alpha": 0.9, "xindex": 0, "data": "data08", "id": "el17074139757737083472pts"}, {"edgecolor": "#000000", "facecolor": "#000000", "edgewidth": 1.0, "yindex": 1, "coordinates": "data", "zorder": 2, "markerpath": [[[-1.7132160977291755, 0.748115856361756], [-1.9976848431111764, 1.121250184719965], [-2.385596768632087, 1.3145904142653075], [-2.772277227722772, 1.506699177380425], [-3.24146593763854, 1.506699177380425], [-3.8953746120880743, 1.506699177380425], [-4.267277474016058, 1.065834195359835], [-4.637948869513817, 0.6249692133392448], [-4.637948869513817, -0.14839170484212572], [-4.637948869513817, -0.7715137185360326], [-4.408896113491946, -1.3527658736022854], [-4.179843357470075, -1.9340180286685382], [-3.7525245061819614, -2.3958179400029556], [-3.475444559381311, -2.6962957489778834], [-3.1158563617555783, -2.8576178513373724], [-2.7562681641298457, -3.0189399536968624], [-2.3597359735973598, -3.0189399536968624], [-1.8831584651002409, -3.0189399536968624], [-1.575291857543963, -2.83052558987242], [-1.267425249987685, -2.6421112260479775], [-1.1282695433722472, -2.2615880991084185], [-1.0051229003497357, -2.908107974976602], [-0.2933353036796209, -2.908107974976602], [-1.443524949509876, 3.018939953696863], [-2.156544012610216, 3.018939953696863], [-3.902763410669425, -0.2530663514112603], [-3.902763410669425, 0.3171026057829667], [-3.6650903896359783, 0.6151174818974439], [-3.426185902172307, 0.913132358011921], [-2.9754691887099156, 0.913132358011921], [-2.3055514506674544, 0.913132358011921], [-1.8326683414610119, 0.2727698142948627], [-1.3597852322545685, -0.36759272942219545], [-1.3597852322545685, -1.283803753509679], [-1.3597852322545685, -1.8379636471109793], [-1.604847051869366, -2.132284123934782], [-1.8486774050539378, -2.426604600758583], [-2.3055514506674544, -2.426604600758583], [-2.6405103196886848, -2.426604600758583], [-2.926210531500911, -2.270208364119994], [-3.210679276882912, -2.1150435939116297], [-3.4224915028816314, -1.8145657849367027], [-3.6453869267523764, -1.4993103787990738], [-3.7746909019260135, -1.0756859268016354], [-3.902763410669425, -0.6532929412344219], [-3.902763410669425, -0.2530663514112603], [4.956898674942121, 0.8662134870203443], [4.604329835968674, 2.6876754839663075], [4.108664597803065, 2.6876754839663075], [4.456061277769569, 0.8825919905423383], [4.477611940298507, 0.7670804393872228], [4.4879562583123995, 0.6834638687749376], [4.499162602827447, 0.5998472981626526], [4.499162602827447, 0.5403674695827797], [4.499162602827447, 0.2981380227575001], [4.363824442145708, 0.16366188857691788], [4.229348307965125, 0.02918575439633586], [3.9871188611398445, 0.02918575439633586], [3.62592975715482, 0.02918575439633586], [3.3431850647751347, 0.2998620757598154], [3.0604403723954476, 0.570538397123295], [2.976823801783164, 1.004137727205557], [2.645805625338654, 2.6876754839663075], [2.150140387173046, 2.6876754839663075], [2.5027092261464956, 0.8825919905423383], [2.5242598886754353, 0.7834589429092168], [2.534604206689326, 0.6989803457957742], [2.545810551204375, 0.6136397221811739], [2.545810551204375, 0.5464016550908827], [2.545810551204375, 0.3007241022609728], [2.4113344170237925, 0.16538594157923292], [2.276858282843211, 0.02918575439633586], [2.039800995024877, 0.02918575439633586], [1.6734397320329064, 0.02918575439633586], [1.389833013152062, 0.2998620757598154], [1.1070883207723758, 0.570538397123295], [1.0234717501600912, 1.004137727205557], [0.6924535737155804, 2.6876754839663075], [0.19678833554997333, 2.6876754839663075], [0.7864144623417575, -0.32941727008521715], [1.2820797005073654, -0.32941727008521715], [1.1881188118811883, 0.13952514654450576], [1.389833013152062, -0.125116989310871], [1.6605093345155417, -0.26304122949608333], [1.9320476823801798, -0.4018274961824533], [2.241515196295749, -0.4018274961824533], [2.569947293236787, -0.4018274961824533], [2.7811437860203947, -0.2294221959509375], [2.9932023053051564, -0.057016895719422145], [3.0363036303630366, 0.24986453869267566], [3.262154573666324, -0.06822324023447046], [3.559553716565688, -0.2345943549578835], [3.8578148859662083, -0.4018274961824533], [4.188833062410721, -0.4018274961824533], [4.5767449879316295, -0.4018274961824533], [4.7879414807152365, -0.1785626323826408], [5.0, 0.04470223141717211], [5.0, 0.4541648194670218], [5.0, 0.5429535490862524], [4.988793655484951, 0.6498448352297921], [4.97844933747106, 0.7558740948721744], [4.956898674942121, 0.8662134870203443]], ["M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "Z", "M", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S", "M", "L", "L", "L", "S", "S", "S", "S", "S", "S", "L", "L", "L", "S", "S", "S", "S", "S", "S", "L", "L", "L", "L", "L", "S", "S", "S", "S", "S", "S", "S", "S", "S", "S"]], "alpha": 1, "xindex": 0, "data": "data09", "id": "el17074139757737084816pts"}], "id": "el17074139757737991376", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.050000000000000003, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}, {"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "x", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757738093840"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Pressure", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757737589840"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 1, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1.0, "xindex": 0, "linewidth": 2.0, "data": "data10", "id": "el17074139757737029776"}], "markers": [], "id": "el17074139757737946832", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.34621212121212119, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}, {"xlim": [-5.0, 5.0], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "x", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, -0.13888888888888892], "rotation": -0.0, "id": "el17074139757736937936"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Velocity", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 10.0, "position": [0.5, 1.0396825396825395], "rotation": -0.0, "id": "el17074139757736734800"}], "zoomable": true, "images": [], "xdomain": [-5.0, 5.0], "ylim": [-5.0, 5.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "bottom", "nticks": 7, "tickvalues": null}, {"scale": "linear", "tickformat": null, "grid": {"color": "#000000", "alpha": 0.1, "dasharray": "5.6,2.4", "gridOn": true}, "visible": true, "fontsize": 10.0, "position": "left", "nticks": 7, "tickvalues": null}], "lines": [{"drawstyle": "default", "color": "#000000", "yindex": 2, "coordinates": "data", "dasharray": "none", "zorder": 2, "alpha": 1.0, "xindex": 0, "linewidth": 2.0, "data": "data10", "id": "el17074139757736988752"}], "markers": [], "id": "el17074139757737404944", "ydomain": [-5.0, 5.0], "collections": [], "xscale": "linear", "bbox": [0.64242424242424234, 0.20000000000000007, 0.25757575757575757, 0.69999999999999996]}], "height": 216.0, "width": 612.0, "plugins": [{"idlinesla": "el17074139757737946576", "idlineslb": "el17074139757736913872", "idrr1": 1.0, "idrr0": 2.0, "idqtwo": "el17074139757736988752", "idlinesra": "el17074139757736448912", "idqone": "el17074139757737029776", "idqlm": "el17074139757736494672pts", "idqmm": "el17074139757737084816pts", "idrl0": -2.0, "idrl1": 1.0, "idqrm": "el17074139757736496400pts", "idlinesrb": "el17074139757736450512", "idmpoint": "el17074139757737083472pts", "type": "drag", "id": "el17074139757736493136pts"}], "data": {"data10": [[-5.0, -2.0, 2.0], [-2.0, -2.0, 2.0], [-2.0, 4.0, -1.0], [2.0, 4.0, -1.0], [2.0, 0.0, -3.0], [5.0, 0.0, -3.0]], "data08": [[4.0, -1.0]], "data09": [[4.4, -1.28]], "data06": [[-1.6, 1.6]], "data07": [[0.4, -3.4]], "data04": [[-5.00000000003, -0.5], [5.00000000003, -5.5]], "data05": [[-2.0, 2.0], [0.0, -3.0]], "data02": [[-5.00000000001, 0.49999999997], [5.00000000001, 5.50000000007]], "data03": [[-5.00000000002, -5.50000000005], [5.00000000002, -0.49999999995]], "data01": [[-5.0, 3.5], [5.0, -1.5]]}, "id": "el17074139757738273360"});
+            })
+         });
+}
+</script>

@@ -21,7 +21,8 @@
 ((* endblock docclass *))
 
 ((* block author *))
-\author{David I. Ketcheson \and Randall J. LeVeque \and Mauricio del Razo Sarmina}
+\author{David I. Ketcheson \and Randall J. LeVeque \and Mauricio J. del Razo}
+
 ((* endblock author *))
 
 ((* block markdowncell scoped *))
