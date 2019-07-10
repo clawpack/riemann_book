@@ -81,22 +81,23 @@ for i, chapter in enumerate(chapters):
     output_filename = str(i).zfill(2)+'-'+filename
     with open(build_dir+output_filename, "w") as output:
         for line in lines:
-            #for j, chapter_name in enumerate(chapters):
+            if 0:
+                # This should be handled automatically, so skip...
                 # fix cross references to other chapters
-                # should be handled automatically
-                # line = re.sub(chapter_name+'.ipynb',
-                #               str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+                for j, chapter_name in enumerate(chapters):
+                    line = re.sub(chapter_name+'.ipynb',
+                                  str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
 
-            # not using context now, so this line not needed:
+            # not using context now, so these lines not needed:
             #line = re.sub(r"context = 'notebook'", "context = 'pdf'", line)
+            #line = re.sub(r"#sns.set_context('paper')",
+            #              r"sns.set_context('paper')", line)
 
             # replace widgets:
             line = re.sub(r'from ipywidgets import interact',
                           'from utils.snapshot_widgets import interact', line)
             line = re.sub(r'Widget Javascript not detected.  It may not be installed or enabled properly.',
                           '', line)
-            #line = re.sub(r"#sns.set_context('paper')",
-            #              r"sns.set_context('paper')", line)
             output.write(line)
 
     # execute to create output with snapshot_widgets:
