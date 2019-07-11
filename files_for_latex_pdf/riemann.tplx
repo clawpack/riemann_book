@@ -40,7 +40,7 @@
 ((* endblock maketitle *))
 
 ((* block bibliography *))
-\bibliographystyle{unsrt}
+\bibliographystyle{siamplain}
 \bibliography{riemann}
 ((* endblock bibliography *))
 

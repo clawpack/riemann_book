@@ -50,6 +50,7 @@ os.system('cp -r utils '+build_dir)
 os.system('cp -r figures '+build_dir)
 os.system('cp files_for_latex_pdf/riemann.tplx '+build_dir)
 os.system('cp files_for_latex_pdf/SIAMbook2016.cls '+build_dir)
+os.system('cp files_for_latex_pdf/siamplain.bst '+build_dir)
 os.system('cp riemann.bib '+build_dir)
 os.system('cp files_for_latex_pdf/latexdefs.tex '+build_dir)
 
