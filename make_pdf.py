@@ -82,12 +82,13 @@ for i, chapter in enumerate(chapters):
     output_filename = str(i).zfill(2)+'-'+filename
     with open(build_dir+output_filename, "w") as output:
         for line in lines:
-            if 0:
-                # This should be handled automatically, so skip...
-                # fix cross references to other chapters
-                for j, chapter_name in enumerate(chapters):
-                    line = re.sub(chapter_name+'.ipynb',
-                                  str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
+
+            # fix cross references to other chapters
+            # notebook names are preprended with 00- etc. for ordering
+            # when copied to this directory, so fix the cross refs accordingly:
+            for j, chapter_name in enumerate(chapters):
+                line = re.sub(chapter_name+'.ipynb',
+                              str(j).zfill(2)+'-'+chapter_name+'.ipynb', line)
 
             # not using context now, so these lines not needed:
             #line = re.sub(r"context = 'notebook'", "context = 'pdf'", line)
