@@ -40,7 +40,7 @@
 #### To copy a new version to the website:
 
 - Create new `build_html` directory as above and confirm it contains the right stuff, 
-by opening `build_html/Index.html`
+by opening `build_html/Index.html`.  Build the html files with the `master` branch checked out (or whatever branch has the notebooks you want to build), not the `gh-pages` branch.
 
 - In particular, ideally go through every notebook to
   make sure all the JSAnimations showed up
