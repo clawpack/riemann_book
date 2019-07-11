@@ -1,6 +1,6 @@
 """
 Convert notebooks listed in `chapters` into html files in the directory
-`riemann_book_files`.
+`build_html`.
 
 Run this code on the master branch with the latest set of notebooks,
 adjusting the specification of `chapters` below first if you want to
