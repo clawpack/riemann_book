@@ -57,9 +57,11 @@ part2 = ['Approximate_solvers',
          'Euler_compare']
 
 others = ['Index2',
+            'Acoustics_heterogeneous',
             'Traffic_variable_speed',
             'Nonlinear_elasticity',
             'Euler_Tammann',
+            'Traffic_with_ramps',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
@@ -144,16 +146,12 @@ for i, chapter in enumerate(chapters):
             "--ExecutePreprocessor.timeout=60", output_filename]
     subprocess.check_call(args)
 
+# remove the notebooks from html/
+os.system('rm *.ipynb')
+
+# go back to the main directory:
 os.chdir('..')
 
 print("The html files can be found in build_html")
 print("Open build_html/Index.html for the index")
-
-if 0:
-    # Recommend doing this after switching to gh-pages branch:
-    os.system('mkdir -p html/figures')
-    os.system('cp build_html/img/figures/* html/figures/')
-
-    print("You may delete the directory build_html")
-    print("Open html/Index.html for the index")
 
