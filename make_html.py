@@ -56,10 +56,10 @@ part2 = ['Approximate_solvers',
          'Euler_approximate',
          'Euler_compare']
 
-others = ['Traffic_variable_speed',
+others = ['Index2',
+            'Traffic_variable_speed',
             'Nonlinear_elasticity',
-            'Euler_TammannEOS',
-            'Nonconvex_scalar',
+            'Euler_Tammann',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
@@ -67,8 +67,8 @@ all_chapters = part0 + part1 + part2 + others
 book_chapters = part0 + part1 + part2
 
 # which chapters to process:
-#chapters = all_chapters
-chapters = book_chapters
+chapters = all_chapters
+#chapters = book_chapters
 
 # test on a small subset:
 #chapters = part0 + ['Introduction']
