@@ -1,6 +1,6 @@
 """
 Convert notebooks listed in `chapters` into html files in the directory
-`riemann_book_files`.
+`build_html`.
 
 Run this code on the master branch with the latest set of notebooks,
 adjusting the specification of `chapters` below first if you want to
@@ -56,10 +56,12 @@ part2 = ['Approximate_solvers',
          'Euler_approximate',
          'Euler_compare']
 
-others = ['Traffic_variable_speed',
+others = ['Index2',
+            'Acoustics_heterogeneous',
+            'Traffic_variable_speed',
             'Nonlinear_elasticity',
-            'Euler_TammannEOS',
-            'Nonconvex_scalar',
+            'Euler_Tammann',
+            'Traffic_with_ramps',
             'Pressureless_flow',
             'Kitchen_sink_problem']
 
@@ -67,8 +69,8 @@ all_chapters = part0 + part1 + part2 + others
 book_chapters = part0 + part1 + part2
 
 # which chapters to process:
-#chapters = all_chapters
-chapters = book_chapters
+chapters = all_chapters
+#chapters = book_chapters
 
 # test on a small subset:
 #chapters = part0 + ['Introduction']
@@ -144,16 +146,12 @@ for i, chapter in enumerate(chapters):
             "--ExecutePreprocessor.timeout=60", output_filename]
     subprocess.check_call(args)
 
+# remove the notebooks from html/
+os.system('rm *.ipynb')
+
+# go back to the main directory:
 os.chdir('..')
 
 print("The html files can be found in build_html")
 print("Open build_html/Index.html for the index")
-
-if 0:
-    # Recommend doing this after switching to gh-pages branch:
-    os.system('mkdir -p html/figures')
-    os.system('cp build_html/img/figures/* html/figures/')
-
-    print("You may delete the directory build_html")
-    print("Open html/Index.html for the index")
 
