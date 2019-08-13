@@ -7,4 +7,7 @@
 # https://www.lri.fr/~filliatr/bibtex2html/
 
 export TMPDIR=.
-bibtex2html riemann.bib
+bibtex2html --sort-as-bibtex \
+            --style files_for_latex_pdf/siamplain \
+            --header '<h1>Bibliography</h1>' \
+            riemann.bib

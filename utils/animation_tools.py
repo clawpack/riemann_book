@@ -46,6 +46,7 @@ from __future__ import print_function
 
 from IPython.display import display
 from matplotlib import image, animation
+from IPython.display import HTML
 from matplotlib import pyplot as plt
 from ipywidgets import interact, interact_manual
 import ipywidgets
@@ -171,7 +172,7 @@ def JSAnimate_images(images, figsize=(10,6), dpi=None):
                                    blit=True)
 
     plt.close(fig)
-    return anim
+    return HTML(anim.to_jshtml())
 
 
 def make_html(anim, file_name='anim.html', title=None, raw_html='',
