@@ -23,7 +23,7 @@ for the license and read more at the
 
 The text content of the notebooks is released under the CC-BY-NC-ND License.
 See
-[LICENSE-TEXT](https://github.com/clawpack/riemann_book/blob/master/LICENSE-TEXT)
+[LICENSE-TEXT.md](https://github.com/clawpack/riemann_book/blob/master/LICENSE-TEXT.md)
 for the license and read more at [Creative
 Commons](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
