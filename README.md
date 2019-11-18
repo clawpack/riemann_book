@@ -9,6 +9,26 @@ solutions and approximate Riemann solvers in Jupyter notebooks.
 
 Contributors: @ketch, @rjleveque, and @maojrs.
 
+## License
+
+### Code
+
+The code in this repository, including all code samples in the notebooks,
+is released under the 3-Clause BSD License.  See
+[LICENSE-CODE](https://github.com/clawpack/riemann_book/blob/master/LICENSE-CODE)
+for the license and read more at the 
+[Open Source Initiative](https://opensource.org/licenses/bsd-3-clause).
+
+### Text
+
+The text content of the notebooks is released under the CC-BY-NC-ND License.
+See
+[LICENSE-TEXT.md](https://github.com/clawpack/riemann_book/blob/master/LICENSE-TEXT.md)
+for the license and read more at [Creative
+Commons](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+
+
 ## View static webpages
 
 The notebooks are saved in Github with the output stripped out.  You can view
