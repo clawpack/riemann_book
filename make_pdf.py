@@ -35,7 +35,7 @@ part2 = ['Approximate_solvers',
 chapters = part0 + part1 + part2
 
 # For testing purposes:
-if 1:
+if 0:
     chapters = ['Shallow_water',
                 'Shallow_tracer']
 

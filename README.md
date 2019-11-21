@@ -39,10 +39,29 @@ animations that will play.  *These may not be up to date with the versions in
 this repository during the development phase of this project.*
 
 ## Installation
-To install the dependencies for the book, see
-https://github.com/clawpack/riemann_book/wiki/Installation.  Then clone this
-repository to get all the notebooks.  A table of contents and suggested order
-for reading the notebooks is given in `Index.ipynb`.
+To install the dependencies for the book, first install a Fortran compiler.
+Then do the following in a terminal:
+
+```
+pip install clawpack
+git clone https://github.com/clawpack/riemann_book
+cd riemann_book
+pip install -r requirements.txt
+jupyter nbextension enable --py widgetsnbextension
+pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user
+jupyter nbextension enable equation-numbering/main
+```
+
+You can test your installation by running
+
+```
+python test.py
+```
+
+A table of contents and suggested order for reading the notebooks is given in `Index.ipynb`.
+
+If you want to compile the PDF locally, you must also install the package `bookbook`.
 
 ## Docker
 
