@@ -47,10 +47,15 @@ for reading the notebooks is given in `Index.ipynb`.
 ## Docker
 
 Rather than installing all the dependencies, if you have
-[Docker](https://www.docker.com/) installed you can use the `Dockerfile` in
-this repository.  See `Docker.md` for instructions.
+[Docker](https://www.docker.com/) installed you can use
 
-*[Add instructions for Dockerhub]*
+    $ docker pull clawpack/rbook
+
+to obtain a docker image that has all the notebooks and dependencies
+installed.  This was built using the `Dockerfile` in
+this repository, which could be modified to build a new image also
+containing other material, if desired.  See `Docker.md` for further
+instructions.
 
 ## Execute in the cloud
 
