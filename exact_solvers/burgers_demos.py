@@ -146,7 +146,8 @@ def bump_animation(numframes):
 
     anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
     plt.close('all')
-    return HTML(anim.to_jshtml())
+    #return HTML(anim.to_jshtml())
+    return anim.to_jshtml()
 
 def bump_pyclaw(numframes):
     """Returns pyclaw solution of bump initial condition."""
@@ -220,7 +221,8 @@ def triplestate_animation(ql, qm, qr, numframes):
 
     anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30, blit=False)
     plt.close('all')
-    return HTML(anim.to_jshtml())
+    #return HTML(anim.to_jshtml())
+    return anim.to_jshtml()
 
 def triplestate_pyclaw(ql, qm, qr, numframes):
     """Returns pyclaw solution of triple-state initial condition."""
