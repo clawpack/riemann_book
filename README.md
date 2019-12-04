@@ -9,6 +9,26 @@ solutions and approximate Riemann solvers in Jupyter notebooks.
 
 Contributors: @ketch, @rjleveque, and @maojrs.
 
+## License
+
+### Code
+
+The code in this repository, including all code samples in the notebooks,
+is released under the 3-Clause BSD License.  See
+[LICENSE-CODE](https://github.com/clawpack/riemann_book/blob/master/LICENSE-CODE)
+for the license and read more at the 
+[Open Source Initiative](https://opensource.org/licenses/bsd-3-clause).
+
+### Text
+
+The text content of the notebooks is released under the CC-BY-NC-ND License.
+See
+[LICENSE-TEXT.md](https://github.com/clawpack/riemann_book/blob/master/LICENSE-TEXT.md)
+for the license and read more at [Creative
+Commons](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+
+
 ## View static webpages
 
 The notebooks are saved in Github with the output stripped out.  You can view
@@ -19,10 +39,29 @@ animations that will play.  *These may not be up to date with the versions in
 this repository during the development phase of this project.*
 
 ## Installation
-To install the dependencies for the book, see
-https://github.com/clawpack/riemann_book/wiki/Installation.  Then clone this
-repository to get all the notebooks.  A table of contents and suggested order
-for reading the notebooks is given in `Index.ipynb`.
+To install the dependencies for the book, first install a Fortran compiler.
+Then do the following in a terminal:
+
+```
+pip install clawpack
+git clone https://github.com/clawpack/riemann_book
+cd riemann_book
+pip install -r requirements.txt
+jupyter nbextension enable --py widgetsnbextension
+pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user
+jupyter nbextension enable equation-numbering/main
+```
+
+You can test your installation by running
+
+```
+python test.py
+```
+
+A table of contents and suggested order for reading the notebooks is given in `Index.ipynb`.
+
+If you want to compile the PDF locally, you must also install the package `bookbook`.
 
 ## Docker
 
