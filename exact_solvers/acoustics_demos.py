@@ -58,7 +58,6 @@ def decompose_q(p,u,K,rho):
 
     
     axes[1].plot([0,p],[0,u],'k-',lw=3,markersize=8)
-    #axes[1].plot([p],[u],'ko',markersize=8)    
     alpha1 = (Z*u-p)/(2.*Z)
     alpha2 = (Z*u+p)/(2.*Z)
     axes[1].plot([0,-Z*alpha1],[0,1*alpha1], color=colors[0], lw=3)
@@ -67,7 +66,6 @@ def decompose_q(p,u,K,rho):
     axes[1].set_ylim(-1.2,1.2)
     axes[1].legend(['$q$',r'$w_1 r_1$',r'$w_2 r_2$'],loc='best')
     axes[1].plot([p],[u],'ko',markersize=6)
-    #axes[1].arrow(0,0,p,u,head_width=0.05, head_length=0.1, color='k') 
     axes[1].plot([0,0],[-2,2],'--k',alpha=0.2)
     axes[1].plot([-2,2],[0,0],'--k',alpha=0.2)
     axes[1].set_xlabel('p')
@@ -119,7 +117,6 @@ def char_solution(t, K, rho):
     axes[1].set_ylim(-0.2,1.2)
     axes[1].set_title('Velocity')
     axes[1].set_xlabel('$x$')
-    #axes[1].set_ylabel('$t$')
     
     plt.tight_layout()
 
