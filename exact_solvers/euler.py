@@ -295,6 +295,7 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
     w1v, w3v = (np.vectorize(w1), np.vectorize(w3))
     ax.set_xlabel('Pressure (p)')
     ax.set_ylabel('Velocity (u)')
+    ax.set_title('Phase plane')
 
     pa = np.linspace(0.,left_state.Pressure,500)
     pb = np.linspace(left_state.Pressure,xmax+0.5*dx)
@@ -360,6 +361,7 @@ def plot_integral_curves(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
                 (1.-(p/p_0)**((gamma-1)/(2*gamma)))
             plt.plot(p,u,color='maroon')
     plt.xlabel('p'); plt.ylabel('u')
+    plt.title('Integral curves projected to p-u plane')
     plt.show()
 
 def plot_hugoniot_loci(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
@@ -380,6 +382,7 @@ def plot_hugoniot_loci(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
                 (1.-p/p_0)/(np.sqrt(1+beta*p/p_0))
             plt.plot(p,u_1,color='maroon')
     plt.xlabel('p'); plt.ylabel('u')
+    plt.title('Hugoniot Loci projected to p-u plane')
     plt.show()
 
 def riemann_solution(left_state, right_state, gamma=1.4):

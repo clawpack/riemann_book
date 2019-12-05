@@ -92,15 +92,16 @@ def plot_with_stripes(rho_l=3.,u_l=0.,p_l=3.,
     plt.tight_layout()
     plt.show()
  
-def euler_demo1():
+def euler_demo1(rho_l=2.,u_l=0.,p_l=2.5,
+                rho_r=3.,u_r=0.,p_r=5., gamma=1.4):
     
-    rhol_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=3.,description=r'$\rho_l$')
-    ul_widget=widgets.FloatSlider(min=-10.,max=10.,step=0.1,value=0.,description=r'$u_l$')
-    pl_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=3.,description=r'$p_l$')
-    rhor_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=1.,description=r'$\rho_r$')
-    ur_widget=widgets.FloatSlider(min=-10.,max=10.,step=0.1,value=0.,description=r'$u_r$')
-    pr_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=1.,description=r'$p_r$')
-    gamma_widget=widgets.FloatSlider(min=1.1,max=2.,step=0.1,value=1.4,description=r'$\gamma$')
+    rhol_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=rho_l,description=r'$\rho_l$')
+    ul_widget=widgets.FloatSlider(min=-10.,max=10.,step=0.1,value=u_l,description=r'$u_l$')
+    pl_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=p_l,description=r'$p_l$')
+    rhor_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=rho_r,description=r'$\rho_r$')
+    ur_widget=widgets.FloatSlider(min=-10.,max=10.,step=0.1,value=u_r,description=r'$u_r$')
+    pr_widget=widgets.FloatSlider(min=1.,max=10.,step=0.1,value=p_r,description=r'$p_r$')
+    gamma_widget=widgets.FloatSlider(min=1.1,max=2.,step=0.1,value=gamma,description=r'$\gamma$')
     t_widget=widgets.FloatSlider(min=0.,max=1.,step=0.1,value=0.5)
 
     interact_gui = widgets.VBox(\
