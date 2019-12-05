@@ -104,7 +104,7 @@ def rarefaction_figure(t):
             plt.arrow(x[2+i], y[2+i], np.abs(t*y[2+i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
         plt.annotate(r"$q_r t$", xy=(2, 1), xytext=(t/2-0.2, 1.05), fontsize=12)
         if t > 2:
-            plt.annotate(r"$q_l t$", xy=(2, 0), xytext=(t/8-0.4, 0.12), fontsize=12)
+            plt.annotate(r"$q_\ell t$", xy=(2, 0), xytext=(t/8-0.4, 0.12), fontsize=12)
             plt.arrow(t/2-0.3, 1.07, -t/2+0.8, 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
             plt.arrow(t/2+0.7, 1.07, t*y[-1] - t/2 - 1, 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
 
