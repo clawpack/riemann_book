@@ -549,7 +549,7 @@ def bump_animation(numframes):
 
     anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
     plt.close('all')
-    return HTML(anim.to_jshtml())
+    return anim.to_jshtml()
 
 
 def bump_pyclaw(numframes):
