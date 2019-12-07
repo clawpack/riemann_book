@@ -66,28 +66,27 @@ If you want to compile the PDF locally, you must also install the package `bookb
 ## Docker
 
 Rather than installing all the dependencies, if you have
-[Docker](https://www.docker.com/) installed you can use the `Dockerfile` in
-this repository.  See `Docker.md` for instructions.
+[Docker](https://www.docker.com/) installed you can use
 
-*[Add instructions for Dockerhub]*
+    $ docker pull clawpack/rbook
+
+to obtain a docker image that has all the notebooks and dependencies
+installed.  This was built using the `Dockerfile` in
+this repository, which could be modified to build a new image also
+containing other material, if desired.  See `Docker.md` for further
+instructions.
 
 ## Execute in the cloud
 
-### Windows Azure
-
-Rather than installing software, you can execute the notebooks on the cloud
-using the [Microsoft Azure Notebooks](https://notebooks.azure.com) cloud
-service:  Create a free account and then clone the [riemann_book
-library](https://notebooks.azure.com/rjleveque/libraries/riemann-book).
-*These may not be up to date with the versions in this repository during the
-development phase of this project.*
-
 ### Binder
 
-This is still under development using the latest version of
-[binder](https://beta.mybinder.org/).  You can try it out for these notebooks
-at this link: https://beta.mybinder.org/v2/gh/clawpack/riemann_book/master
+Rather than installing anything on your own computer, you can run the
+notebooks on the cloud using the free
+[binder](https://mybinder.org/) service.  
+Simply navigate to this link in a browser:
 
-This should start up a notebook server on a
-[Jupyterhub](https://jupyterhub.readthedocs.io/en/latest/) that lets you
-execute all the notebooks with no installation required.
+    https://mybinder.org/v2/gh/clawpack/riemann_book/master
+
+This may take a few minutes to start up a notebook server on a
+[Jupyterhub](https://jupyterhub.readthedocs.io/en/latest/). Then navigate to
+`riemann_book` and open `Index.ipynb` to get started.
