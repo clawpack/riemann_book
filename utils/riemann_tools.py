@@ -429,7 +429,8 @@ def plot_riemann(states, s, riemann_eval, wave_types=None, t=0.1, ax=None,
 def make_plot_function(states_list, speeds_list, riemann_eval_list,
                        wave_types_list=None, names=None, layout='horizontal',
                        variable_names=None, colors=('multi', 'green', 'orange'),
-                       plot_chars=None, derived_variables=None, aux=None, contact_index=None):
+                       plot_chars=None, derived_variables=None, aux=None, contact_index=None,
+                       vertical_spacing=0, show_time_legend=False):
     """
     Utility function to create a plot_function that takes a single argument t,
     or (if plot_chars is specified) an argument t and an integer argument indicating
@@ -444,6 +445,7 @@ def make_plot_function(states_list, speeds_list, riemann_eval_list,
                     the characteristic speeds of the wave families (in order).
         aux: auxiliary variables to be passed to plot_characteristics
         contact_index: see docstring for plot_characteristics
+        show_time_legend: show time in legend
     """
     if type(states_list) is not list:
         states_list = [states_list]
@@ -465,9 +467,9 @@ def make_plot_function(states_list, speeds_list, riemann_eval_list,
             fig, ax = plt.subplots(1,num_axes,figsize=(fig_width, 3))
         elif layout == 'vertical':
             fig_width = 6
-            fig_height = 2*(num_axes-1)
+            fig_height = (2 + vertical_spacing)*(num_axes-1)
             fig, ax = plt.subplots(num_axes,1,figsize=(fig_width, fig_height),sharex=True)
-            plt.subplots_adjust(hspace=0)
+            plt.subplots_adjust(hspace=vertical_spacing)
             ax[-1].set_xlabel('x')
             ax[0].set_ylabel('t')
 
@@ -482,9 +484,13 @@ def make_plot_function(states_list, speeds_list, riemann_eval_list,
                          variable_names=variable_names, t_pointer=False,
                          derived_variables=derived_variables)
 
-            if names is not None:
+            if names is not None and show_time_legend:
                 # We could use fig.legend here if we had the line plot handles
+                ax[1].legend(names,loc='best', title='time = %.2f' % t)
+            if names is not None and not show_time_legend:
                 ax[1].legend(names,loc='best')
+            if names is None and show_time_legend:
+                ax[1].legend([],loc='best', title='time = %.2f' % t)
 
             if which_char:
                 plot_characteristics(riemann_eval, plot_chars[which_char-1],
