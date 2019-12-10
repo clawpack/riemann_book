@@ -54,7 +54,7 @@ part2 = ['Approximate_solvers',
          'Burgers_approximate',
          'Shallow_water_approximate',
          'Euler_approximate',
-         'Euler_compare']
+         'FV_compare']
 
 others = ['Index2',
             'Acoustics_heterogeneous',
