@@ -30,7 +30,7 @@ part2 = ['Approximate_solvers',
          'Burgers_approximate',
          'Shallow_water_approximate',
          'Euler_approximate',
-         'Euler_compare']
+         'FV_compare']
 
 chapters = part0 + part1 + part2
 
