@@ -11782,8 +11782,9 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The scalar nonlinear conservation law $q_t + f(q)_x = 0$ is said to be "genuinely nonlinear" over some range of states between $q_l$ and $q_r$ if $f''(q) \neq 0$ for all $q$ between these values.  This is true in particular if $f(q)$ is any quadratic function, for example the flux function for Burgers' equation and the LWR traffic flow model are genuinely nonlinear for all $q$.  The reason this is important is that it means that the characteristic speed $f'(q)$ is either monotonically increasing or monotonically decreasing over the interval between $q_l$ and $q_r$.  As discussed already in chapters <a href="Burgers.html">Burgers.html</a> and <a href="Traffic_flow.html">Traffic_flow.html</a>, if $f'(q)$ is increasing as $q$ varies from $q_l$ to $q_r$ then the initial discontinuity of a Riemann problem spreads out into a smooth single-valued rarefaction wave.  On the other hand if $f'(q)$ is decreasing then the discontinuity propagates as a single shock wave with speed given by the Rankine-Hugoniot condition.  Hence the Riemann solution for a genuinely nonlinear scalar equation always consists of either a single rarefaction wave or a single shock.</p>
-<p>The solution can be much more complicated if $f''(q)$ vanishes somewhere between $q_l$ and $q_r$, since this means that the characteristic speed may not vary monotonically.  As we will illustrate below, for a scalar conservation law of this type the solution to the Riemann problem might consist of multiple shocks and rarefaction waves.  These waves all originate from $x=0$ and the Riemann solution is still a similarity solution $q(x,t) = Q(x/t)$ for some single-valued function $Q(\xi)$, but determining the right set of waves is more challenging.  Below we present results computed using an elegant form of the solution to general scalar conservation laws due to Osher.</p>
+<p>The scalar nonlinear conservation law $q_t + f(q)_x = 0$ is said to be "genuinely nonlinear" over some range of states between $q_l$ and $q_r$ if $f''(q) \neq 0$ for all $q$ between these values.  This is true in particular if $f(q)$ is any quadratic function; for example, the flux function for Burgers' equation and the LWR traffic flow model are genuinely nonlinear for all $q$.  The reason this is important is that it means that the characteristic speed $f'(q)$ is either monotonically increasing or monotonically decreasing over the interval between $q_l$ and $q_r$.  As discussed already in chapters <a href="Burgers.html">Burgers.html</a> and <a href="Traffic_flow.html">Traffic_flow.html</a>, if $f'(q)$ is increasing as $q$ varies from $q_l$ to $q_r$ then the initial discontinuity of a Riemann problem spreads out into a smooth single-valued rarefaction wave.  On the other hand if $f'(q)$ is decreasing then the discontinuity propagates as a single shock wave with speed given by the Rankine-Hugoniot condition.  Hence the Riemann solution for a genuinely nonlinear scalar equation always consists of either a single rarefaction wave or a single shock.</p>
+<p>The solution can be much more complicated if $f''(q)$ vanishes somewhere between $q_l$ and $q_r$, since this means that the characteristic speed may not vary monotonically.  As we will illustrate below, for a scalar conservation law of this type the solution to the Riemann problem might consist of multiple shocks and rarefaction waves.  These waves all originate from $x=0$ and the Riemann solution is still a similarity solution $q(x,t) = Q(x/t)$ for some single-valued function $Q(\xi)$, but determining the correct set of waves is more challenging.</p>
+<p>In this chapter, we focus on <em>scalar nonconvex</em> problems and present results computed using an elegant form of the exact solution for a general scalar conservation laws due to Osher.  At the end of the chapter we comment briefly on implications for systems of equations.</p>
 
 </div>
 </div>
@@ -11792,35 +11793,15 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Linear-degeneracy">Linear degeneracy<a class="anchor-link" href="#Linear-degeneracy">&#182;</a></h2><p>The opposite extreme of genuine nonlinearity is "linear degeneracy".  The scalar advection equation has $f(q) = aq$ with constant characteristic speed $f'(q)\equiv a$ and so $f''(q) \equiv 0$ for all values of $q$.  Since it is a linear equation, it naturally fails to be genuinely nonlinear over any range of $q$ values.</p>
-<p>Recall that in the Riemann solution for the scalar advection equation (discussed in <a href="Advection.html">Advection.html</a>) the characteristics are parallel to the propagating discontinuity in the $x$-$t$ plane.  They are neither impinging on the discontinuity (as in a shock wave, where the characteristic speed decreases from $q_l$ to $q_r$) nor are they spreading out (as they would in a rarefaction wave with $f'(q)$ increasing).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implications-to-systems-of-equations">Implications to systems of equations<a class="anchor-link" href="#Implications-to-systems-of-equations">&#182;</a></h2><p>For hyperoblic systems of $m$ equations, there are $m$ different characteristic fields. For classical nonlinear systems such as the shallow water equations or the Euler equations of gas dynamics, the Riemann solution generally consists of $m$ waves, each of which is either a discontinuity or a rarefaction wave.  The fact that there is only one wave in each family results from the fact that, for these systems, each characteristic speed either varies monotonically through the wave (if the field is genuinely nonlinear) or else is constant across the wave (if the field is linearly degenerate).  In the former case the wave is either a single shock or rarefaction wave, and in the latter case the wave is a "contact discontinuity", as discussed further in <a href="Shallow_tracer.html">Shallow_tracer.html</a> and <a href="Euler.html">Euler.html</a>.  As in the case of scalar advection, the characteristic speed is constant across a contact discontinuity ($f'(q) \equiv 0$ between the left and right states). The definition of genuine nonlinearity and linear degeneracy for systems of equations is given in <a href="Shallow_tracer.html">Shallow_tracer.html</a>.</p>
-<p>The nonconvex equations studied in this chapter illustrate that even for a scalar problem the Riemann solution becomes much more complicated if the problem fails to be genuinely nonlinear or linearly degenerate.  <em>Systems</em> of equations that lack the corresponding properties are more difficult still and are beyond the scope of this book, although they do arise in some important applcations, such as magnetohydrodynamics (MHD).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Osher's-Solution">Osher's Solution<a class="anchor-link" href="#Osher's-Solution">&#182;</a></h2><p>In this chapter we use Osher's general solution to the scalar nonlinear Riemann problem (valid also for non-convex fluxes), using the formula from <cite data-cite="osher1984"><a href="riemann.html#osher1984">(Osher 1984)</a></cite>.  The Riemann solution is always a similarity solution $q(x,t) = Q(x/t)$ for all $t&gt;0$ (constant on any ray $x=\alpha t$ eminating from the origin, for any constant $\alpha$).  The function $Q(\xi)$ is given by</p>
+<h2 id="Osher's-Solution">Osher's Solution<a class="anchor-link" href="#Osher's-Solution">&#182;</a></h2><p>In this chapter we use Osher's general solution to the scalar nonlinear Riemann problem (valid also for nonconvex fluxes), using the formula from <cite data-cite="osher1984"><a href="riemann.html#osher1984">(Osher 1984)</a></cite>.  The Riemann solution is always a similarity solution $q(x,t) = Q(x/t)$ for all $t&gt;0$ (constant on any ray $x=\alpha t$ eminating from the origin, for any constant $\alpha$).  The function $Q(\xi)$ is given by</p>
 <p>$$
 Q(\xi) = \begin{cases} 
     \text{argmin}_{q_l \leq q \leq q_r} [f(q) - \xi q]&amp; \text{if} ~q_l\leq q_r,\\
     \text{argmax}_{q_r \leq q \leq q_l} [f(q) - \xi q]&amp; \text{if} ~q_r\leq q_l.\\
 \end{cases}
 $$</p>
-<p>Recall that $\text{argmin}_{q_l \leq q \leq q_r} G(q)$ returns the value of $q$ for which $G(q)$ is minimized over the indicated interval, while argmax returns the value of $q$ where $G(q)$ is maximized.</p>
-<p>For more discussion, see also Section 16.1 of <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque 2002)</a></cite>.</p>
+<p>Recall that $\text{argmin}_{q_l \leq q \leq q_r} G(q)$ returns the value of $q$ for which $G(q)$ is minimized over the indicated interval, while argmax returns the value of $q$ where $G(q)$ is maximized.
+For more discussion, see also Section 16.1 of <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque 2002)</a></cite>.</p>
 
 </div>
 </div>
@@ -11880,8 +11861,10 @@ $$</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>If you wish to examine the Python code for this chapter, please see:</p>
 <ul>
-<li><a href="exact_solvers/nonconvex.py">exact_solvers/nonconvex.py</a></li>
-<li><a href="exact_solvers/nonconvex_demos.py">exact_solvers/nonconvex_demos.py</a></li>
+<li><a href="exact_solvers/nonconvex.py">exact_solvers/nonconvex.py</a> ...
+<a href="https://github.com/clawpack/riemann_book/blob/master/exact_solvers/nonconvex.py">on github</a></li>
+<li><a href="exact_solvers/nonconvex_demos.py">exact_solvers/nonconvex_demos.py</a> ...
+<a href="https://github.com/clawpack/riemann_book/blob/master/exact_solvers/nonconvex_demos.py">on github</a></li>
 </ul>
 
 </div>
@@ -11900,7 +11883,7 @@ $$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Traffic-flow">Traffic flow<a class="anchor-link" href="#Traffic-flow">&#182;</a></h2><p>First we recall that the Riemann solution for a convex flux consists of a single shock or rarefaction wave.  For example, consider the flux function $f(q) = q(1-q)$ from traffic flow (with $q$ now representing the density $\rho$ that was used in <a href="Traffic_flow.html">Traffic_flow.html</a>).</p>
+<h2 id="Traffic-flow">Traffic flow<a class="anchor-link" href="#Traffic-flow">&#182;</a></h2><p>First we recall that the Riemann solution for a problem with convex flux consists of a single shock or rarefaction wave.  For example, consider the flux function $f(q) = q(1-q)$ from traffic flow (with $q$ now representing the density $\rho$ that was used in <a href="Traffic_flow.html">Traffic_flow.html</a>).</p>
 
 </div>
 </div>
@@ -11962,10 +11945,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="ma3be917fea" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m0c79c502f2" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="70.070067" xlink:href="#ma3be917fea" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="70.070067" xlink:href="#m0c79c502f2" y="239.758125"/>
       </g>
      </g>
      <g id="text_1">
@@ -12000,7 +11983,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="131.55767" xlink:href="#ma3be917fea" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="131.55767" xlink:href="#m0c79c502f2" y="239.758125"/>
       </g>
      </g>
      <g id="text_2">
@@ -12036,7 +12019,7 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="193.045274" xlink:href="#ma3be917fea" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="193.045274" xlink:href="#m0c79c502f2" y="239.758125"/>
       </g>
      </g>
      <g id="text_3">
@@ -12053,10 +12036,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="md31bb7c38a" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m8088d63d30" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="239.758125"/>
       </g>
      </g>
      <g id="text_4">
@@ -12079,7 +12062,7 @@ z
     <g id="ytick_2">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="208.695268"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="208.695268"/>
       </g>
      </g>
      <g id="text_5">
@@ -12094,7 +12077,7 @@ z
     <g id="ytick_3">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="177.632411"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="177.632411"/>
       </g>
      </g>
      <g id="text_6">
@@ -12135,7 +12118,7 @@ z
     <g id="ytick_4">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="146.569554"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="146.569554"/>
       </g>
      </g>
      <g id="text_7">
@@ -12184,7 +12167,7 @@ z
     <g id="ytick_5">
      <g id="line2d_8">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="115.506696"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="115.506696"/>
       </g>
      </g>
      <g id="text_8">
@@ -12218,7 +12201,7 @@ z
     <g id="ytick_6">
      <g id="line2d_9">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="84.443839"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="84.443839"/>
       </g>
      </g>
      <g id="text_9">
@@ -12259,7 +12242,7 @@ z
     <g id="ytick_7">
      <g id="line2d_10">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="53.380982"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="53.380982"/>
       </g>
      </g>
      <g id="text_10">
@@ -12306,7 +12289,7 @@ z
     <g id="ytick_8">
      <g id="line2d_11">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#md31bb7c38a" y="22.318125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m8088d63d30" y="22.318125"/>
       </g>
      </g>
      <g id="text_11">
@@ -12331,7 +12314,7 @@ z
     </g>
    </g>
    <g id="line2d_12">
-    <path clip-path="url(#pb2d41db8de)" d="M 223.789075 208.695268 
+    <path clip-path="url(#p43eb564b84)" d="M 223.789075 208.695268 
 L 180.716979 208.617533 
 L 119.290924 53.458717 
 L 39.326265 53.380982 
@@ -12339,7 +12322,7 @@ L 39.326265 53.380982
 " style="fill:none;stroke:#ff0000;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_13">
-    <path clip-path="url(#pb2d41db8de)" d="M 39.326265 53.380982 
+    <path clip-path="url(#p43eb564b84)" d="M 39.326265 53.380982 
 L 119.278615 53.380982 
 L 180.766218 208.695268 
 L 223.789075 208.695268 
@@ -12677,7 +12660,7 @@ z
     <g id="xtick_4">
      <g id="line2d_14">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="313.560976" xlink:href="#ma3be917fea" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="313.560976" xlink:href="#m0c79c502f2" y="239.758125"/>
       </g>
      </g>
      <g id="text_13">
@@ -12691,7 +12674,7 @@ z
     <g id="xtick_5">
      <g id="line2d_15">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="375.04858" xlink:href="#ma3be917fea" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="375.04858" xlink:href="#m0c79c502f2" y="239.758125"/>
       </g>
      </g>
      <g id="text_14">
@@ -12704,7 +12687,7 @@ z
     <g id="xtick_6">
      <g id="line2d_16">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="436.536183" xlink:href="#ma3be917fea" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="436.536183" xlink:href="#m0c79c502f2" y="239.758125"/>
       </g>
      </g>
      <g id="text_15">
@@ -12719,7 +12702,7 @@ z
     <g id="ytick_9">
      <g id="line2d_17">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="239.758125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="239.758125"/>
       </g>
      </g>
      <g id="text_16">
@@ -12734,7 +12717,7 @@ z
     <g id="ytick_10">
      <g id="line2d_18">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="208.695268"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="208.695268"/>
       </g>
      </g>
      <g id="text_17">
@@ -12749,7 +12732,7 @@ z
     <g id="ytick_11">
      <g id="line2d_19">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="177.632411"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="177.632411"/>
       </g>
      </g>
      <g id="text_18">
@@ -12764,7 +12747,7 @@ z
     <g id="ytick_12">
      <g id="line2d_20">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="146.569554"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="146.569554"/>
       </g>
      </g>
      <g id="text_19">
@@ -12779,7 +12762,7 @@ z
     <g id="ytick_13">
      <g id="line2d_21">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="115.506696"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="115.506696"/>
       </g>
      </g>
      <g id="text_20">
@@ -12794,7 +12777,7 @@ z
     <g id="ytick_14">
      <g id="line2d_22">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="84.443839"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="84.443839"/>
       </g>
      </g>
      <g id="text_21">
@@ -12809,7 +12792,7 @@ z
     <g id="ytick_15">
      <g id="line2d_23">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="53.380982"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="53.380982"/>
       </g>
      </g>
      <g id="text_22">
@@ -12824,7 +12807,7 @@ z
     <g id="ytick_16">
      <g id="line2d_24">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#md31bb7c38a" y="22.318125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="273.594034" xlink:href="#m8088d63d30" y="22.318125"/>
       </g>
      </g>
      <g id="text_23">
@@ -12838,7 +12821,7 @@ z
     </g>
    </g>
    <g id="line2d_25">
-    <path clip-path="url(#p84b7c6a17f)" d="M 282.817175 208.695268 
+    <path clip-path="url(#pd81e86af22)" d="M 282.817175 208.695268 
 L 424.207888 208.617533 
 L 362.781833 53.458717 
 L 467.279985 53.380982 
@@ -12846,7 +12829,7 @@ L 467.279985 53.380982
 " style="fill:none;stroke:#000000;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
    </g>
    <g id="line2d_26">
-    <path clip-path="url(#p84b7c6a17f)" d="M 282.817175 208.695268 
+    <path clip-path="url(#pd81e86af22)" d="M 282.817175 208.695268 
 L 393.421002 208.695268 
 L 393.605649 53.380982 
 L 467.279985 53.380982 
@@ -12960,10 +12943,10 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pb2d41db8de">
+  <clipPath id="p43eb564b84">
    <rect height="217.44" width="202.909091" x="30.103125" y="22.318125"/>
   </clipPath>
-  <clipPath id="p84b7c6a17f">
+  <clipPath id="pd81e86af22">
    <rect height="217.44" width="202.909091" x="273.594034" y="22.318125"/>
   </clipPath>
  </defs>
@@ -12981,7 +12964,7 @@ z
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The plot on the left above shows a case where the solution is a rarefaction wave that can be computed by tracing characteristics.  On the right we see the case for which tracing characteristics would give an multivalued solution (as a dashed line) whereas the correct Riemann solution consists of a shock wave (solid line).</p>
+<p>The plot on the left above shows a case where the solution is a rarefaction wave that can be computed by tracing characteristics.  On the right we see the case for which tracing characteristics would give an multivalued solution (as a dashed line) whereas the correct Riemann solution consists of a shock wave (solid line).  As discussed in <a href="Traffic_flow.html">Traffic_flow</a>, the shock location is determined by the Rankine-Hugniot condition, or, equivalently, by the equal area condition discussed in <a href="Burgers.html">Burgers</a>.</p>
 
 </div>
 </div>
@@ -13055,10 +13038,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="mf2670b1c86" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m18011976ad" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="79.096402" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="79.096402" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_1">
@@ -13126,7 +13109,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="125.420644" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="125.420644" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_2">
@@ -13160,7 +13143,7 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="171.744886" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="171.744886" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_3">
@@ -13244,10 +13227,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="md037e99990" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m3e184f1e5e" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#md037e99990" y="154.643112"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#m3e184f1e5e" y="154.643112"/>
       </g>
      </g>
      <g id="text_5">
@@ -13278,7 +13261,7 @@ z
     <g id="ytick_2">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#md037e99990" y="112.768046"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#m3e184f1e5e" y="112.768046"/>
       </g>
      </g>
      <g id="text_6">
@@ -13320,7 +13303,7 @@ z
     <g id="ytick_3">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#md037e99990" y="70.89298"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#m3e184f1e5e" y="70.89298"/>
       </g>
      </g>
      <g id="text_7">
@@ -13336,7 +13319,7 @@ z
     <g id="ytick_4">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#md037e99990" y="29.017914"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="50.14375" xlink:href="#m3e184f1e5e" y="29.017914"/>
       </g>
      </g>
      <g id="text_8">
@@ -13407,7 +13390,7 @@ z
     </g>
    </g>
    <g id="line2d_8">
-    <path clip-path="url(#p0eec2f7d78)" d="M 171.744886 37.392927 
+    <path clip-path="url(#p4c64fb633a)" d="M 171.744886 37.392927 
 L 168.835072 35.42083 
 L 165.925258 33.71309 
 L 163.015444 32.269705 
@@ -13639,7 +13622,7 @@ z
     <g id="xtick_4">
      <g id="line2d_9">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="265.862598" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="265.862598" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_11">
@@ -13654,7 +13637,7 @@ z
     <g id="xtick_5">
      <g id="line2d_10">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="312.420801" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="312.420801" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_12">
@@ -13669,7 +13652,7 @@ z
     <g id="xtick_6">
      <g id="line2d_11">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="358.979004" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="358.979004" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_13">
@@ -13692,7 +13675,7 @@ z
     <g id="ytick_5">
      <g id="line2d_12">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#md037e99990" y="163.356509"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#m3e184f1e5e" y="163.356509"/>
       </g>
      </g>
      <g id="text_15">
@@ -13716,7 +13699,7 @@ z
     <g id="ytick_6">
      <g id="line2d_13">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#md037e99990" y="136.421155"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#m3e184f1e5e" y="136.421155"/>
       </g>
      </g>
      <g id="text_16">
@@ -13731,7 +13714,7 @@ z
     <g id="ytick_7">
      <g id="line2d_14">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#md037e99990" y="109.485802"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#m3e184f1e5e" y="109.485802"/>
       </g>
      </g>
      <g id="text_17">
@@ -13746,7 +13729,7 @@ z
     <g id="ytick_8">
      <g id="line2d_15">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#md037e99990" y="82.550448"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#m3e184f1e5e" y="82.550448"/>
       </g>
      </g>
      <g id="text_18">
@@ -13761,7 +13744,7 @@ z
     <g id="ytick_9">
      <g id="line2d_16">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#md037e99990" y="55.615095"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#m3e184f1e5e" y="55.615095"/>
       </g>
      </g>
      <g id="text_19">
@@ -13776,7 +13759,7 @@ z
     <g id="ytick_10">
      <g id="line2d_17">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#md037e99990" y="28.679741"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="237.085417" xlink:href="#m3e184f1e5e" y="28.679741"/>
       </g>
      </g>
      <g id="text_20">
@@ -13875,7 +13858,7 @@ z
     </g>
    </g>
    <g id="line2d_18">
-    <path clip-path="url(#pcf054c4107)" d="M 358.686553 163.018125 
+    <path clip-path="url(#p2a7d016010)" d="M 358.686553 163.018125 
 L 242.875947 29.018125 
 L 242.875947 29.018125 
 " style="fill:none;stroke:#1f77b4;stroke-linecap:square;stroke-width:1.5;"/>
@@ -14095,7 +14078,7 @@ z
     <g id="xtick_7">
      <g id="line2d_19">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="452.804264" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="452.804264" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_23">
@@ -14110,7 +14093,7 @@ z
     <g id="xtick_8">
      <g id="line2d_20">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="511.002018" xlink:href="#mf2670b1c86" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="511.002018" xlink:href="#m18011976ad" y="169.718125"/>
       </g>
      </g>
      <g id="text_24">
@@ -14137,7 +14120,7 @@ z
     <g id="ytick_11">
      <g id="line2d_21">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#md037e99990" y="163.356509"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#m3e184f1e5e" y="163.356509"/>
       </g>
      </g>
      <g id="text_26">
@@ -14152,7 +14135,7 @@ z
     <g id="ytick_12">
      <g id="line2d_22">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#md037e99990" y="136.421155"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#m3e184f1e5e" y="136.421155"/>
       </g>
      </g>
      <g id="text_27">
@@ -14167,7 +14150,7 @@ z
     <g id="ytick_13">
      <g id="line2d_23">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#md037e99990" y="109.485802"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#m3e184f1e5e" y="109.485802"/>
       </g>
      </g>
      <g id="text_28">
@@ -14216,7 +14199,7 @@ z
     <g id="ytick_14">
      <g id="line2d_24">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#md037e99990" y="82.550448"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#m3e184f1e5e" y="82.550448"/>
       </g>
      </g>
      <g id="text_29">
@@ -14231,7 +14214,7 @@ z
     <g id="ytick_15">
      <g id="line2d_25">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#md037e99990" y="55.615095"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#m3e184f1e5e" y="55.615095"/>
       </g>
      </g>
      <g id="text_30">
@@ -14246,7 +14229,7 @@ z
     <g id="ytick_16">
      <g id="line2d_26">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#md037e99990" y="28.679741"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="424.027083" xlink:href="#m3e184f1e5e" y="28.679741"/>
       </g>
      </g>
      <g id="text_31">
@@ -14266,13 +14249,13 @@ z
     </g>
    </g>
    <g id="line2d_27">
-    <path clip-path="url(#pee2f15ed66)" d="M 429.817614 29.018125 
+    <path clip-path="url(#p2ecc94c837)" d="M 429.817614 29.018125 
 L 545.62822 163.018125 
 L 545.62822 163.018125 
 " style="fill:none;stroke:#1f77b4;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_28">
-    <path clip-path="url(#pee2f15ed66)" d="M 452.804264 163.018125 
+    <path clip-path="url(#p2ecc94c837)" d="M 452.804264 163.018125 
 L 452.804264 29.018125 
 " style="fill:none;stroke:#000000;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
    </g>
@@ -14326,13 +14309,13 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p0eec2f7d78">
+  <clipPath id="p4c64fb633a">
    <rect height="147.4" width="127.391667" x="50.14375" y="22.318125"/>
   </clipPath>
-  <clipPath id="pcf054c4107">
+  <clipPath id="p2a7d016010">
    <rect height="147.4" width="127.391667" x="237.085417" y="22.318125"/>
   </clipPath>
-  <clipPath id="pee2f15ed66">
+  <clipPath id="p2ecc94c837">
    <rect height="147.4" width="127.391667" x="424.027083" y="22.318125"/>
   </clipPath>
  </defs>
@@ -14355,7 +14338,7 @@ z
 f(q) = \frac{q^2}{q^2 + a(1-q)^2}
 $$
 where $a$ is some constant, $q=1$ corresponds to pure water and $q=0$ to pure oil, in a saturated porous medium.</p>
-<p>Consider the Riemann problem for water intruding into oil, with $q_l=1$ and $q_r=0$.</p>
+<p>Here we make plots like the ones above, but for the Buckley-Leverett flux.</p>
 
 </div>
 </div>
@@ -14369,27 +14352,8 @@ where $a$ is some constant, $q=1$ corresponds to pure water and $q=0$ to pure oi
 <span class="n">f_buckley_leverett</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">q</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">q_left</span> <span class="o">=</span> <span class="mf">1.</span>
 <span class="n">q_right</span> <span class="o">=</span> <span class="mf">0.</span>
-</pre></div>
 
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Plot-the-flux-and-its-derivative">Plot the flux and its derivative<a class="anchor-link" href="#Plot-the-flux-and-its-derivative">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nonconvex_demos</span><span class="o">.</span><span class="n">plot_flux</span><span class="p">(</span><span class="n">f_buckley_leverett</span><span class="p">,</span> <span class="n">q_left</span><span class="p">,</span> <span class="n">q_right</span><span class="p">)</span>
+<span class="n">nonconvex_demos</span><span class="o">.</span><span class="n">plot_flux</span><span class="p">(</span><span class="n">f_buckley_leverett</span><span class="p">,</span> <span class="n">q_left</span><span class="p">,</span> <span class="n">q_right</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14441,10 +14405,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="maed8c1df7d" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m9a2f70644a" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="49.988991" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="49.988991" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_1">
@@ -14488,7 +14452,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="112.066402" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="112.066402" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_2">
@@ -14529,7 +14493,7 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="174.143814" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="174.143814" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_3">
@@ -14596,10 +14560,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="m1033d6935e" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m2dcd1ba3b7" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m1033d6935e" y="163.018125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m2dcd1ba3b7" y="163.018125"/>
       </g>
      </g>
      <g id="text_5">
@@ -14614,7 +14578,7 @@ L -3.5 0
     <g id="ytick_2">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m1033d6935e" y="136.218125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m2dcd1ba3b7" y="136.218125"/>
       </g>
      </g>
      <g id="text_6">
@@ -14655,7 +14619,7 @@ z
     <g id="ytick_3">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m1033d6935e" y="109.418125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m2dcd1ba3b7" y="109.418125"/>
       </g>
      </g>
      <g id="text_7">
@@ -14689,7 +14653,7 @@ z
     <g id="ytick_4">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m1033d6935e" y="82.618125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m2dcd1ba3b7" y="82.618125"/>
       </g>
      </g>
      <g id="text_8">
@@ -14736,7 +14700,7 @@ z
     <g id="ytick_5">
      <g id="line2d_8">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m1033d6935e" y="55.818125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m2dcd1ba3b7" y="55.818125"/>
       </g>
      </g>
      <g id="text_9">
@@ -14792,7 +14756,7 @@ z
     <g id="ytick_6">
      <g id="line2d_9">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m1033d6935e" y="29.018125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="43.78125" xlink:href="#m2dcd1ba3b7" y="29.018125"/>
       </g>
      </g>
      <g id="text_10">
@@ -14862,7 +14826,7 @@ z
     </g>
    </g>
    <g id="line2d_10">
-    <path clip-path="url(#p6af16e6c5a)" d="M 49.988991 163.018125 
+    <path clip-path="url(#p3d095c6df2)" d="M 49.988991 163.018125 
 L 52.484565 162.905452 
 L 54.98014 162.549606 
 L 57.475714 161.923534 
@@ -15098,7 +15062,7 @@ z
     <g id="xtick_4">
      <g id="line2d_11">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="238.402817" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="238.402817" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_13">
@@ -15113,7 +15077,7 @@ z
     <g id="xtick_5">
      <g id="line2d_12">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="300.79375" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="300.79375" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_14">
@@ -15128,7 +15092,7 @@ z
     <g id="xtick_6">
      <g id="line2d_13">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="363.184683" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="363.184683" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_15">
@@ -15151,7 +15115,7 @@ z
     <g id="ytick_7">
      <g id="line2d_14">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m1033d6935e" y="163.181784"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m2dcd1ba3b7" y="163.181784"/>
       </g>
      </g>
      <g id="text_17">
@@ -15166,7 +15130,7 @@ z
     <g id="ytick_8">
      <g id="line2d_15">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m1033d6935e" y="130.939653"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m2dcd1ba3b7" y="130.939653"/>
       </g>
      </g>
      <g id="text_18">
@@ -15181,7 +15145,7 @@ z
     <g id="ytick_9">
      <g id="line2d_16">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m1033d6935e" y="98.697522"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m2dcd1ba3b7" y="98.697522"/>
       </g>
      </g>
      <g id="text_19">
@@ -15196,7 +15160,7 @@ z
     <g id="ytick_10">
      <g id="line2d_17">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m1033d6935e" y="66.45539"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m2dcd1ba3b7" y="66.45539"/>
       </g>
      </g>
      <g id="text_20">
@@ -15211,7 +15175,7 @@ z
     <g id="ytick_11">
      <g id="line2d_18">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m1033d6935e" y="34.213259"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="232.508598" xlink:href="#m2dcd1ba3b7" y="34.213259"/>
       </g>
      </g>
      <g id="text_21">
@@ -15269,7 +15233,7 @@ z
     </g>
    </g>
    <g id="line2d_19">
-    <path clip-path="url(#p6e0485fbf9)" d="M 238.716339 162.527172 
+    <path clip-path="url(#p16552d08c6)" d="M 238.716339 162.527172 
 L 241.224517 156.946426 
 L 243.732695 150.720546 
 L 246.240873 143.846007 
@@ -15536,7 +15500,7 @@ z
     <g id="xtick_7">
      <g id="line2d_20">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="427.443686" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="427.443686" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_24">
@@ -15549,7 +15513,7 @@ z
     <g id="xtick_8">
      <g id="line2d_21">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="487.117314" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="487.117314" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_25">
@@ -15562,7 +15526,7 @@ z
     <g id="xtick_9">
      <g id="line2d_22">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="546.790941" xlink:href="#maed8c1df7d" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="546.790941" xlink:href="#m9a2f70644a" y="169.718125"/>
       </g>
      </g>
      <g id="text_26">
@@ -15587,7 +15551,7 @@ z
     <g id="ytick_12">
      <g id="line2d_23">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m1033d6935e" y="163.356509"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m2dcd1ba3b7" y="163.356509"/>
       </g>
      </g>
      <g id="text_28">
@@ -15602,7 +15566,7 @@ z
     <g id="ytick_13">
      <g id="line2d_24">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m1033d6935e" y="136.421155"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m2dcd1ba3b7" y="136.421155"/>
       </g>
      </g>
      <g id="text_29">
@@ -15617,7 +15581,7 @@ z
     <g id="ytick_14">
      <g id="line2d_25">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m1033d6935e" y="109.485802"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m2dcd1ba3b7" y="109.485802"/>
       </g>
      </g>
      <g id="text_30">
@@ -15632,7 +15596,7 @@ z
     <g id="ytick_15">
      <g id="line2d_26">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m1033d6935e" y="82.550448"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m2dcd1ba3b7" y="82.550448"/>
       </g>
      </g>
      <g id="text_31">
@@ -15647,7 +15611,7 @@ z
     <g id="ytick_16">
      <g id="line2d_27">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m1033d6935e" y="55.615095"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m2dcd1ba3b7" y="55.615095"/>
       </g>
      </g>
      <g id="text_32">
@@ -15662,7 +15626,7 @@ z
     <g id="ytick_17">
      <g id="line2d_28">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m1033d6935e" y="28.679741"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="421.235945" xlink:href="#m2dcd1ba3b7" y="28.679741"/>
       </g>
      </g>
      <g id="text_33">
@@ -15682,7 +15646,7 @@ z
     </g>
    </g>
    <g id="line2d_29">
-    <path clip-path="url(#pd0b06ac724)" d="M 428.049464 163.018125 
+    <path clip-path="url(#p4a6f9a7b2a)" d="M 428.049464 163.018125 
 L 433.213877 160.311054 
 L 438.975296 157.603984 
 L 445.336982 154.896913 
@@ -15736,7 +15700,7 @@ L 427.595137 29.018125
 " style="fill:none;stroke:#1f77b4;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_30">
-    <path clip-path="url(#pd0b06ac724)" d="M 427.443686 163.018125 
+    <path clip-path="url(#p4a6f9a7b2a)" d="M 427.443686 163.018125 
 L 427.443686 29.018125 
 " style="fill:none;stroke:#000000;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
    </g>
@@ -15790,13 +15754,13 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p6af16e6c5a">
+  <clipPath id="p3d095c6df2">
    <rect height="147.4" width="136.570305" x="43.78125" y="22.318125"/>
   </clipPath>
-  <clipPath id="p6e0485fbf9">
+  <clipPath id="p16552d08c6">
    <rect height="147.4" width="136.570305" x="232.508598" y="22.318125"/>
   </clipPath>
-  <clipPath id="pd0b06ac724">
+  <clipPath id="p4a6f9a7b2a">
    <rect height="147.4" width="136.570305" x="421.235945" y="22.318125"/>
   </clipPath>
  </defs>
@@ -15831,7 +15795,7 @@ z
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_left</span> <span class="o">=</span> <span class="mf">1.</span>
@@ -16005,29 +15969,29 @@ css/font-awesome.min.css">
 </script>
 
 <div class="animation" align="center">
-    <img id="_anim_imgccceae5f40aa4d1faa7826b25973359a">
+    <img id="_anim_img31aaee8d9f79438382d13f5c15af1a3d">
     <br>
-    <input id="_anim_sliderccceae5f40aa4d1faa7826b25973359a" type="range" style="width:350px"
+    <input id="_anim_slider31aaee8d9f79438382d13f5c15af1a3d" type="range" style="width:350px"
            name="points" min="0" max="1" step="1" value="0"
-           onchange="animccceae5f40aa4d1faa7826b25973359a.set_frame(parseInt(this.value));"></input>
+           onchange="anim31aaee8d9f79438382d13f5c15af1a3d.set_frame(parseInt(this.value));"></input>
     <br>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.slower()"><i class="fa fa-minus"></i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.first_frame()"><i class="fa fa-fast-backward">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.slower()"><i class="fa fa-minus"></i></button>
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.first_frame()"><i class="fa fa-fast-backward">
         </i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.previous_frame()">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.previous_frame()">
         <i class="fa fa-step-backward"></i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.reverse_animation()">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.reverse_animation()">
         <i class="fa fa-play fa-flip-horizontal"></i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.pause_animation()"><i class="fa fa-pause">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.pause_animation()"><i class="fa fa-pause">
         </i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.play_animation()"><i class="fa fa-play"></i>
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.play_animation()"><i class="fa fa-play"></i>
         </button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.next_frame()"><i class="fa fa-step-forward">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.next_frame()"><i class="fa fa-step-forward">
         </i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.last_frame()"><i class="fa fa-fast-forward">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.last_frame()"><i class="fa fa-fast-forward">
         </i></button>
-    <button onclick="animccceae5f40aa4d1faa7826b25973359a.faster()"><i class="fa fa-plus"></i></button>
-  <form action="#n" name="_anim_loop_selectccceae5f40aa4d1faa7826b25973359a" class="anim_control">
+    <button onclick="anim31aaee8d9f79438382d13f5c15af1a3d.faster()"><i class="fa fa-plus"></i></button>
+  <form action="#n" name="_anim_loop_select31aaee8d9f79438382d13f5c15af1a3d" class="anim_control">
     <input type="radio" name="state"
            value="once" > Once </input>
     <input type="radio" name="state"
@@ -16042,9 +16006,9 @@ css/font-awesome.min.css">
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imgccceae5f40aa4d1faa7826b25973359a";
-    var slider_id = "_anim_sliderccceae5f40aa4d1faa7826b25973359a";
-    var loop_select_id = "_anim_loop_selectccceae5f40aa4d1faa7826b25973359a";
+    var img_id = "_anim_img31aaee8d9f79438382d13f5c15af1a3d";
+    var slider_id = "_anim_slider31aaee8d9f79438382d13f5c15af1a3d";
+    var loop_select_id = "_anim_loop_select31aaee8d9f79438382d13f5c15af1a3d";
     var frames = new Array(0);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAYAAABchszxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\
@@ -20361,7 +20325,7 @@ iIiIyO6wACIiIiK7wwKIiIiI7A4LICIiIrI7/x9cZoaC48MiOAAAAABJRU5ErkJggg==\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        animccceae5f40aa4d1faa7826b25973359a = new Animation(frames, img_id, slider_id, 200.0,
+        anim31aaee8d9f79438382d13f5c15af1a3d = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -20379,7 +20343,8 @@ iIiIyO6wACIiIiK7wwKIiIiI7A4LICIiIrI7/x9cZoaC48MiOAAAAABJRU5ErkJggg==\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note from the plot on the left above that the triple-valued solution suggested by tracing characteristics (the dashed line) has been partially replaced by a shock wave.  By conservation, the areas of the two regions cut off by the shock must cancel out.  Moreover, the shock speed coincides with the characteristic speed along at the edge of the rarefaction wave that ends at the shock.  In terms of the flux function shown by the dashed curve in the right-most figure above, we see that the shock wave connects $q_r=0$ to the point where the slope of the solid line (the shock speed) agrees with the slope of the flux function (the characteristic speed at this edge of the rarefaction wave).  The correct Riemann solution lies along the upper convex hull of the flux function.</p>
+<p>Note from the plot on the left above that the triple-valued solution suggested by tracing characteristics (the dashed line) has been partially replaced by a shock wave.  By conservation, the areas of the two regions cut off by the shock must cancel out.  Moreover, the shock speed coincides with the characteristic speed at the edge of the rarefaction wave that ends at the shock.  In terms of the flux function shown by the dashed curve in the right-most figure above, we see that the shock wave connects $q_r=0$ to the point where the slope of the linear segment of the solid line (which is the shock speed, by the Rankine-Hugoniot condition) agrees with the slope of the flux function (which is the characteristic speed at this edge of the rarefaction wave).</p>
+<p>Note that the correct Riemann solution lies along the upper <em>convex hull</em> of the flux function (i.e., the convex hull of the region below the curve $f(q)$).  We will see below that this is true more generally, even for flux functions with many local maxima or minima.  If $q_l &gt; q_r$ then the upper convex hull of the flux function between these points illustrates the Riemann solution.  On the other hand, if $q_l &lt; q_r$ then the lower convex hull gives the Riemann solution, as illustrated in the next example.</p>
 
 </div>
 </div>
@@ -20388,14 +20353,14 @@ iIiIyO6wACIiIiK7wwKIiIiI7A4LICIiIrI7/x9cZoaC48MiOAAAAABJRU5ErkJggg==\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Swapping-left-and-right-states">Swapping left and right states<a class="anchor-link" href="#Swapping-left-and-right-states">&#182;</a></h3><p>Note what happens if we switch <code>q_left</code> and <code>q_right</code> in this problem.  This now corresponds to oil on the left pushing into water on the right.  Since $q_l &lt; q_r$ in this case, the correct Riemann solution corresponds to the lower convex hull of the flux function.</p>
+<h3 id="Swapping-left-and-right-states">Swapping left and right states<a class="anchor-link" href="#Swapping-left-and-right-states">&#182;</a></h3><p>Note what happens if we switch <code>q_left</code> and <code>q_right</code> in this problem.  This now corresponds to oil on the left pushing into water on the right.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">q_left</span> <span class="o">=</span> <span class="mf">0.</span>
@@ -20569,29 +20534,29 @@ css/font-awesome.min.css">
 </script>
 
 <div class="animation" align="center">
-    <img id="_anim_imgf88e241801214c2f9b6c46312057a3a1">
+    <img id="_anim_img41ff2182d9fe41adb1e411b0187bd5c8">
     <br>
-    <input id="_anim_sliderf88e241801214c2f9b6c46312057a3a1" type="range" style="width:350px"
+    <input id="_anim_slider41ff2182d9fe41adb1e411b0187bd5c8" type="range" style="width:350px"
            name="points" min="0" max="1" step="1" value="0"
-           onchange="animf88e241801214c2f9b6c46312057a3a1.set_frame(parseInt(this.value));"></input>
+           onchange="anim41ff2182d9fe41adb1e411b0187bd5c8.set_frame(parseInt(this.value));"></input>
     <br>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.slower()"><i class="fa fa-minus"></i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.first_frame()"><i class="fa fa-fast-backward">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.slower()"><i class="fa fa-minus"></i></button>
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.first_frame()"><i class="fa fa-fast-backward">
         </i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.previous_frame()">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.previous_frame()">
         <i class="fa fa-step-backward"></i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.reverse_animation()">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.reverse_animation()">
         <i class="fa fa-play fa-flip-horizontal"></i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.pause_animation()"><i class="fa fa-pause">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.pause_animation()"><i class="fa fa-pause">
         </i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.play_animation()"><i class="fa fa-play"></i>
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.play_animation()"><i class="fa fa-play"></i>
         </button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.next_frame()"><i class="fa fa-step-forward">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.next_frame()"><i class="fa fa-step-forward">
         </i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.last_frame()"><i class="fa fa-fast-forward">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.last_frame()"><i class="fa fa-fast-forward">
         </i></button>
-    <button onclick="animf88e241801214c2f9b6c46312057a3a1.faster()"><i class="fa fa-plus"></i></button>
-  <form action="#n" name="_anim_loop_selectf88e241801214c2f9b6c46312057a3a1" class="anim_control">
+    <button onclick="anim41ff2182d9fe41adb1e411b0187bd5c8.faster()"><i class="fa fa-plus"></i></button>
+  <form action="#n" name="_anim_loop_select41ff2182d9fe41adb1e411b0187bd5c8" class="anim_control">
     <input type="radio" name="state"
            value="once" > Once </input>
     <input type="radio" name="state"
@@ -20606,9 +20571,9 @@ css/font-awesome.min.css">
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imgf88e241801214c2f9b6c46312057a3a1";
-    var slider_id = "_anim_sliderf88e241801214c2f9b6c46312057a3a1";
-    var loop_select_id = "_anim_loop_selectf88e241801214c2f9b6c46312057a3a1";
+    var img_id = "_anim_img41ff2182d9fe41adb1e411b0187bd5c8";
+    var slider_id = "_anim_slider41ff2182d9fe41adb1e411b0187bd5c8";
+    var loop_select_id = "_anim_loop_select41ff2182d9fe41adb1e411b0187bd5c8";
     var frames = new Array(0);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAYAAABchszxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\
@@ -24996,7 +24961,7 @@ ICIiIrI7LICIiIjI7vw/PgRcWps5BWAAAAAASUVORK5CYII=\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        animf88e241801214c2f9b6c46312057a3a1 = new Animation(frames, img_id, slider_id, 200.0,
+        anim41ff2182d9fe41adb1e411b0187bd5c8 = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -25014,14 +24979,23 @@ ICIiIrI7LICIiIjI7vw/PgRcWps5BWAAAAAASUVORK5CYII=\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Leftward-flow">Leftward flow<a class="anchor-link" href="#Leftward-flow">&#182;</a></h3><p>Note that the Buckley-Leverett equation as written above simulates flow from left to right.   So if we wanted to model water on the right pushing leftward into oil on the left, we must negate the flux function, as is done in the next cell. Note that this gives the same solution as our original Riemann problem, but flipped in <code>x</code>.</p>
+<p>Again the shock replaces the triple-valued part of the solution in such a way that mass is conserved (equal areas are cut off), and the shock speed again agrees with the limiting characteristic speed at edge of the adjacent rarefaction wave.  Since $q_l &lt; q_r$ in this case, the correct Riemann solution corresponds to the lower convex hull of the flux function, i.e. the convex hull of the set of points lying above $f(q)$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Leftward-flow">Leftward flow<a class="anchor-link" href="#Leftward-flow">&#182;</a></h3><p>The Buckley-Leverett equation as written above simulates flow from left to right.   So if we wanted to model water on the right pushing leftward into oil on the left, we must negate the flux function, as is done in the next cell. Note that this gives the same solution as our original Riemann problem, but flipped in <code>x</code>.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f_BL_leftward</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="o">-</span><span class="n">f_buckley_leverett</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -25196,29 +25170,29 @@ css/font-awesome.min.css">
 </script>
 
 <div class="animation" align="center">
-    <img id="_anim_img4b4bc87fcd3a4277a1316633fd9fb35c">
+    <img id="_anim_img3095813291194e9aabf8dae2bc44d6ad">
     <br>
-    <input id="_anim_slider4b4bc87fcd3a4277a1316633fd9fb35c" type="range" style="width:350px"
+    <input id="_anim_slider3095813291194e9aabf8dae2bc44d6ad" type="range" style="width:350px"
            name="points" min="0" max="1" step="1" value="0"
-           onchange="anim4b4bc87fcd3a4277a1316633fd9fb35c.set_frame(parseInt(this.value));"></input>
+           onchange="anim3095813291194e9aabf8dae2bc44d6ad.set_frame(parseInt(this.value));"></input>
     <br>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.slower()"><i class="fa fa-minus"></i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.first_frame()"><i class="fa fa-fast-backward">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.slower()"><i class="fa fa-minus"></i></button>
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.first_frame()"><i class="fa fa-fast-backward">
         </i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.previous_frame()">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.previous_frame()">
         <i class="fa fa-step-backward"></i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.reverse_animation()">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.reverse_animation()">
         <i class="fa fa-play fa-flip-horizontal"></i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.pause_animation()"><i class="fa fa-pause">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.pause_animation()"><i class="fa fa-pause">
         </i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.play_animation()"><i class="fa fa-play"></i>
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.play_animation()"><i class="fa fa-play"></i>
         </button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.next_frame()"><i class="fa fa-step-forward">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.next_frame()"><i class="fa fa-step-forward">
         </i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.last_frame()"><i class="fa fa-fast-forward">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.last_frame()"><i class="fa fa-fast-forward">
         </i></button>
-    <button onclick="anim4b4bc87fcd3a4277a1316633fd9fb35c.faster()"><i class="fa fa-plus"></i></button>
-  <form action="#n" name="_anim_loop_select4b4bc87fcd3a4277a1316633fd9fb35c" class="anim_control">
+    <button onclick="anim3095813291194e9aabf8dae2bc44d6ad.faster()"><i class="fa fa-plus"></i></button>
+  <form action="#n" name="_anim_loop_select3095813291194e9aabf8dae2bc44d6ad" class="anim_control">
     <input type="radio" name="state"
            value="once" > Once </input>
     <input type="radio" name="state"
@@ -25233,9 +25207,9 @@ css/font-awesome.min.css">
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_img4b4bc87fcd3a4277a1316633fd9fb35c";
-    var slider_id = "_anim_slider4b4bc87fcd3a4277a1316633fd9fb35c";
-    var loop_select_id = "_anim_loop_select4b4bc87fcd3a4277a1316633fd9fb35c";
+    var img_id = "_anim_img3095813291194e9aabf8dae2bc44d6ad";
+    var slider_id = "_anim_slider3095813291194e9aabf8dae2bc44d6ad";
+    var loop_select_id = "_anim_loop_select3095813291194e9aabf8dae2bc44d6ad";
     var frames = new Array(0);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAYAAABchszxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\
@@ -29807,7 +29781,7 @@ ABEREZHNYQFERERENuf/A96BdF9WU1eZAAAAAElFTkSuQmCC\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        anim4b4bc87fcd3a4277a1316633fd9fb35c = new Animation(frames, img_id, slider_id, 200.0,
+        anim3095813291194e9aabf8dae2bc44d6ad = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -29825,15 +29799,14 @@ ABEREZHNYQFERERENuf/A96BdF9WU1eZAAAAAElFTkSuQmCC\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Sinusoidal-flux">Sinusoidal flux<a class="anchor-link" href="#Sinusoidal-flux">&#182;</a></h2><p>As another test, the flux function $f(q) = \sin(q)$ is used in Example 16.1 of <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque 2002)</a></cite>.</p>
-<p>First we plot the flux function $f(q)$ and also the characteristic speed $df/dq$. We also plot $q$ as a function of $df/dq$.  This again helps us visualize whether the characteristic speed is positive or negative for each value of $q$ along the jump discontinuity in the Riemann data (again indicated by the vertical dashed line), and shows that trying to solve the Riemann problem by tracing characteristics alone would lead to a multi-valued solution.</p>
+<h2 id="Sinusoidal-flux">Sinusoidal flux<a class="anchor-link" href="#Sinusoidal-flux">&#182;</a></h2><p>As another test, we consider the flux function $f(q) = \sin(q)$, which is also used in Example 16.1 of <cite data-cite="fvmhp"><a href="riemann.html#fvmhp">(LeVeque 2002)</a></cite>.  First we plot the flux function $f(q)$ and also the characteristic speed $df/dq$. We also plot $q$ as a function of $df/dq$.  This again helps us visualize whether the characteristic speed is positive or negative for each value of $q$ along the jump discontinuity in the Riemann data (again indicated by the vertical dashed line), and shows that trying to solve the Riemann problem by tracing characteristics alone would lead to a multi-valued solution.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f_sin</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -29892,10 +29865,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="mf19d92d866" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m80812e72fd" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="102.916105" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="102.916105" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_1">
@@ -29934,7 +29907,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="156.181337" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="156.181337" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_2">
@@ -30021,10 +29994,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="m84d802f3d1" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m32b9139811" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m84d802f3d1" y="163.018647"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m32b9139811" y="163.018647"/>
       </g>
      </g>
      <g id="text_4">
@@ -30054,7 +30027,7 @@ z
     <g id="ytick_2">
      <g id="line2d_4">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m84d802f3d1" y="129.518386"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m32b9139811" y="129.518386"/>
       </g>
      </g>
      <g id="text_5">
@@ -30070,7 +30043,7 @@ z
     <g id="ytick_3">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m84d802f3d1" y="96.018125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m32b9139811" y="96.018125"/>
       </g>
      </g>
      <g id="text_6">
@@ -30085,7 +30058,7 @@ z
     <g id="ytick_4">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m84d802f3d1" y="62.517864"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m32b9139811" y="62.517864"/>
       </g>
      </g>
      <g id="text_7">
@@ -30100,7 +30073,7 @@ z
     <g id="ytick_5">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m84d802f3d1" y="29.017603"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="52.160938" xlink:href="#m32b9139811" y="29.017603"/>
       </g>
      </g>
      <g id="text_8">
@@ -30170,7 +30143,7 @@ z
     </g>
    </g>
    <g id="line2d_8">
-    <path clip-path="url(#p5d16faa471)" d="M 175.154119 143.394648 
+    <path clip-path="url(#p428f5d35e4)" d="M 175.154119 143.394648 
 L 173.388244 150.562583 
 L 172.210995 154.52098 
 L 171.033745 157.765661 
@@ -30455,7 +30428,7 @@ z
     <g id="xtick_3">
      <g id="line2d_9">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="291.247065" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="291.247065" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_11">
@@ -30468,7 +30441,7 @@ z
     <g id="xtick_4">
      <g id="line2d_10">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="344.781314" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="344.781314" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_12">
@@ -30490,7 +30463,7 @@ z
     <g id="ytick_6">
      <g id="line2d_11">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m84d802f3d1" y="163.028736"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m32b9139811" y="163.028736"/>
       </g>
      </g>
      <g id="text_14">
@@ -30506,7 +30479,7 @@ z
     <g id="ytick_7">
      <g id="line2d_12">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m84d802f3d1" y="129.523952"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m32b9139811" y="129.523952"/>
       </g>
      </g>
      <g id="text_15">
@@ -30522,7 +30495,7 @@ z
     <g id="ytick_8">
      <g id="line2d_13">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m84d802f3d1" y="96.019169"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m32b9139811" y="96.019169"/>
       </g>
      </g>
      <g id="text_16">
@@ -30537,7 +30510,7 @@ z
     <g id="ytick_9">
      <g id="line2d_14">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m84d802f3d1" y="62.514385"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m32b9139811" y="62.514385"/>
       </g>
      </g>
      <g id="text_17">
@@ -30552,7 +30525,7 @@ z
     <g id="ytick_10">
      <g id="line2d_15">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m84d802f3d1" y="29.009601"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="240.560938" xlink:href="#m32b9139811" y="29.009601"/>
       </g>
      </g>
      <g id="text_18">
@@ -30610,7 +30583,7 @@ z
     </g>
    </g>
    <g id="line2d_16">
-    <path clip-path="url(#p90587f34fb)" d="M 363.554119 49.969074 
+    <path clip-path="url(#p3c8f5fe591)" d="M 363.554119 49.969074 
 L 361.779326 58.630644 
 L 359.412935 71.728596 
 L 356.454946 89.682223 
@@ -30905,7 +30878,7 @@ z
     <g id="xtick_5">
      <g id="line2d_17">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="434.80848" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="434.80848" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_21">
@@ -30919,7 +30892,7 @@ z
     <g id="xtick_6">
      <g id="line2d_18">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="493.385025" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="493.385025" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_22">
@@ -30932,7 +30905,7 @@ z
     <g id="xtick_7">
      <g id="line2d_19">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="551.961571" xlink:href="#mf19d92d866" y="169.718125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="551.961571" xlink:href="#m80812e72fd" y="169.718125"/>
       </g>
      </g>
      <g id="text_23">
@@ -30957,7 +30930,7 @@ z
     <g id="ytick_11">
      <g id="line2d_20">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m84d802f3d1" y="148.479737"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m32b9139811" y="148.479737"/>
       </g>
      </g>
      <g id="text_25">
@@ -30996,7 +30969,7 @@ z
     <g id="ytick_12">
      <g id="line2d_21">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m84d802f3d1" y="123.983196"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m32b9139811" y="123.983196"/>
       </g>
      </g>
      <g id="text_26">
@@ -31028,7 +31001,7 @@ z
     <g id="ytick_13">
      <g id="line2d_22">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m84d802f3d1" y="99.486655"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m32b9139811" y="99.486655"/>
       </g>
      </g>
      <g id="text_27">
@@ -31073,7 +31046,7 @@ z
     <g id="ytick_14">
      <g id="line2d_23">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m84d802f3d1" y="74.990114"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m32b9139811" y="74.990114"/>
       </g>
      </g>
      <g id="text_28">
@@ -31127,7 +31100,7 @@ z
     <g id="ytick_15">
      <g id="line2d_24">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m84d802f3d1" y="50.493573"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m32b9139811" y="50.493573"/>
       </g>
      </g>
      <g id="text_29">
@@ -31141,7 +31114,7 @@ z
     <g id="ytick_16">
      <g id="line2d_25">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m84d802f3d1" y="25.997033"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="428.960938" xlink:href="#m32b9139811" y="25.997033"/>
       </g>
      </g>
      <g id="text_30">
@@ -31160,7 +31133,7 @@ z
     </g>
    </g>
    <g id="line2d_26">
-    <path clip-path="url(#p8fc1f7673c)" d="M 533.639806 29.018125 
+    <path clip-path="url(#p4f0c7c43c6)" d="M 533.639806 29.018125 
 L 526.068277 31.048428 
 L 517.600759 33.078731 
 L 505.320939 35.785802 
@@ -31245,7 +31218,7 @@ L 533.639806 163.018125
 " style="fill:none;stroke:#1f77b4;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_27">
-    <path clip-path="url(#p8fc1f7673c)" d="M 493.385025 163.018125 
+    <path clip-path="url(#p4f0c7c43c6)" d="M 493.385025 163.018125 
 L 493.385025 29.018125 
 " style="fill:none;stroke:#000000;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
    </g>
@@ -31299,13 +31272,13 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p5d16faa471">
+  <clipPath id="p428f5d35e4">
    <rect height="147.4" width="128.85" x="52.160938" y="22.318125"/>
   </clipPath>
-  <clipPath id="p90587f34fb">
+  <clipPath id="p3c8f5fe591">
    <rect height="147.4" width="128.85" x="240.560938" y="22.318125"/>
   </clipPath>
-  <clipPath id="p8fc1f7673c">
+  <clipPath id="p4f0c7c43c6">
    <rect height="147.4" width="128.85" x="428.960938" y="22.318125"/>
   </clipPath>
  </defs>
@@ -31330,7 +31303,7 @@ z
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_function</span> <span class="o">=</span> \
@@ -31502,29 +31475,29 @@ css/font-awesome.min.css">
 </script>
 
 <div class="animation" align="center">
-    <img id="_anim_imgbec2fee4f4bf482c8c722f3874d6dba3">
+    <img id="_anim_img13839dca75a246829fed7f5e6e5fe6c0">
     <br>
-    <input id="_anim_sliderbec2fee4f4bf482c8c722f3874d6dba3" type="range" style="width:350px"
+    <input id="_anim_slider13839dca75a246829fed7f5e6e5fe6c0" type="range" style="width:350px"
            name="points" min="0" max="1" step="1" value="0"
-           onchange="animbec2fee4f4bf482c8c722f3874d6dba3.set_frame(parseInt(this.value));"></input>
+           onchange="anim13839dca75a246829fed7f5e6e5fe6c0.set_frame(parseInt(this.value));"></input>
     <br>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.slower()"><i class="fa fa-minus"></i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.first_frame()"><i class="fa fa-fast-backward">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.slower()"><i class="fa fa-minus"></i></button>
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.first_frame()"><i class="fa fa-fast-backward">
         </i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.previous_frame()">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.previous_frame()">
         <i class="fa fa-step-backward"></i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.reverse_animation()">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.reverse_animation()">
         <i class="fa fa-play fa-flip-horizontal"></i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.pause_animation()"><i class="fa fa-pause">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.pause_animation()"><i class="fa fa-pause">
         </i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.play_animation()"><i class="fa fa-play"></i>
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.play_animation()"><i class="fa fa-play"></i>
         </button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.next_frame()"><i class="fa fa-step-forward">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.next_frame()"><i class="fa fa-step-forward">
         </i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.last_frame()"><i class="fa fa-fast-forward">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.last_frame()"><i class="fa fa-fast-forward">
         </i></button>
-    <button onclick="animbec2fee4f4bf482c8c722f3874d6dba3.faster()"><i class="fa fa-plus"></i></button>
-  <form action="#n" name="_anim_loop_selectbec2fee4f4bf482c8c722f3874d6dba3" class="anim_control">
+    <button onclick="anim13839dca75a246829fed7f5e6e5fe6c0.faster()"><i class="fa fa-plus"></i></button>
+  <form action="#n" name="_anim_loop_select13839dca75a246829fed7f5e6e5fe6c0" class="anim_control">
     <input type="radio" name="state"
            value="once" > Once </input>
     <input type="radio" name="state"
@@ -31539,9 +31512,9 @@ css/font-awesome.min.css">
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imgbec2fee4f4bf482c8c722f3874d6dba3";
-    var slider_id = "_anim_sliderbec2fee4f4bf482c8c722f3874d6dba3";
-    var loop_select_id = "_anim_loop_selectbec2fee4f4bf482c8c722f3874d6dba3";
+    var img_id = "_anim_img13839dca75a246829fed7f5e6e5fe6c0";
+    var slider_id = "_anim_slider13839dca75a246829fed7f5e6e5fe6c0";
+    var loop_select_id = "_anim_loop_select13839dca75a246829fed7f5e6e5fe6c0";
     var frames = new Array(0);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAYAAABchszxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\
@@ -37513,7 +37486,7 @@ EGJ1KAAihBBCiNWhAIgQQgghVocCIEIIIYRYnf8PGgkJljjd0scAAAAASUVORK5CYII=\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        animbec2fee4f4bf482c8c722f3874d6dba3 = new Animation(frames, img_id, slider_id, 200.0,
+        anim13839dca75a246829fed7f5e6e5fe6c0 = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -37531,15 +37504,15 @@ EGJ1KAAihBBCiNWhAIgQQgghVocCIEIIIYRYnf8PGgkJljjd0scAAAAASUVORK5CYII=\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In the figure above, note that the shocks in the Riemann solution correspond to linear segments of the lower boundary of the convex hull of the set of points that lie above the flux function $f(q)$.  This is because we chose $q_l &lt; q_r$ in this example.</p>
-<p>If we switch the states so that $q_l &gt; q_r$, then the Riemann solution corresponds to the upper boundary of the convex hull of the set of points that lie below the flux function:</p>
+<p>In the figure above, note that the shocks in the Riemann solution correspond to linear segments of the lower convex hull the flux function $f(q)$.  This is because we chose $q_l &lt; q_r$ in this example.</p>
+<p>If we switch the states so that $q_l &gt; q_r$, then the Riemann solution corresponds to the upper convex hull of the flux function:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f_sin</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -37716,29 +37689,29 @@ css/font-awesome.min.css">
 </script>
 
 <div class="animation" align="center">
-    <img id="_anim_img5d91826a2d4f4f4592cf68185559ddf3">
+    <img id="_anim_img7bc6fccdcc3e45d7ab82fecc3faedeb9">
     <br>
-    <input id="_anim_slider5d91826a2d4f4f4592cf68185559ddf3" type="range" style="width:350px"
+    <input id="_anim_slider7bc6fccdcc3e45d7ab82fecc3faedeb9" type="range" style="width:350px"
            name="points" min="0" max="1" step="1" value="0"
-           onchange="anim5d91826a2d4f4f4592cf68185559ddf3.set_frame(parseInt(this.value));"></input>
+           onchange="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.set_frame(parseInt(this.value));"></input>
     <br>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.slower()"><i class="fa fa-minus"></i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.first_frame()"><i class="fa fa-fast-backward">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.slower()"><i class="fa fa-minus"></i></button>
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.first_frame()"><i class="fa fa-fast-backward">
         </i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.previous_frame()">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.previous_frame()">
         <i class="fa fa-step-backward"></i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.reverse_animation()">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.reverse_animation()">
         <i class="fa fa-play fa-flip-horizontal"></i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.pause_animation()"><i class="fa fa-pause">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.pause_animation()"><i class="fa fa-pause">
         </i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.play_animation()"><i class="fa fa-play"></i>
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.play_animation()"><i class="fa fa-play"></i>
         </button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.next_frame()"><i class="fa fa-step-forward">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.next_frame()"><i class="fa fa-step-forward">
         </i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.last_frame()"><i class="fa fa-fast-forward">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.last_frame()"><i class="fa fa-fast-forward">
         </i></button>
-    <button onclick="anim5d91826a2d4f4f4592cf68185559ddf3.faster()"><i class="fa fa-plus"></i></button>
-  <form action="#n" name="_anim_loop_select5d91826a2d4f4f4592cf68185559ddf3" class="anim_control">
+    <button onclick="anim7bc6fccdcc3e45d7ab82fecc3faedeb9.faster()"><i class="fa fa-plus"></i></button>
+  <form action="#n" name="_anim_loop_select7bc6fccdcc3e45d7ab82fecc3faedeb9" class="anim_control">
     <input type="radio" name="state"
            value="once" > Once </input>
     <input type="radio" name="state"
@@ -37753,9 +37726,9 @@ css/font-awesome.min.css">
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_img5d91826a2d4f4f4592cf68185559ddf3";
-    var slider_id = "_anim_slider5d91826a2d4f4f4592cf68185559ddf3";
-    var loop_select_id = "_anim_loop_select5d91826a2d4f4f4592cf68185559ddf3";
+    var img_id = "_anim_img7bc6fccdcc3e45d7ab82fecc3faedeb9";
+    var slider_id = "_anim_slider7bc6fccdcc3e45d7ab82fecc3faedeb9";
+    var loop_select_id = "_anim_loop_select7bc6fccdcc3e45d7ab82fecc3faedeb9";
     var frames = new Array(0);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAYAAABchszxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\
@@ -43731,7 +43704,7 @@ Xuf/AQv8GKYbmJ97AAAAAElFTkSuQmCC\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        anim5d91826a2d4f4f4592cf68185559ddf3 = new Animation(frames, img_id, slider_id, 200.0,
+        anim7bc6fccdcc3e45d7ab82fecc3faedeb9 = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -43749,15 +43722,14 @@ Xuf/AQv8GKYbmJ97AAAAAElFTkSuQmCC\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Yet-another-example">Yet another example<a class="anchor-link" href="#Yet-another-example">&#182;</a></h2><p>Here's another example that you can run in a live notebook. Note the collection of shock and rarefaction waves that result from this.  In the notebook you can adjust $q_l$ and $q_r$.  Notice how the structure of the solution changes as you vary them.  What do you think the Riemann solution looks like if you switch the left and right states?  Check if you are right.</p>
-<p>Note this example doesn't work in the static html version due to sliders for $q_l$ and $q_r$.</p>
+<h2 id="Yet-another-example">Yet another example<a class="anchor-link" href="#Yet-another-example">&#182;</a></h2><p>Here's another example that you can run in a live notebook. Observe the collection of shock and rarefaction waves that result from this.  <em>In the notebook you can also adjust $q_l$ and $q_r$.</em>  Notice how the structure of the solution changes as you vary them.  What do you think the Riemann solution looks like if you switch the left and right states?  Check if you are right.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="mf">0.25</span><span class="o">*</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">1.5</span><span class="o">*</span><span class="n">q</span><span class="p">)</span>
@@ -43932,29 +43904,29 @@ css/font-awesome.min.css">
 </script>
 
 <div class="animation" align="center">
-    <img id="_anim_img5a0c282afd734e828d1489620e6d9dc8">
+    <img id="_anim_img423ee1e77628436c86189e297b41fd70">
     <br>
-    <input id="_anim_slider5a0c282afd734e828d1489620e6d9dc8" type="range" style="width:350px"
+    <input id="_anim_slider423ee1e77628436c86189e297b41fd70" type="range" style="width:350px"
            name="points" min="0" max="1" step="1" value="0"
-           onchange="anim5a0c282afd734e828d1489620e6d9dc8.set_frame(parseInt(this.value));"></input>
+           onchange="anim423ee1e77628436c86189e297b41fd70.set_frame(parseInt(this.value));"></input>
     <br>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.slower()"><i class="fa fa-minus"></i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.first_frame()"><i class="fa fa-fast-backward">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.slower()"><i class="fa fa-minus"></i></button>
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.first_frame()"><i class="fa fa-fast-backward">
         </i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.previous_frame()">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.previous_frame()">
         <i class="fa fa-step-backward"></i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.reverse_animation()">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.reverse_animation()">
         <i class="fa fa-play fa-flip-horizontal"></i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.pause_animation()"><i class="fa fa-pause">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.pause_animation()"><i class="fa fa-pause">
         </i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.play_animation()"><i class="fa fa-play"></i>
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.play_animation()"><i class="fa fa-play"></i>
         </button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.next_frame()"><i class="fa fa-step-forward">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.next_frame()"><i class="fa fa-step-forward">
         </i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.last_frame()"><i class="fa fa-fast-forward">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.last_frame()"><i class="fa fa-fast-forward">
         </i></button>
-    <button onclick="anim5a0c282afd734e828d1489620e6d9dc8.faster()"><i class="fa fa-plus"></i></button>
-  <form action="#n" name="_anim_loop_select5a0c282afd734e828d1489620e6d9dc8" class="anim_control">
+    <button onclick="anim423ee1e77628436c86189e297b41fd70.faster()"><i class="fa fa-plus"></i></button>
+  <form action="#n" name="_anim_loop_select423ee1e77628436c86189e297b41fd70" class="anim_control">
     <input type="radio" name="state"
            value="once" > Once </input>
     <input type="radio" name="state"
@@ -43969,9 +43941,9 @@ css/font-awesome.min.css">
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_img5a0c282afd734e828d1489620e6d9dc8";
-    var slider_id = "_anim_slider5a0c282afd734e828d1489620e6d9dc8";
-    var loop_select_id = "_anim_loop_select5a0c282afd734e828d1489620e6d9dc8";
+    var img_id = "_anim_img423ee1e77628436c86189e297b41fd70";
+    var slider_id = "_anim_slider423ee1e77628436c86189e297b41fd70";
+    var loop_select_id = "_anim_loop_select423ee1e77628436c86189e297b41fd70";
     var frames = new Array(0);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAEgCAYAAABchszxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\
@@ -49439,7 +49411,7 @@ CCGEz/n/6tgyyKLdHKUAAAAASUVORK5CYII=\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        anim5a0c282afd734e828d1489620e6d9dc8 = new Animation(frames, img_id, slider_id, 200.0,
+        anim423ee1e77628436c86189e297b41fd70 = new Animation(frames, img_id, slider_id, 200.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -49457,7 +49429,17 @@ CCGEz/n/6tgyyKLdHKUAAAAASUVORK5CYII=\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Experiment with this and other flux functions in this notebook!  But please note that the plotting functions, as written, may break down if you try an example with too many oscillations in the flux.</p>
+<p>Experiment with this and other flux functions in this notebook!  But be warned that the plotting functions, as written, may break down if you try an example with too many oscillations in the flux.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implications-for-systems-of-equations">Implications for systems of equations<a class="anchor-link" href="#Implications-for-systems-of-equations">&#182;</a></h2><p>For hyperoblic systems of $m$ equations, there are $m$ different characteristic fields. For classical nonlinear systems such as the shallow water equations or the Euler equations of gas dynamics, the Riemann solution generally consists of $m$ waves, each of which is either a discontinuity or a rarefaction wave.  The fact that there is only one wave in each family results from the fact that, for these systems, each characteristic speed either varies monotonically through the wave (the field is said to be <em>genuinely nonlinear</em>) or else is constant across the wave (in which case the field is called <em>linearly degenerate</em>).  In the former case the wave is either a single shock or rarefaction wave, and in the latter case the wave is a "contact discontinuity", as discussed further in <a href="Shallow_tracer.html">Shallow_tracer.html</a> and <a href="Euler.html">Euler.html</a>.  As in the case of scalar advection, the characteristic speed is constant across a contact discontinuity ($f'(q) \equiv 0$ between the left and right states). The definition of genuine nonlinearity and linear degeneracy for systems of equations is given in <a href="Shallow_tracer.html">Shallow_tracer.html</a>.</p>
+<p>The nonconvex equations studied in this chapter illustrate that even for a <em>scalar</em> problem the Riemann solution becomes much more complicated if the problem fails to be genuinely nonlinear (e.g. Burgers' equation or the LWR model for traffic flow) or linearly degenerate (the advection equation).  <em>Systems</em> of equations that lack the corresponding properties are more difficult still and are beyond the scope of this book, although they do arise in some important applications, such as magnetohydrodynamics (MHD).</p>
 
 </div>
 </div>

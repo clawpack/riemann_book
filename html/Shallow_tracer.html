@@ -11774,11 +11774,11 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Shallow-water-equations-with-a-tracer">Shallow water equations with a tracer<a class="anchor-link" href="#Shallow-water-equations-with-a-tracer">&#182;</a></h1><p>We can augment the shallow water equations discussed in <a href="Shallow_water.html">Shallow_water.html</a> with a quantity $\phi(x,t)$ that measures the concentration of a tracer that is advected with the fluid motion (but has no influence on the fluid dynamics).  If $\phi$ is measured in units of mass per unit volume (which is really per unit area of the vertical cross section in this one-dimensional example) then the mass per unit length along the $x$ axis is given by $h(x,t)\phi(x,t)$.  The quantity $\phi$ satisfies the variable coefficient advection equation in advective (non-conservative) form:
+<h1 id="Shallow-water-equations-with-a-tracer">Shallow water equations with a tracer<a class="anchor-link" href="#Shallow-water-equations-with-a-tracer">&#182;</a></h1><p>We can augment the shallow water equations discussed in <a href="Shallow_water.html">Shallow_water.html</a> with a quantity $\phi(x,t)$ that measures the concentration of a tracer that is advected with the fluid motion (but has no influence on the fluid dynamics).  If $\phi$ is measured in units of mass per unit volume (which is really per unit area of the vertical cross section in this one-dimensional example), then the mass per unit length along the $x$ axis is given by $h(x,t)\phi(x,t)$.  The quantity $\phi$ satisfies the variable coefficient advection equation in advective (nonconservative) form:
 $$
 \phi_t(x,t) + u(x,t)\phi_x(x,t) = 0.
 $$
-This is also called the "color equation", since we can think of $\phi$ as measuring the concentration of a dye that changes the color of the water.  We will use this interpretation in the plots below.  By setting the intitial conditions $\phi(x,0)$ to be piecewise constant with different values corresponding to different colors, we can visualize the motion of the fluid better.   We will use a dark shade of blue for the water that is initially to the left of a dam at $x=0$ and a lighter shade of blue for the water that is initially to the right.</p>
+This equation is also called the "color equation", since we can think of $\phi$ as measuring the concentration of a dye that changes the color of the water.  We will use this interpretation in the plots below.  By setting the intitial conditions $\phi(x,0)$ to be piecewise constant with different values corresponding to different colors, we can visualize the motion of the fluid better.   We will use a dark shade of blue for the water that is initially to the left of a dam at $x=0$ and a lighter shade of blue for the water that is initially to the right.</p>
 <p>The quantity $h\phi$ satisfies the conservative form of the advection equation,
 $$
 (h\phi)_t + (uh\phi)_x = 0.
@@ -11786,17 +11786,18 @@ $$
 This can be derived by combining the color equation with the conservation of mass equation $h_t +(hu)_x  = 0$.  Since $h\phi$ measures the concentration of dye per unit length in $x$, and we assume molecules of dye are not created or destroyed, it makes sense that this is the conserved quantity.</p>
 <p>The full system of equations in conservation form,
 \begin{align} \label{SW-tracer}
-q_t(x,t) + f(q(x,t))_x = 0
+q_t(x,t) + f(q(x,t))_x = 0,
 \end{align}
 thus takes the form
 \begin{align*}
 \begin{split}
-h_t + (hu)_x &amp;=0\\
-(hu)_t + \left(hu^2 + \frac 1 2 gh^2\right)_x &amp;=0\\
-(h\phi)_t + (uh\phi)_x &amp;= 0
+h_t + (hu)_x &amp;=0,\\
+(hu)_t + \left(hu^2 + \frac 1 2 gh^2\right)_x &amp;=0,\\
+(h\phi)_t + (uh\phi)_x &amp;= 0.
 \end{split}
 \end{align*}</p>
-<p>The Riemann solution for this system has 3 waves.  Two of these waves, with speeds $u\pm c$ (where $c=\sqrt{gh}$) are just the same waves we studied in the shallow water system.  We refer to these as the 1-wave and 2-wave, to maintain consistency with the last chapter.  The additional wave appearing in this system (the <em>tracer</em> wave) moves at the fluid velocity $u$ and carries only a jump in the tracer concentration $\phi$.  It is our first example of what is known as a contact discontinuity or linearly degenerate wave.  Because the fluid velocity is constant across this wave, tracer characteristics travel parallel to the wave on either side.  Thus this family does not admit shock or rarefaction waves.  The 1- and 2-waves can of course each be either a shock wave or rarefaction wave depending on the initial data, as explained in <a href="Shallow_water.html">Shallow_water.html</a>.  Below we consider a dam break problem in which case there is one of each.</p>
+<p>The Riemann solution for this system has 3 waves.  Two of these waves, with speeds $u\pm c$ (where $c=\sqrt{gh}$) are just the same waves we studied in the shallow water system.  We refer to these as the 1-wave and 2-wave, to maintain consistency with the last chapter.  The additional wave appearing in this system (the <em>tracer</em> wave) moves at the fluid velocity $u$ and carries only a jump in the tracer concentration $\phi$.  It is our first example of what is known as a contact discontinuity or <em>linearly degenerate</em> wave.  Because the fluid velocity is constant across this wave, tracer characteristics travel parallel to the wave on either side.  Thus this family does not admit shock or rarefaction waves.  We will see another example of linear degeneracy in <a href="Euler.html">Euler</a> and give a more general definition at that point.</p>
+<p>The 1- and 2-waves can of course each be either a shock wave or rarefaction wave depending on the initial data, as explained in <a href="Shallow_water.html">Shallow_water.html</a>, since the tracer has no effect on the structure of these waves.  Below we consider a dam break problem in which case there is one of each.</p>
 
 </div>
 </div>
@@ -11854,7 +11855,7 @@ h_t + (hu)_x &amp;=0\\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you wish to examine the Python code for this chapter, see:</p>
+<p>If you wish to examine the Python code for this chapter, see</p>
 <ul>
 <li><a href="exact_solvers/shallow_water.py">exact_solvers/shallow_water.py</a> ...
 <a href="https://github.com/clawpack/riemann_book/blob/master/exact_solvers/shallow_water.py">on github</a></li>
@@ -11869,8 +11870,8 @@ h_t + (hu)_x &amp;=0\\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Dam-break-problem">Dam break problem<a class="anchor-link" href="#Dam-break-problem">&#182;</a></h2><p>Here we plot the solution to the dam break Riemann problem for the shallow water equations with the addition of a tracer.  The tracer is now also take to be piecewise constant, with light blue representing the value $\phi_l$ taken in the water the left of the dam, while dark blue represents the value $\phi_r$ in the water on the right side of the dam.</p>
-<p>The structure of the depth and velocity are exactly the same as seen and discussed in detail in <a href="Shallow_water.html">Shallow_water.html</a>, and the value of $\phi$ is constant across the 1-rarefaction and 3-shock waves.    The discontinuity in $\phi$ shows the propagation of the 2-wave in the Riemann solution, the contact discontinuity across which $\phi$ is discontinuous while  $h$ and $u$ are continuous.</p>
+<h2 id="Dam-break-problem">Dam break problem<a class="anchor-link" href="#Dam-break-problem">&#182;</a></h2><p>Here we plot the solution to the dam break Riemann problem for the shallow water equations with the addition of a tracer.  The tracer is now also taken to be piecewise constant, with light blue representing the value $\phi_l$ taken in the water the left of the dam, while dark blue represents the value $\phi_r$ in the water on the right side of the dam.</p>
+<p>The structure of the depth and velocity are exactly the same as seen and discussed in detail in <a href="Shallow_water.html">Shallow_water.html</a>, and the value of $\phi$ is constant across the 1-rarefaction and 2-shock waves.    The discontinuity in $\phi$ shows the propagation of the contact wave in the Riemann solution, the contact discontinuity across which $\phi$ is discontinuous while  $h$ and $u$ are continuous.</p>
 
 </div>
 </div>
@@ -11932,10 +11933,10 @@ z
       <defs>
        <path d="M 0 0 
 L 0 3.5 
-" id="m2e40afe741" style="stroke:#000000;stroke-width:0.8;"/>
+" id="ma4aacb2047" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="67.622894" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="67.622894" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_1">
@@ -11970,7 +11971,7 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="118.875852" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="118.875852" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_2">
@@ -12006,7 +12007,7 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="170.12881" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="170.12881" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_3">
@@ -12023,10 +12024,10 @@ z
       <defs>
        <path d="M 0 0 
 L -3.5 0 
-" id="mc1817d7a4a" style="stroke:#000000;stroke-width:0.8;"/>
+" id="m620e1d66b9" style="stroke:#000000;stroke-width:0.8;"/>
       </defs>
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mc1817d7a4a" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m620e1d66b9" y="131.038125"/>
       </g>
      </g>
      <g id="text_4">
@@ -12049,7 +12050,7 @@ z
     <g id="ytick_2">
      <g id="line2d_5">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mc1817d7a4a" y="109.294125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m620e1d66b9" y="109.294125"/>
       </g>
      </g>
      <g id="text_5">
@@ -12090,7 +12091,7 @@ z
     <g id="ytick_3">
      <g id="line2d_6">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mc1817d7a4a" y="87.550125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m620e1d66b9" y="87.550125"/>
       </g>
      </g>
      <g id="text_6">
@@ -12124,7 +12125,7 @@ z
     <g id="ytick_4">
      <g id="line2d_7">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mc1817d7a4a" y="65.806125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m620e1d66b9" y="65.806125"/>
       </g>
      </g>
      <g id="text_7">
@@ -12171,7 +12172,7 @@ z
     <g id="ytick_5">
      <g id="line2d_8">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mc1817d7a4a" y="44.062125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m620e1d66b9" y="44.062125"/>
       </g>
      </g>
      <g id="text_8">
@@ -12227,7 +12228,7 @@ z
     <g id="ytick_6">
      <g id="line2d_9">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#mc1817d7a4a" y="22.318125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="30.103125" xlink:href="#m620e1d66b9" y="22.318125"/>
       </g>
      </g>
      <g id="text_9">
@@ -12241,42 +12242,42 @@ z
     </g>
    </g>
    <g id="line2d_10">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 30.103125 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_11">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 44.419118 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_12">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 58.735111 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_13">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 73.051105 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_14">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 87.367098 22.318125 
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:0.6;"/>
    </g>
    <g id="line2d_15">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 157.051834 22.318125 
 " style="fill:none;stroke:#000000;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_16">
-    <path clip-path="url(#p594ea1982d)" d="M 118.875852 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 118.875852 131.038125 
 L 202.040091 22.318125 
 " style="fill:none;stroke:#ff0000;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_17">
-    <path clip-path="url(#p594ea1982d)" d="M 30.103125 131.038125 
+    <path clip-path="url(#p2de029c9ae)" d="M 30.103125 131.038125 
 L 207.64858 131.038125 
 " style="fill:none;stroke:#000000;stroke-dasharray:1.85,0.8;stroke-dashoffset:0;stroke-width:0.5;"/>
    </g>
@@ -12553,7 +12554,7 @@ z
     <g id="xtick_4">
      <g id="line2d_18">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_11">
@@ -12566,7 +12567,7 @@ z
     <g id="xtick_5">
      <g id="line2d_19">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="287.544034" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="287.544034" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_12">
@@ -12579,7 +12580,7 @@ z
     <g id="xtick_6">
      <g id="line2d_20">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="331.930398" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="331.930398" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_13">
@@ -12592,7 +12593,7 @@ z
     <g id="xtick_7">
      <g id="line2d_21">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="376.316761" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="376.316761" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_14">
@@ -12639,7 +12640,7 @@ z
     <g id="xtick_8">
      <g id="line2d_22">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="420.703125" xlink:href="#m2e40afe741" y="131.038125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="420.703125" xlink:href="#ma4aacb2047" y="131.038125"/>
       </g>
      </g>
      <g id="text_15">
@@ -12731,7 +12732,7 @@ z
     <g id="ytick_7">
      <g id="line2d_23">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mc1817d7a4a" y="125.331941"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m620e1d66b9" y="125.331941"/>
       </g>
      </g>
      <g id="text_17">
@@ -12747,7 +12748,7 @@ z
     <g id="ytick_8">
      <g id="line2d_24">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mc1817d7a4a" y="101.005033"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m620e1d66b9" y="101.005033"/>
       </g>
      </g>
      <g id="text_18">
@@ -12789,7 +12790,7 @@ z
     <g id="ytick_9">
      <g id="line2d_25">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mc1817d7a4a" y="76.678125"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m620e1d66b9" y="76.678125"/>
       </g>
      </g>
      <g id="text_19">
@@ -12804,7 +12805,7 @@ z
     <g id="ytick_10">
      <g id="line2d_26">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mc1817d7a4a" y="52.351217"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m620e1d66b9" y="52.351217"/>
       </g>
      </g>
      <g id="text_20">
@@ -12819,7 +12820,7 @@ z
     <g id="ytick_11">
      <g id="line2d_27">
       <g>
-       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#mc1817d7a4a" y="28.024309"/>
+       <use style="stroke:#000000;stroke-width:0.8;" x="243.15767" xlink:href="#m620e1d66b9" y="28.024309"/>
       </g>
      </g>
      <g id="text_21">
@@ -12940,7 +12941,7 @@ z
     </g>
    </g>
    <g id="line2d_28">
-    <path clip-path="url(#p19bf780771)" d="M 281.865033 -1 
+    <path clip-path="url(#paa8e7b90a6)" d="M 281.865033 -1 
 L 284.228644 1.739331 
 L 286.937119 4.776438 
 L 289.645593 7.720964 
@@ -12979,7 +12980,7 @@ L 376.316761 76.678125
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_29">
-    <path clip-path="url(#p19bf780771)" d="M 376.316761 76.678125 
+    <path clip-path="url(#paa8e7b90a6)" d="M 376.316761 76.678125 
 L 377.222606 77.250425 
 L 378.12845 77.820794 
 L 379.034294 78.389253 
@@ -13032,7 +13033,7 @@ L 420.703125 102.751626
 " style="fill:none;stroke:#0000ff;stroke-dasharray:5.55,2.4;stroke-dashoffset:0;stroke-width:1.5;"/>
    </g>
    <g id="line2d_30">
-    <path clip-path="url(#p19bf780771)" d="M 243.601534 163.009124 
+    <path clip-path="url(#paa8e7b90a6)" d="M 243.601534 163.009124 
 L 245.266998 151.527276 
 L 246.932462 144.362749 
 L 248.597926 138.673055 
@@ -13085,7 +13086,7 @@ L 325.209264 40.438125
 " style="fill:none;stroke:#0000ff;stroke-linecap:square;stroke-width:1.5;"/>
    </g>
    <g id="line2d_31">
-    <path clip-path="url(#p19bf780771)" d="M 325.209264 40.438125 
+    <path clip-path="url(#paa8e7b90a6)" d="M 325.209264 40.438125 
 L 327.158118 38.876158 
 L 329.106972 37.332207 
 L 331.055827 35.805664 
@@ -13131,25 +13132,25 @@ C -4.473168 -2.597899 -5 -1.326016 -5 0
 C -5 1.326016 -4.473168 2.597899 -3.535534 3.535534 
 C -2.597899 4.473168 -1.326016 5 0 5 
 z
-" id="m4008625d62" style="stroke:#000000;"/>
+" id="m925877e4e2" style="stroke:#000000;"/>
     </defs>
-    <g clip-path="url(#p19bf780771)">
-     <use style="stroke:#000000;" x="376.316761" xlink:href="#m4008625d62" y="76.678125"/>
+    <g clip-path="url(#paa8e7b90a6)">
+     <use style="stroke:#000000;" x="376.316761" xlink:href="#m925877e4e2" y="76.678125"/>
     </g>
    </g>
    <g id="line2d_33">
-    <g clip-path="url(#p19bf780771)">
-     <use style="stroke:#000000;" x="325.209264" xlink:href="#m4008625d62" y="40.438125"/>
+    <g clip-path="url(#paa8e7b90a6)">
+     <use style="stroke:#000000;" x="325.209264" xlink:href="#m925877e4e2" y="40.438125"/>
     </g>
    </g>
    <g id="line2d_34">
-    <g clip-path="url(#p19bf780771)">
-     <use style="stroke:#000000;" x="325.209264" xlink:href="#m4008625d62" y="40.438125"/>
+    <g clip-path="url(#paa8e7b90a6)">
+     <use style="stroke:#000000;" x="325.209264" xlink:href="#m925877e4e2" y="40.438125"/>
     </g>
    </g>
    <g id="line2d_35">
-    <g clip-path="url(#p19bf780771)">
-     <use style="stroke:#000000;" x="287.544034" xlink:href="#m4008625d62" y="76.678125"/>
+    <g clip-path="url(#paa8e7b90a6)">
+     <use style="stroke:#000000;" x="287.544034" xlink:href="#m925877e4e2" y="76.678125"/>
     </g>
    </g>
    <g id="patch_8">
@@ -13377,10 +13378,10 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p594ea1982d">
+  <clipPath id="p2de029c9ae">
    <rect height="108.72" width="177.545455" x="30.103125" y="22.318125"/>
   </clipPath>
-  <clipPath id="p19bf780771">
+  <clipPath id="paa8e7b90a6">
    <rect height="108.72" width="177.545455" x="243.15767" y="22.318125"/>
   </clipPath>
  </defs>
@@ -13409,27 +13410,27 @@ z
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Hyperbolic-structure">Hyperbolic structure<a class="anchor-link" href="#Hyperbolic-structure">&#182;</a></h2><p>The canonical form (\ref{SW-tracer}) arises by defining 
 \begin{align}
-q &amp; = \begin{pmatrix} h \\ hu \\ h \phi \end{pmatrix} &amp; f &amp; = \begin{pmatrix} hu \\ hu^2 + \frac{1}{2}gh^2 \\ uh\phi\end{pmatrix}.
+q &amp; = \begin{pmatrix} h \\ hu \\ h \phi \end{pmatrix}, &amp; f &amp; = \begin{pmatrix} hu \\ hu^2 + \frac{1}{2}gh^2 \\ uh\phi\end{pmatrix}.
 \end{align}<br>
 In terms of the conserved quantities, the flux is<br>
 \begin{align}
-f(q) &amp; = \begin{pmatrix} q_2 \\ q_2^2/q_1 + \frac{1}{2}g q_1^2 \\ q_3 q_2/q_1 \end{pmatrix}
+f(q) &amp; = \begin{pmatrix} q_2 \\ q_2^2/q_1 + \frac{1}{2}g q_1^2 \\ q_3 q_2/q_1 \end{pmatrix}.
 \end{align}<br>
-Thus the flux jacobian is<br>
+Thus the flux Jacobian is<br>
 \begin{align}
 f'(q) &amp; = \begin{pmatrix} 0 &amp; 1 &amp; 0  \\ -(q_2/q_1)^2 + g q_1 &amp; 2 q_2/q_1 &amp; 0 \\ -q_3 q_2/q_1^2 &amp; q_3/q_1 &amp; q_2/q_1 \end{pmatrix} 
         = \begin{pmatrix} 0 &amp; 1 &amp; 0 \\ -u^2 + g h &amp; 2 u &amp; 0 \\ -u\phi &amp; \phi &amp; u \end{pmatrix}.
 \end{align}<br>
 Its eigenvalues are<br>
-\begin{align} \label{SW:char-speeds}
+\begin{align*}
     \lambda_1 &amp; = u - \sqrt{gh} &amp; \lambda_\text{tracer} &amp; = u &amp; \lambda_2 &amp; = u + \sqrt{gh},
-\end{align}<br>
+\end{align*}<br>
 with corresponding eigenvectors<br>
-\begin{align} \label{SW:fjac-evecs}
+\begin{align*}
     r_1 &amp; = \begin{bmatrix} 1 \\ u-\sqrt{gh} \\ \phi \end{bmatrix} &amp;
     r_\text{tracer} &amp; = \begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix} &amp; 
     r_2 &amp; = \begin{bmatrix} 1 \\ u+\sqrt{gh} \\ \phi \end{bmatrix}
-\end{align}<br>
+\end{align*}<br>
 We see immediately that the tracer wave carries only a jump in the tracer itself.  It may seem puzzling that the third entry of $r_1$ and $r_3$ is nonzero.  Notice that each of these waves carries a jump in $h$; since $\phi$ is constant across each of these waves, there must be a corresponding jump in $q_3=\phi h$.</p>
 
 </div>
@@ -13444,12 +13445,12 @@ We see immediately that the tracer wave carries only a jump in the tracer itself
 \begin{align} \label{SW:gradu}
 \nabla \lambda_\text{tracer} = \begin{bmatrix} -hu/h^2\\ 1/h \\ 0\end{bmatrix}.
 \end{align}
-Note that this vector is orthogonal to the corresponding eigenvector,
+This vector is orthogonal to the corresponding eigenvector,
 \begin{align} \label{SW:lindeg}
 \nabla \lambda_\text{tracer} \cdot r_\text{tracer} \equiv 0
 \end{align}
 for all values of $q$.  This is the general mathematical condition for a linearly degenerate field, since it shows that the eigenvalue is unchanged as we move along integral curves of the corresponding eigenvalue.</p>
-<p>We will see another example of a linearly degenerate family in the next chapter, <a href="Euler.html">Euler.html</a>, where we will see that the Riemann solution to the Euler equations has a very similar structure to that of the shallow water equations with a tracer.  In general it consists of two nonlinear acoustic waves that can be either shock or rarefaction waves, depending on the initial data, and an intermediate contact discontinuity that propagates with the intermediate fluid velocity, and across which the fluid velocity is constant.</p>
+<p>We will see another example of a linearly degenerate characteristic family in the next chapter, <a href="Euler.html">Euler.html</a>, where we will see that the Riemann solution to the Euler equations has a very similar structure to that of the shallow water equations with a tracer.  In general it consists of two nonlinear acoustic waves that can be either shock or rarefaction waves, depending on the initial data, and an intermediate contact discontinuity that propagates with the intermediate fluid velocity, and across which the fluid velocity is constant.</p>
 
 </div>
 </div>

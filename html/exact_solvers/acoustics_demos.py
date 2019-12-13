@@ -19,7 +19,7 @@ colors = ['g','orange']
 def decompose_q_interactive():
     """plots interactive decomposed eigenvectors."""
     pwidget = widgets.FloatSlider(min=-1,max=1,value=1.)
-    uwidget = widgets.FloatSlider(min=-1,max=1,value=0.)
+    uwidget = widgets.FloatSlider(min=-1,max=1,value=0.3)
     rhowidget = widgets.FloatSlider(min=0.1,max=2,value=1.,description=r'$\rho$')
     Kwidget = widgets.FloatSlider(min=0.1,max=2,value=1.)
 
@@ -40,20 +40,24 @@ def decompose_q(p,u,K,rho):
     should also print the eigenvectors and the values w_1, w_2."""
     Z = np.sqrt(K*rho)
     fig, axes = plt.subplots(1,2,figsize=(8,4)) 
-    axes[0].arrow(0,0,-Z,1,head_width=0.05, head_length=0.1, color=colors[0])
-    axes[0].arrow(0,0,Z,1, head_width=0.05, head_length=0.1, color=colors[1])
+    axes[0].arrow(0,0,-Z,1,head_width=0.07, head_length=0.15, 
+                  color=colors[0],lw=3)
+    axes[0].arrow(0,0,Z,1, head_width=0.07, head_length=0.15, 
+                  color=colors[1],lw=3)
     l1 = axes[0].plot([],[],colors[0])
     l2 = axes[0].plot([],[],'-',color=colors[1])
     axes[0].set_xlim(-2,2)
     axes[0].set_ylim(-2,2)
     axes[0].set_aspect('equal')
-    axes[0].set_title('Eigenvectors')
+    axes[0].set_title('Eigenvectors in phase plane',fontsize=10)
     axes[0].legend(['$r_1$','$r_2$'],loc=3)
     axes[0].plot([0,0],[-2,2],'--k',alpha=0.2)
     axes[0].plot([-2,2],[0,0],'--k',alpha=0.2)
+    axes[0].set_xlabel('p')
+    axes[0].set_ylabel('u')
 
     
-    axes[1].plot([0,p],[0,u],'k',lw=3)    
+    axes[1].plot([0,p],[0,u],'k-',lw=3,markersize=8)
     alpha1 = (Z*u-p)/(2.*Z)
     alpha2 = (Z*u+p)/(2.*Z)
     axes[1].plot([0,-Z*alpha1],[0,1*alpha1], color=colors[0], lw=3)
@@ -61,9 +65,11 @@ def decompose_q(p,u,K,rho):
     axes[1].set_xlim(-1.2,1.2)
     axes[1].set_ylim(-1.2,1.2)
     axes[1].legend(['$q$',r'$w_1 r_1$',r'$w_2 r_2$'],loc='best')
+    axes[1].plot([p],[u],'ko',markersize=6)
     axes[1].plot([0,0],[-2,2],'--k',alpha=0.2)
     axes[1].plot([-2,2],[0,0],'--k',alpha=0.2)
-
+    axes[1].set_xlabel('p')
+    axes[1].set_title('Decomposition of q',fontsize=10)
     plt.tight_layout()
 
 
@@ -111,7 +117,6 @@ def char_solution(t, K, rho):
     axes[1].set_ylim(-0.2,1.2)
     axes[1].set_title('Velocity')
     axes[1].set_xlabel('$x$')
-    #axes[1].set_ylabel('$t$')
     
     plt.tight_layout()
 
@@ -544,7 +549,7 @@ def bump_animation(numframes):
 
     anim = animation.FuncAnimation(fig, fplot, frames=len(frames), interval=30)
     plt.close('all')
-    return HTML(anim.to_jshtml())
+    return anim.to_jshtml()
 
 
 def bump_pyclaw(numframes):
