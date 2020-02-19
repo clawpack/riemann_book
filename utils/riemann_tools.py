@@ -34,7 +34,6 @@ These are usually obtained from an exact or approximate Riemann solver.
 
 from __future__ import absolute_import
 from __future__ import print_function
-import sympy
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -51,7 +50,6 @@ except:
 from IPython.display import display
 
 
-sympy.init_printing(use_latex='mathjax')
 
 def set_interact(context):
     if context == 'notebook':
@@ -143,6 +141,8 @@ def riemann_solution(solver,q_l,q_r,aux_l=None,aux_r=None,t=0.2,problem_data=Non
     num_states = num_waves + 1
 
     if verbose:
+        import sympy
+        sympy.init_printing(use_latex='mathjax')
         print('States in Riemann solution:')
         states_sym = sympy.Matrix(states)
         display([states_sym[:,k] for k in range(num_states)])
