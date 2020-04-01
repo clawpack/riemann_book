@@ -263,6 +263,8 @@ def exact_riemann_solution(q_l, q_r, gamma=1.4, phase_plane_curves=False):
 def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=None,
                      cons_inputs=False):
     r"""Plot the Hugoniot loci or integral curves in the p-u plane."""
+    import matplotlib.lines as mlines
+    
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -329,12 +331,40 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
     ax.plot(pa,ua,style1)
     ax.plot(pb,ub,style2)
 
-    for xp,yp in zip(x,y):
-        ax.plot(xp,yp,'ok',markersize=10)
-    # Label states
-    for i,label in enumerate(('Left', 'Middle', 'Right')):
-        ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label)
-
+    if 0:
+        # now use different symbols below
+        for xp,yp in zip(x,y):
+            ax.plot(xp,yp,'ok',markersize=8)
+            
+    if 0:
+        # attempt to put boxes around labels, still too hard to read when crash
+        bbox_props = dict(boxstyle="round,pad=0.3", fc="w", ec="b", 
+                          alpha=0.5, lw=1)
+        # Label states
+        for i,label in enumerate(('Left', 'Middle', 'Right')):
+            ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label, fontsize=10,
+                    bbox=bbox_props)
+          
+    if 1:
+        msize = 8
+        ax.plot(x[0],y[0],'<k',markersize=msize,label='Left')
+        ax.plot(x[1],y[1],'ok',markersize=msize,label='Middle')
+        ax.plot(x[2],y[2],'>k',markersize=msize,label='Right')
+        #ax.legend()
+        
+    # add legends only for Left, Middle, Right:
+    handles = []
+    handle = mlines.Line2D([], [], color='k', linestyle='', marker='<',
+                    label='Left state')
+    handles.append(handle)
+    handle = mlines.Line2D([], [], color='k', linestyle='', marker='o',
+                    label='Middle state')
+    handles.append(handle)
+    handle = mlines.Line2D([], [], color='k', linestyle='', marker='>',
+                    label='Right state')
+    handles.append(handle)
+    plt.legend(handles=handles, fontsize=8)
+    
     if approx_states is not None:
         p_approx = []
         u_approx = []
@@ -342,8 +372,18 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
             rho, u, p = cons_to_prim(approx_states[:,j],gamma=gamma)
             p_approx.append(p)
             u_approx.append(u)
-        ax.plot(p_approx,u_approx,'o-g',markersize=10,zorder=0)
+        ax.plot(p_approx,u_approx,'-g',zorder=0)
+        # don't plot the left and right states as dots, only middle states:
+        ax.plot(p_approx[1:-1],u_approx[1:-1],'og',markersize=8,zorder=0)
 
+    xlimits = ax.get_xlim()
+    if xlimits[0] <= 0.:
+        # shift xlimits to better show vacuum state:
+        x0 = -0.05*(xlimits[1] - xlimits[0])
+        ax.set_xlim(x0,xlimits[1])
+        ylimits = ax.get_ylim()
+        ax.plot([0,0], ylimits, 'k-', linewidth=0.6)  # y-axis
+        
 def plot_integral_curves(plot_1=True,plot_3=False,gamma=1.4,rho_0=1.):
     N = 400
     p = np.linspace(0.,5,N)
@@ -395,6 +435,7 @@ def riemann_solution(left_state, right_state, gamma=1.4):
                                                      layout='vertical',
                                                      variable_names=primitive_variables,
                                                      plot_chars=[lambda1,lambda2,lambda3],
+                                                     vertical_spacing=0.1,
                                                      derived_variables=cons_to_prim)
 
     interact(plot_function, t=widgets.FloatSlider(value=0.1,min=0,max=.9),
