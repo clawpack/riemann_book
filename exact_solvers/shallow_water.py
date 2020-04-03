@@ -395,27 +395,11 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
         ax.plot(h1,hu1,'b', label='Integral curve (physical)')
         ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
-    if 0:
-        for xp,yp in zip(x,y):
-            ax.plot(xp,yp,'ok',markersize=10, label='Exact solution states')
-            
-    if 0:
-        # Label states
-        if include_contact:
-            state_labels = ('Left', 'Middle', '', 'Right')
-            state_colors = ('r', 'k', '', 'g')
-        else:
-            state_labels = ('Left', 'Middle', 'Right')
-            state_colors = ('r', 'k', 'g')
-        for i,label in enumerate(state_labels):
-            ax.text(x[i] + 0.05*dx,y[i] + 0.05*ymax, label, 
-                    color=state_colors[i], fontsize=10)
 
     msize = 6
     Lp = ax.plot(x[0],y[0],'<k',markersize=msize,label='Left')
     Mp = ax.plot(x[1],y[1],'ok',markersize=msize,label='Middle')
     Rp = ax.plot(x[-1],y[-1],'>k',markersize=msize,label='Right')
-    #ax.legend()
         
     # add legends only for Left, Middle, Right:
     handles = []
@@ -433,7 +417,6 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
     if approx_states is not None:
         u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
         h = approx_states[0,:]
-        #ax.plot(h,u,'o-',color=color,markersize=10,zorder=0, label='Approximate solution') # old
         ax.plot(h,u,'-g',zorder=0)
         # don't plot the left and right states as dots, only middle states:
         ax.plot(h[1:-1],u[1:-1],'og',markersize=8,zorder=0)
@@ -441,7 +424,7 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
     xlimits = ax.get_xlim()
     if xlimits[0] <= 0.:
         # shift xlimits to better show dry state:
-        x0 = -0.05*(xlimits[1] - xlimits[0])
+        x0 = min(xlimits[0],  -0.05*(xlimits[1] - xlimits[0]))
         ax.set_xlim(x0,xlimits[1])
         ylimits = ax.get_ylim()
         ax.plot([0,0], ylimits, 'k-', linewidth=0.6)  # y-axis

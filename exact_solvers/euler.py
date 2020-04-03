@@ -331,26 +331,11 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
     ax.plot(pa,ua,style1)
     ax.plot(pb,ub,style2)
 
-    if 0:
-        # now use different symbols below
-        for xp,yp in zip(x,y):
-            ax.plot(xp,yp,'ok',markersize=8)
-            
-    if 0:
-        # attempt to put boxes around labels, still too hard to read when crash
-        bbox_props = dict(boxstyle="round,pad=0.3", fc="w", ec="b", 
-                          alpha=0.5, lw=1)
-        # Label states
-        for i,label in enumerate(('Left', 'Middle', 'Right')):
-            ax.text(x[i] + 0.025*dx,y[i] + 0.025*dy,label, fontsize=10,
-                    bbox=bbox_props)
           
-    if 1:
-        msize = 8
-        ax.plot(x[0],y[0],'<k',markersize=msize,label='Left')
-        ax.plot(x[1],y[1],'ok',markersize=msize,label='Middle')
-        ax.plot(x[2],y[2],'>k',markersize=msize,label='Right')
-        #ax.legend()
+    msize = 8
+    ax.plot(x[0],y[0],'<k',markersize=msize,label='Left')
+    ax.plot(x[1],y[1],'ok',markersize=msize,label='Middle')
+    ax.plot(x[2],y[2],'>k',markersize=msize,label='Right')
         
     # add legends only for Left, Middle, Right:
     handles = []
@@ -379,7 +364,7 @@ def phase_plane_plot(left_state, right_state, gamma=1.4, ax=None, approx_states=
     xlimits = ax.get_xlim()
     if xlimits[0] <= 0.:
         # shift xlimits to better show vacuum state:
-        x0 = -0.05*(xlimits[1] - xlimits[0])
+        x0 = min(xlimits[0], -0.05*(xlimits[1] - xlimits[0]))
         ax.set_xlim(x0,xlimits[1])
         ylimits = ax.get_ylim()
         ax.plot([0,0], ylimits, 'k-', linewidth=0.6)  # y-axis
