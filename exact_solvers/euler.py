@@ -418,12 +418,13 @@ def riemann_solution(left_state, right_state, gamma=1.4):
 
     plot_function = riemann_tools.make_plot_function(ex_states, ex_speeds, reval, wave_types,
                                                      layout='vertical',
+                                                     vertical_spacing=0.15,
                                                      variable_names=primitive_variables,
                                                      plot_chars=[lambda1,lambda2,lambda3],
                                                      vertical_spacing=0.1,
                                                      derived_variables=cons_to_prim)
 
-    interact(plot_function, t=widgets.FloatSlider(value=0.1,min=0,max=.9),
+    interact(plot_function, t=widgets.FloatSlider(value=0.5,min=0,max=.9),
              which_char=widgets.Dropdown(options=[None,1,2,3],description='Show characteristics:',
                                          style={'description_width':'initial'}))
 
