@@ -59,6 +59,14 @@ def compare_curves(wave_family=1, h0=1., u0=0., y_axis='u'):
         plt.ylabel('momentum (hu)')
     plt.xlabel('depth h')
     plt.title('Wave family %i' % wave_family)
+    
+    xlimits = plt.xlim()
+    if xlimits[0] <= 0.:
+        # shift xlimits to better show dry state:
+        x0 = -0.05*(xlimits[1] - xlimits[0])
+        plt.xlim(x0,xlimits[1])
+        ylimits = plt.ylim()
+        plt.plot([0,0], ylimits, 'k-', linewidth=0.6)  # y-axis
     plt.show()
     
 def connect_states(h_l=1.,u_l=-1.,h_r=1.,u_r=1.):
