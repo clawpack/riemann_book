@@ -112,6 +112,6 @@ Note the last `.` on this line!
 
 ### More resources:
 
- - [Docker for Clawpack](http://www.clawpack.org/docker_image.html#docker-image).  The Dockerfile provided here includes everything in the Clawpack-5.4.0 image.
+ - [Docker for Clawpack](http://www.clawpack.org/docker_image.html#docker-image).  The Dockerfile provided here includes everything in the Clawpack-5.7.0 image.
  
  - [Docker documentation](https://docs.docker.com/)
