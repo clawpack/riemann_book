@@ -1,7 +1,7 @@
 
-FROM clawpack/v5.6.1_dockerimage:release
+FROM clawpack/v5.7.0_dockerimage:release
 # this dockerhub image has a user jovyan and clawpack installed 
-# in /home/jovyan/clawpack-v5.6.1
+# in /home/jovyan/clawpack-v5.7.0
 
 
 ENV NB_USER jovyan
