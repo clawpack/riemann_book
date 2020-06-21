@@ -85,7 +85,7 @@ notebooks on the cloud using the free
 [binder](https://mybinder.org/) service.  
 Simply navigate to this link in a browser:
 
-https://mybinder.org/v2/gh/clawpack/riemann_book/master
+https://mybinder.org/v2/gh/clawpack/riemann_book/FA16
 
 This may take a few minutes to start up a notebook server on a
 [Jupyterhub](https://jupyterhub.readthedocs.io/en/latest/). Then navigate to
