@@ -5,20 +5,38 @@
 #### by David I. Ketcheson, Randall J. LeVeque, and Mauricio del Razo Sarmina
 
 This repository contains source files for a book that illustrates Riemann
-solutions and approximate Riemann solvers in Jupyter notebooks.  The print or PDF version
-of the book is [available from SIAM](https://my.siam.org/Store/Product/viewproduct/?ProductId=31634540).
-The recommended way to experience the book is by running the Jupyter notebooks:
+solutions and approximate Riemann solvers in Jupyter notebooks.  The print version
+of the book is [available from SIAM](https://my.siam.org/Store/Product/viewproduct/?ProductId=31634540),
+and also as an [ebook](https://epubs.siam.org/doi/book/10.1137/1.9781611976212).  You can view a pdf 
+version of the [contents, preface, and index](https://archive.siam.org/books/fa16/fa16fmbm.pdf).
+
+    Riemann Problems and Jupyter Solutions
+        Theory and Approximate Solvers for Hyperbolic PDEs
+    by David I. Ketcheson, Randall J. LeVeque, and Mauricio J. del Razo
+    SIAM, 2020.   ISBN: 978-1-611976-20-5
+    ebook: DOI 10.1137/1.9781611976212
+
+See [https://bookstore.siam.org/fa16/bonus](https://bookstore.siam.org/fa16/bonus) for additional 
+information and links to the html rendered notebooks.
+These are static views (no execution or interactive widgets), but some notebooks include animations that will play.
+
+
+The recommended way to fully experience the book is by running the Jupyter notebooks:
 
  - [Locally, installed using Docker](#docker)
  - [Locally, installed manually](#installation)
  - [In the cloud with Binder](#binder)
  
- Start from the table of contents given in the notebook `index.ipynb`.
- You may also [browse the book chapters rendered as HTML](http://www.clawpack.org/riemann_book/html/Index.html).
- These are static views (no execution or interactive widgets), but some notebooks include animations that will play.
+ Start from the table of contents given in the notebook [Index.ipynb](Index.ipynb).
+ The notebook [Index2.ipynb](Index2.ipynb) lists some notebooks that are not 
+ in the SIAM book, some of which are still under development.  Additional notebooks may appear in the future.
+
+## Branches
+The [**FA16** branch](https://github.com/clawpack/riemann_book/tree/FA16) of this repository corresponds
+to notebooks as converted into the SIAM book.  The **master** branch may be updated in the future.
 
 ## Installation
-To install the dependencies for the book, first install a Fortran compiler.
+To install the [dependencies](#installation), first install a Fortran compiler.
 Then do the following in a terminal:
 
 ```
@@ -38,9 +56,9 @@ You can test your installation by running
 python test.py
 ```
 
-A table of contents and suggested order for reading the notebooks is given in `Index.ipynb`.
+A table of contents and suggested order for reading the notebooks is given in [Index.ipynb](Index.ipynb).
 
-If you want to compile the PDF locally, you must also install the package `bookbook`.
+If you want to compile the PDF locally, you must also install the package [bookbook](https://github.com/takluyver/bookbook).
 
 ## Docker
 
@@ -50,9 +68,9 @@ Rather than installing all the dependencies, if you have
     $ docker pull clawpack/rbook
 
 to obtain a docker image that has all the notebooks and dependencies
-installed.  This was built using the `Dockerfile` in
+installed.  This was built using the [Dockerfile](Dockerfile) in
 this repository, which could be modified to build a new image also
-containing other material, if desired.  See `Docker.md` for further
+containing other material, if desired.  See [Docker.md](Docker.md) for further
 instructions.
 
 ## Execute in the cloud
