@@ -27,7 +27,7 @@ The recommended way to fully experience the book is by running the Jupyter noteb
  - [Locally, installed manually](#installation)
  - [In the cloud with Binder](#binder)
  
- Start from the table of contents given in the notebook [Index.ipynb](Index.ipynb), which is also [shown below](#contents).
+ Start from the table of contents given in the notebook [Index.ipynb](Index.ipynb).
  The notebook [Index2.ipynb](Index2.ipynb) lists some notebooks that are not 
  in the SIAM book, some of which are still under development.  Additional notebooks may appear in the future.
 
@@ -106,26 +106,3 @@ See
 [LICENSE-TEXT.md](https://github.com/clawpack/riemann_book/blob/master/LICENSE-TEXT.md)
 for the license and read more at [Creative
 Commons](https://creativecommons.org/licenses/by-nc-nd/4.0/).
-
-## Contents
-
-Taken from the notebook [Index.ipynb](Index.ipynb), these are the notebooks that also appear in the printed book:
-
-- Preface -- Describes the aims and goals, and different ways to use the notebooks.
-- Part I: The Riemann problem and its solution
-  - Introduction -- Introduces basic ideas with some sample solutions.
-  - Advection -- The scalar advection equation is the simplest hyperbolic problem.
-  - Acoustics -- This linear system of two equations illustrates how eigenstructure is used.
-  - Burgers' equation -- The classic nonlinear scalar problem with a convex flux.
-  - Traffic flow -- A nonlinear scalar problem with a nice physical interpretation.
-  - Nonconvex_scalar -- More interesting Riemann solutions arise when the flux is not convex.
-  - Shallow water waves -- A classic nonlinear system of two equations.
-  - Shallow water with a tracer -- Adding a passively advected tracer and a linearly degenerate field.
-  - Euler equations of compressible gas dynamics -- The classic equations for an ideal gas.
-- Part II: Approximate solvers
-  - Approximate_solvers -- Introduction to two basic types of approximations.
-  - Burgers approximate -- Approximate solvers for a scalar problem.
-  - Shallow water_approximate -- Roe solvers, the entropy fix, positivity, HLL, and HLLE.
-  - Euler approximate -- Extension of these solvers to gas dynamics.
-  - Finite volume discretizations with approximate Riemann solvers -- Comparing how different approximate solvers perform when used with PyClaw.
-
