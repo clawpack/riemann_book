@@ -113,19 +113,19 @@ Taken from the notebook [Index.ipynb](Index.ipynb), these are the notebooks that
 
 - Preface -- Describes the aims and goals, and different ways to use the notebooks.
 - Part I: The Riemann problem and its solution
-  - Introduction -- Introduces basic ideas with some sample solutions.
-  - Advection -- The scalar advection equation is the simplest hyperbolic problem.
-  - Acoustics -- This linear system of two equations illustrates how eigenstructure is used.
-  - Burgers' equation -- The classic nonlinear scalar problem with a convex flux.
-  - Traffic flow -- A nonlinear scalar problem with a nice physical interpretation.
-  - Nonconvex_scalar -- More interesting Riemann solutions arise when the flux is not convex.
-  - Shallow water waves -- A classic nonlinear system of two equations.
-  - Shallow water with a tracer -- Adding a passively advected tracer and a linearly degenerate field.
-  - Euler equations of compressible gas dynamics -- The classic equations for an ideal gas.
+  - `Introduction.ipynb` -- Introduces basic ideas with some sample solutions.
+  - `Advection.ipynb` -- The scalar advection equation is the simplest hyperbolic problem.
+  - `Acoustics.ipynb` -- This linear system of two equations illustrates how eigenstructure is used.
+  - `Burgers.ipynb` -- The classic nonlinear scalar problem with a convex flux.
+  - `Traffic_flow.ipynb` -- A nonlinear scalar problem with a nice physical interpretation.
+  - `Nonconvex_scalar.ipynb` -- More interesting Riemann solutions arise when the flux is not convex.
+  - `Shallow_water.ipynb` -- A classic nonlinear system of two equations.
+  - `Shallow_tracer.ipynb` -- Adding a passively advected tracer and a linearly degenerate field.
+  - `Euler.ipynb` -- The classic equations for an ideal gas.
 - Part II: Approximate solvers
-  - Approximate_solvers -- Introduction to two basic types of approximations.
-  - Burgers approximate -- Approximate solvers for a scalar problem.
-  - Shallow water_approximate -- Roe solvers, the entropy fix, positivity, HLL, and HLLE.
-  - Euler approximate -- Extension of these solvers to gas dynamics.
-  - Finite volume discretizations with approximate Riemann solvers -- Comparing how different approximate solvers perform when used with PyClaw.
+  - `Approximate_solvers.ipynb` -- Introduction to two basic types of approximations.
+  - `Burgers_approximate.ipynb` -- Approximate solvers for a scalar problem.
+  - `Shallow_water_approximate.ipynb` -- Roe solvers, the entropy fix, positivity, HLL, and HLLE.
+  - `Euler_approximate.ipynb` -- Extension of these solvers to gas dynamics.
+  - `FV_compare.ipynb` -- Comparing how different approximate solvers perform when used with PyClaw.
 
