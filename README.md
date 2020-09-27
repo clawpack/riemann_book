@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/clawpack/riemann_book.svg?branch=master)](https://travis-ci.org/clawpack/riemann_book)
+[![Build Status](https://travis-ci.org/clawpack/riemann_book.svg?branch=FA16)](https://travis-ci.org/clawpack/riemann_book)
 
 # Riemann Problems and Jupyter Solutions
 
@@ -15,7 +15,7 @@ Contributors: @ketch, @rjleveque, and @maojrs.
 
 The code in this repository, including all code samples in the notebooks,
 is released under the 3-Clause BSD License.  See
-[LICENSE-CODE](https://github.com/clawpack/riemann_book/blob/master/LICENSE-CODE)
+[LICENSE-CODE](https://github.com/clawpack/riemann_book/blob/FA16/LICENSE-CODE)
 for the license and read more at the 
 [Open Source Initiative](https://opensource.org/licenses/bsd-3-clause).
 
@@ -23,7 +23,7 @@ for the license and read more at the
 
 The text content of the notebooks is released under the CC-BY-NC-ND License.
 See
-[LICENSE-TEXT.md](https://github.com/clawpack/riemann_book/blob/master/LICENSE-TEXT.md)
+[LICENSE-TEXT.md](https://github.com/clawpack/riemann_book/blob/FA16/LICENSE-TEXT.md)
 for the license and read more at [Creative
 Commons](https://creativecommons.org/licenses/by-nc-nd/4.0/).
 
@@ -85,7 +85,7 @@ notebooks on the cloud using the free
 [binder](https://mybinder.org/) service.  
 Simply navigate to this link in a browser:
 
-https://mybinder.org/v2/gh/clawpack/riemann_book/master
+https://mybinder.org/v2/gh/clawpack/riemann_book/FA16
 
 This may take a few minutes to start up a notebook server on a
 [Jupyterhub](https://jupyterhub.readthedocs.io/en/latest/). Then navigate to
