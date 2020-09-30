@@ -146,7 +146,7 @@ for i, chapter in enumerate(chapters):
             "--ExecutePreprocessor.timeout=60", output_filename]
     subprocess.check_call(args)
 
-# remove the notebooks from html/
+# remove the notebooks from html
 os.system('rm *.ipynb')
 
 # go back to the main directory:
