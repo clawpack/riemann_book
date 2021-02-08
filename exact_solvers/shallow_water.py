@@ -312,8 +312,13 @@ def phase_plane_curves(hstar, hustar, state, g=1., wave_family='both', y_axis='u
     else:
         ustar = hustar  # Fake it
         ax.set_ylabel('Momentum (hu)')
-    ax.plot([hstar],[ustar],'ko',markersize=5)
+    if state == 'qleft':
+        ax.plot([hstar],[ustar],'k<',markersize=6)
+    elif state == 'qright':
+        ax.plot([hstar],[ustar],'k>',markersize=6)
+    #ax.plot([hstar],[ustar],'ko',markersize=5) #old way
     ax.text(hstar + 0.1, ustar - 0.2, state, fontsize=13)
+    
 
 
 def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
@@ -327,6 +332,9 @@ def make_axes_and_label(x1=-.5, x2=6., y1=-2.5, y2=2.5):
 def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u', 
                      approx_states=None, hmin=0, color='g', include_contact=False):
     r"""Plot the Hugoniot loci or integral curves in the h-u or h-hu plane."""
+    
+    import matplotlib.lines as mlines
+
     # Solve Riemann problem
     states, speeds, reval, wave_types = \
                         exact_riemann_solution(q_l, q_r, g, force_waves=force_waves,
@@ -387,21 +395,40 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
         ax.plot(h1,hu1,'b', label='Integral curve (physical)')
         ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
-    for xp,yp in zip(x,y):
-        ax.plot(xp,yp,'ok',markersize=10, label='Exact solution states')
-    # Label states
-    if include_contact:
-        state_labels = ('Left', 'Middle', '', 'Right')
-    else:
-        state_labels = ('Left', 'Middle', 'Right')
-    for i,label in enumerate(state_labels):
-        ax.text(x[i] + 0.025*dx,y[i] + 0.025*ymax, label)
+
+    msize = 6
+    Lp = ax.plot(x[0],y[0],'<k',markersize=msize,label='Left')
+    Mp = ax.plot(x[1],y[1],'ok',markersize=msize,label='Middle')
+    Rp = ax.plot(x[-1],y[-1],'>k',markersize=msize,label='Right')
+        
+    # add legends only for Left, Middle, Right:
+    handles = []
+    handle = mlines.Line2D([], [], color='k', linestyle='', marker='<',
+                            markersize=msize, label='Left state')
+    handles.append(handle)
+    handle = mlines.Line2D([], [], color='k', linestyle='', marker='o',
+                            markersize=msize, label='Middle state')
+    handles.append(handle)
+    handle = mlines.Line2D([], [], color='k', linestyle='', marker='>',
+                            markersize=msize, label='Right state')
+    handles.append(handle)
+    plt.legend(handles=handles, fontsize=6)
 
     if approx_states is not None:
         u = approx_states[1,:]/(approx_states[0,:]+1.e-15)
         h = approx_states[0,:]
-        ax.plot(h,u,'o-',color=color,markersize=10,zorder=0, label='Approximate solution')
+        ax.plot(h,u,'-g',zorder=0)
+        # don't plot the left and right states as dots, only middle states:
+        ax.plot(h[1:-1],u[1:-1],'og',markersize=8,zorder=0)
 
+    xlimits = ax.get_xlim()
+    if xlimits[0] <= 0.:
+        # shift xlimits to better show dry state:
+        x0 = min(xlimits[0],  -0.05*(xlimits[1] - xlimits[0]))
+        ax.set_xlim(x0,xlimits[1])
+        ylimits = ax.get_ylim()
+        ax.plot([0,0], ylimits, 'k-', linewidth=0.6)  # y-axis
+        
     # The code below generates a legend with just one
     # entry for each kind of line/marker, even if
     # multiple plotting calls were made with that type
