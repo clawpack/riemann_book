@@ -565,7 +565,7 @@ def compute_riemann_trajectories(states, s, riemann_eval, wave_types=None,
 
     nsteps = 200.
     dt = 1./nsteps
-    t_traj = np.linspace(0,1,nsteps+1)
+    t_traj = np.linspace(0,1,int(nsteps+1))
     q_old = riemann_eval(xx/1e-15)
     for n in range(1,len(t_traj)):
         q_new = riemann_eval(xx/t_traj[n])
