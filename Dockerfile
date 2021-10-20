@@ -15,7 +15,7 @@ RUN pip install ipywidgets
 RUN pip install --user -e jupyter_contrib_nbextensions
 
 ENV PATH ${PATH}:/home/jovyan/.local/bin
-RUN pip install "traitlets>=5.0"
+RUN pip install "traitlets>=5.0" "jupyter-client>=6.1.5"
 RUN jupyter contrib nbextension install --user
 RUN jupyter nbextension enable widgetsnbextension --py
 RUN jupyter nbextension enable equation-numbering/main
