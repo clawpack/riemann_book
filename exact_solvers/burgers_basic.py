@@ -67,15 +67,7 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
     num_vars, num_states = states.shape
                     
     x = np.linspace(-4, 4, 1000)
-
-    wavespeeds = np.array(s[0])
-        
-    xm = 0.5 * (wavespeeds[1:]+wavespeeds[:-1]) * t
     
-    iloc = np.searchsorted(x,xm)
-
-    x = np.insert(x, iloc, xm)
-
     q = riemann_eval(x/(t+1e-10))
 
     ax.set_xlim(-4,4)
