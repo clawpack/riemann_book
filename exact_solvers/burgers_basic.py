@@ -76,9 +76,6 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
 
     xmax = max(0.001, xmax)
     ax.set_xlim(-xmax,xmax)
-
-    xi_range = np.linspace(min(-10, 2*np.min(s[0])), max(10, 2*np.max(s[-1])))
-    q_sample = riemann_eval(xi_range)
             
     x = np.linspace(-xmax, xmax, 1000)
 
