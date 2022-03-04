@@ -82,7 +82,7 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
             
     x = np.linspace(-xmax, xmax, 1000)
 
-    wavespeeds = np.array([speed for speed in s[0]])
+    wavespeeds = np.array(s[0])
         
     xm = 0.5 * (wavespeeds[1:]+wavespeeds[:-1]) * t
     
