@@ -10,9 +10,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 
-def speed(q, xi):
-    return q
-
 def exact_riemann_solution(xi,q_l,q_r):
     f = lambda q: 0.5*q*q
     # Shock wave
