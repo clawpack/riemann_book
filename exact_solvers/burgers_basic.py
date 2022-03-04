@@ -62,19 +62,17 @@ def shock():
     
 def plot_riemann(states, s, riemann_eval, t, outfile):
     
-    fig_width = 5
-    fig, ax = plt.subplots(figsize=(fig_width, 3))
+    fig, ax = plt.subplots(figsize=(5, 3))
 
     num_vars, num_states = states.shape
     
     tmax = 1.0
     xmax = 0.
     
-    for i in range(len(s)):
-        speeds = np.linspace(s[i][0],s[i][1],5)
-        for ss in speeds:
-            x1 = tmax * ss
-            xmax = max(xmax,abs(x1))
+    speeds = np.linspace(s[0][0],s[0][1],5)
+    for ss in speeds:
+        x1 = tmax * ss
+        xmax = max(xmax,abs(x1))
 
     xmax = max(0.001, xmax)
     ax.set_xlim(-xmax,xmax)
@@ -93,6 +91,7 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
     xm = 0.5 * (wavespeeds[1:]+wavespeeds[:-1]) * t
     
     iloc = np.searchsorted(x,xm)
+
     x = np.insert(x, iloc, xm)
 
     q = riemann_eval(x/(t+1e-10))
@@ -103,7 +102,7 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
 
 if __name__ == "__main__": 
     
-    rarefaction()
-    #shock()
+    #rarefaction()
+    shock()
 
 
