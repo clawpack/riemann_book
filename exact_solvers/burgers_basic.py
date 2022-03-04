@@ -66,15 +66,10 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
     fig, ax = plt.subplots(figsize=(fig_width, 3))
 
     num_vars, num_states = states.shape
-
-    variable_names = ['q']
     
-    existing_plots = True
-    ylims = []
-
-    xmax=None
     tmax = 1.0
-    if xmax is None: xmax = 0.
+    xmax = 0.
+    
     for i in range(len(s)):
         speeds = np.linspace(s[i][0],s[i][1],5)
         for ss in speeds:
@@ -109,6 +104,6 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
 if __name__ == "__main__": 
     
     rarefaction()
-    shock()
+    #shock()
 
 
