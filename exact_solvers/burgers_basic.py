@@ -11,10 +11,10 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 def exact_riemann_solution(xi,q_l,q_r):
-    f = lambda q: 0.5*q*q
+    def qf(q): return 0.5*q*q
     # Shock wave
     if q_l > q_r: 
-        shock_speed = (f(q_l)-f(q_r))/(q_l-q_r)
+        shock_speed = (qf(q_l)-qf(q_r))/(q_l-q_r)
         q = (xi < shock_speed)*q_l \
           + (xi >=shock_speed)*q_r
         return q
