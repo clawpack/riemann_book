@@ -82,12 +82,8 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
             
     x = np.linspace(-xmax, xmax, 1000)
 
-    wavespeeds = []
-
-    for speed in s: wavespeeds += speed
-
-    wavespeeds = np.array(wavespeeds)
-    
+    wavespeeds = np.array([s for s in speeds])
+        
     xm = 0.5 * (wavespeeds[1:]+wavespeeds[:-1]) * t
     
     iloc = np.searchsorted(x,xm)
@@ -102,7 +98,7 @@ def plot_riemann(states, s, riemann_eval, t, outfile):
 
 if __name__ == "__main__": 
     
-    #rarefaction()
-    shock()
+    rarefaction()
+    #shock()
 
 
