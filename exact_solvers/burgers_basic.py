@@ -39,35 +39,33 @@ def exact_riemann_solution(q_l,q_r):
               + (c_l<xi)*(xi<c_r)*xi
             return q
 
-    return states, speeds, reval
+    return reval
     
 def rarefaction():
     print ('rarefaction')
     q_l, q_r = 2.0, 4.0
-    states, speeds, reval = exact_riemann_solution(q_l ,q_r)
+    reval = exact_riemann_solution(q_l ,q_r)
     for t in np.linspace(0,1,6):
         outfile = '/tmp/rarefaction-%f.png' % t
         print (outfile)
-        plot_riemann(states, speeds, reval, t, outfile)
+        plot_riemann(reval, t, outfile)
 
 def shock():
     print ('shock wave')
     q_l, q_r = 5.0, 1.0
-    states, speeds, reval = exact_riemann_solution(q_l ,q_r)
+    reval = exact_riemann_solution(q_l ,q_r)
     for t in np.linspace(0,1,6):
         outfile = '/tmp/shock-%f.png' % t
         print (outfile)
-        plot_riemann(states, speeds, reval, t, outfile)
+        plot_riemann(reval, t, outfile)
 
     
-def plot_riemann(states, s, riemann_eval, t, outfile):
+def plot_riemann(riemann_eval, t, outfile):
     
     fig, ax = plt.subplots(figsize=(5, 3))
-
-    num_vars, num_states = states.shape
                     
     x = np.linspace(-4, 4, 1000)
-    
+
     q = riemann_eval(x/(t+1e-10))
 
     ax.set_xlim(-4,4)
