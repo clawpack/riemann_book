@@ -160,7 +160,7 @@ def phase_plane_plot(q_l, q_r, v_l, v_r, states=None, speeds=None,
 
     if connect:
         for i, w in enumerate(wave_types):
-            if w is 'raref':
+            if w == 'raref':
                 q = np.linspace(states[i],states[i+1],500)
                 if min(speeds[i])<0:  # left-going
                     ff = f(q,v_l)
