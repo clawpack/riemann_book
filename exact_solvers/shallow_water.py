@@ -151,7 +151,7 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None,
             ws[2] = (hu_r - hu_m) / (h_r - h_m)
             ws[3] = ws[2]
         else:
-            wave_types[0] = 'raref'
+            wave_types[1] = 'raref'
             c_m = np.sqrt(grav * h_m)
             ws[2] = u_m + c_m
             ws[3] = u_r + c_r
@@ -381,17 +381,19 @@ def phase_plane_plot(q_l, q_r, g=1., ax=None, force_waves=None, y_axis='u',
         ax.plot(h1,hu1,'b', label='Integral curve (physical)')
         ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
-    h_r = states[0,right]
+    true_right = right + include_contact # right=3 if we have the tracer
+    h_r = states[0,true_right]
     h1 = np.linspace(1.e-2,h_r)
     h2 = np.linspace(h_r,xmax+0.5*dx)
-    if wave_types[1] == 'shock':
-        hu1 = hugoniot_locus(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        hu2 = hugoniot_locus(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
+    right_wave = 1 + include_contact
+    if wave_types[right_wave] == 'shock':
+        hu1 = hugoniot_locus(h1, states[0,true_right], states[1,true_right], wave_family=2, g=g, y_axis=y_axis)
+        hu2 = hugoniot_locus(h2, states[0,true_right], states[1,true_right], wave_family=2, g=g, y_axis=y_axis)
         ax.plot(h1,hu1,'--r', label='Hugoniot locus (unphysical)')
         ax.plot(h2,hu2,'r', label='Hugoniot locus (physical)')
     else:
-        hu1 = integral_curve(h1, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
-        hu2 = integral_curve(h2, states[0,right], states[1,right], wave_family=2, g=g, y_axis=y_axis)
+        hu1 = integral_curve(h1, states[0,true_right], states[1,true_right], wave_family=2, g=g, y_axis=y_axis)
+        hu2 = integral_curve(h2, states[0,true_right], states[1,true_right], wave_family=2, g=g, y_axis=y_axis)
         ax.plot(h1,hu1,'b', label='Integral curve (physical)')
         ax.plot(h2,hu2,'--b', label='Integral curve (unphysical)')
 
