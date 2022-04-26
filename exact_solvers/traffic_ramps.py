@@ -145,7 +145,7 @@ def phase_plane_plot(q_l, q_r, D, states=None, speeds=None,
     fluxes = [f(state) for state in states]
 
     for i, w in enumerate(wave_types):
-        if w is 'raref':
+        if w == 'raref':
             q = np.linspace(states[i],states[i+1],500)
             ff = f(q)
             axes.plot(q,ff,color=colors['raref'],lw=3)

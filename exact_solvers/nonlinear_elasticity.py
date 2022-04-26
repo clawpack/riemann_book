@@ -139,11 +139,11 @@ def exact_riemann_solution(q_l,q_r,aux_l,aux_r,phase_plane_curves=False):
 
     states = np.column_stack([q_l, q_star_l, q_star_r, q_r])
     speeds = [[], ws[2], []]
-    if wave_types[0] is 'shock':
+    if wave_types[0] == 'shock':
         speeds[0] = ws[0]
     else:
         speeds[0] = (ws[0],ws[1])
-    if wave_types[2] is 'shock':
+    if wave_types[2] == 'shock':
         speeds[2] = ws[3]
     else:
         speeds[2] = (ws[3],ws[4])
