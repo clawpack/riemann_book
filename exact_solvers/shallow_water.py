@@ -175,11 +175,11 @@ def exact_riemann_solution(q_l, q_r, grav=1., force_waves=None,
 
     states = np.column_stack([q_l,q_m,q_r])
     speeds = [[], []]
-    if wave_types[0] is 'shock':
+    if wave_types[0] == 'shock':
         speeds[0] = ws[0]
     else:
         speeds[0] = (ws[0],ws[1])
-    if wave_types[1] is 'shock':
+    if wave_types[1] == 'shock':
         speeds[1] = ws[2]
     else:
         speeds[1] = (ws[2],ws[3])

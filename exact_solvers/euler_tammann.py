@@ -216,11 +216,11 @@ def exact_riemann_solution(ql, qr, auxl, auxr, varin = 'primitive', varout = 'pr
     #speeds = [(ws[0],ws[1]),ws[2],(ws[3],ws[4])]
     speeds = [[], ws[2], []]
     wave_types = [wave1, 'contact', wave3]
-    if wave_types[0] is 'shock':
+    if wave_types[0] == 'shock':
         speeds[0] = ws[0]
     else:
         speeds[0] = (ws[0],ws[1])
-    if wave_types[2] is 'shock':
+    if wave_types[2] == 'shock':
         speeds[2] = ws[3]
     else:
         speeds[2] = (ws[3],ws[4])
