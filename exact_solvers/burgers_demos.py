@@ -29,7 +29,8 @@ def multivalued_solution(t,fig=0):
         numarrows = 7
         arrowIndexList = np.linspace(len(x)/3,2*len(x)/3,numarrows, dtype = int)
         for i in arrowIndexList:
-            plt.arrow(x[i], y[i], np.abs(t*y[i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
+            if t*y[i]-0.4 >0.1:
+                plt.arrow(x[i], y[i], np.abs(t*y[i]-0.4), 0, head_width=0.02, head_length=0.4, fc='k', ec='k')
     if fig==0: plt.show()
 
 def shock():
