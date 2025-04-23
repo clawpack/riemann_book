@@ -214,7 +214,7 @@ def make_reval(states, speeds, wave_types, c_raref_fun=None):
 
         for i in range(len(wave_types)):
             if i == 0:
-                s_last = -np.Inf
+                s_last = -np.inf
             if wave_types[i] == 'raref':
                 q[0,:] += (xi>s_last)*(xi<=speeds[i][0])*states[i]
                 q[0,:] += (xi>speeds[i][0])*(xi<=speeds[i][1])*c_raref_fun(xi)
